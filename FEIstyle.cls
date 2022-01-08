@@ -1,6 +1,8 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{FEIstyle}[2020/05/13 v. 1.6.1 Thesis template - FEI STUBA]
 
+\newcommand{\source}[1]{\caption*{Source: {#1}} }
+
 % parse arguments
 \DeclareOption{dizp}{\def\typPraceSkr{dizp}
     \def\isThesis{1}
