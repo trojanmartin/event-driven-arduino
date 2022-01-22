@@ -1,0 +1,83 @@
+\subsection{Eventually}
+\noindent Eventually je jednoduchá knižnica, ktorej cieľom je zjednodušenie udalosťami riadeného 
+programovania na platforme Arduino. Zdrojový kód Eventually open-source a je zapísaný v jazyku C++. Celá knižnica vznikla v roku 2016 a je dostupná pod MIT licenciou.
+\par Pre demonštráciu použitia knižnice opíšeme štruktúru programu, ktorý stlačením tlačidla spustí blikanie LED žiarovky. Program napísaný pomocou Eventually môžeme rozdeliť na tri časti.
+
+\par Prvou je definícia makier a globálnych premenných. To vyzerá nasledovne: 
+\begin{lstlisting}[
+    label={lst:main-c},
+    language=c
+  ]  
+  #include <Eventually.h>
+
+  #define LIGHT_PIN 5
+  #define BUTTON_PIN 3
+  
+  EvtManager mgr;
+  bool blink_state = LOW;
+
+  USE_EVENTUALLY_LOOP(mgr)
+\end{lstlisting}
+
+Ako prvé je nutné prilinkovať knižnicu. Následne definujeme piny s ktorými budeme pracovať vytvoríme premennú manažéra udalostí spolu s pomocnou premennou na uloženie aktuálneho stavu LED žiarovky. Nakoniec sa tu nachádza makro definované v zdrojovom kóde Eventually. To nahrádza štandardnú funkciu loop a je využívané samotnou knižnicou na beh programu.
+
+\par Druhou je funckia setup. Je to štandardná funkcia Arduino platformy, ktorá je zavolaná 
+jedenkrát po štarte. Nachádza sa tu, ako názov funkcie napovedá, kód, ktorého úlohou je 
+nastavenie základných vlastností aplikácie. Ako prvé nastavíme správny mód pinom, ktoré chceme neskôr používať. Nasleduje použitie už
+spomínaného manažéra udalostí. Pomocou funkcie \textit{addListener} vytvoríme nový \textit{EvtPinListener}, ktorý bude počúvať na stlačenie tlačidla. Keď daná udalosť nastane, zavolá metódu \textit{start\_blinking}, ktorú popíšene neskôr. Takýmto spôsobom je možné zaregistrovať rôznych "poslucháčov" na rôzne udalosti. V našom prípade opisovaná funkcia vyzerá nasledovne: 
+
+\begin{lstlisting}[
+    label={lst:main-c},
+    language=c
+  ]  
+  void setup() {
+    /* Set the pin modes */
+    pinMode(LIGHT_PIN, OUTPUT);
+    pinMode(BUTTON_PIN, INPUT);
+  
+    /* Add a button listener */
+    mgr.addListener(new EvtPinListener(BUTTON_PIN, (EvtAction)start_blinking));
+
+    /* Button is LOW when pushed, so use INPUT_PULLUP */
+    pinMode(BUTTON_PIN, INPUT_PULLUP);
+
+    /* Add a button listener, listening for LOW */
+    /* (To use this constructor, we also have to specify the debounce delay) */
+    mgr.addListener(new EvtPinListener(BUTTON_PIN, 40, LOW, (EvtAction)start_blinking);
+  }
+\end{lstlisting}
+
+\par Poslednou časťou kódu sú obslužné funkcie udalostí. Ako sme popísali vyššie, po stlačení tlačidla sa zavolá funkcia \textit{start\_blinking}. V nej najskôr odstránime všetkých zaregistrovaných poslucháčov na udalosti a následne pridáme dvoch nových. Prvou je časová udalosť. Táto bude využitá na pravidelné zapnutie a vypnutie LED žiarovky. V intervale 500 milisekúnd bude pravidelne volaná funkcia \textit{blink\_pin}, ktorá zabezpečí zapnutie, respektíve vypnutie žiarovky. Druhou je udalosťou je opätovné stlačenie tlačidla, ktorým je možné zastaviť blikanie žiarovky. Vo funkcii \textit{stop\_blinking} taktiež odstránime aktuálnych poslucháčov a pridáme nového, ktorý zabezpečí opätovné začatie blikania. 
+
+\begin{lstlisting}[
+    label={lst:main-c},
+    language=c
+  ]
+bool start_blinking() {
+  mgr.resetContext(); 
+  mgr.addListener(new EvtTimeListener(500, true, (EvtAction)blink_pin));
+  mgr.addListener(new EvtPinListener(BUTTON_PIN, (EvtAction)stop_blinking));
+  return true;
+}
+
+bool blink_pin() {
+  blink_state = !blink_state;
+  digitalWrite(LIGHT_PIN, blink_state);
+  return false;
+}
+  
+bool stop_blinking() {
+  mgr.resetContext();
+  mgr.addListener(new EvtPinListener(BUTTON_PIN, (EvtAction)start_blinking));
+  return true;
+}
+
+\end{lstlisting}
+
+\par V popísanom programe sme využili existujúcich poslucháčov, ktorý sú definovaný v knižnici Eventually. Pri pokročilom použivaní Eventually je možné vytvoriť aj vlastných a to vytvorením novej zdedenej triedy, ktorej základom je \textit{EvtListener} \cite{bartlettEventually2021}.
+
+\par Knižnica Eventually nám umožňuje definovanie obslužných funkcíí a funguje ako rozposielač udalostí. Našou úlohou je definícia týchto funkcíí, ktoré vykonávajú nami definované akcie.
+Pre pokročilejšom použití je taktiež možné definovať aj vlastné udalosti. Vďaka týmto 
+vlastnostiam Eventually môže byť dobrou voľbou pre programovanie pomocou udalosťami riadenej 
+paradigmy. Medzi jej nevýhody patrí to, že nijakým spôsobom nespravuje aktuálny stav programu. Nerozlišuje kedy udalosť nastala a celá správa je ponechaná na konečného užívateľa.
+Taktiež všetky udalosti sú generované softvérovo. To znamená, že Eventually v cykle kontroluje či pre zaregistrovaných poslucháčov nastala udalosť. Ak áno zavolá obslužnú funkciu. Týmto spôsobom však môže dojsť k značnej latencii medzi nastaním udalosti a vyvolaním obslužnej funkcie.
