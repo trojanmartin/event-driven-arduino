@@ -1,11 +1,11 @@
 \section{Konečný stavový automat}
 \noindent Existuje množstvo spôsobov ako modelovať správanie sytémov. Jedným z 
 najstarších a najznámejších je modelovanie pomocou konečného stavového automatu.
-Vďaka takejto abtrakcii môžeme o problémoch rozmýšľať ako o stavoch, ktoré nastali v určitom čase a charakterizujú to ako sa systém má správať. 
+Vďaka takejto abstrakcii môžeme o problémoch rozmýšľať ako o stavoch, ktoré nastali v určitom čase a charakterizujú ako sa systém správa. 
 Táto technika však nie je limitovaná len na modelovanie softvérových systémov. Využíva sa aj v iných oblastiach ako napríklad vo fyzike a biológii \cite{WaybackMachine2014}. 
 \par Častou úlohou vstavaných systémov je reagovanie na udalosti, ktoré nastali  na rôznych 
-periférnych zariadeniach. To o akú reakciu pôjde záleží od dvoch faktorov. Prvým je typ
-udalosti, ktorá nastala. Druhým je kontext v akom udalosť nastala 
+periférnych zariadeniach. To, o akú reakciu pôjde záleží od dvoch faktorov. Prvým je typ
+udalosti, ktorá nastala a druhým je kontext v akom udalosť nastala 
 (napríklad sekvencia minulých udalostí). Stavový automat robí obsluhu udalostí explicitne závislými od povahy udalosti a od kontextu (stavu) systému. 
 Stav veľmi efektívne zachytáva relevantné aspekty histórie systému. 
 Stav môže abstrahovať všetky možné (relevantné ale i irelevantné) sekvencie udalostí a zachytiť len tie podstatné \cite{samekStateMachinesEventDriven2016}.

@@ -1,5 +1,5 @@
 \section{Programovacie paradigmy}
-\noindent Programovacia paradigma je spôsob riešenia programátorských problémov \cite{Samuel2018AnII}. Poznáme veľké množstvo programovacích paradigiem. Medzi ne patria aj nasledujúce štyri:
+\noindent \par Programovacia paradigma je spôsob riešenia programátorských problémov \cite{Samuel2018AnII}. Poznáme veľké množstvo programovacích paradigiem. Medzi ne patria aj nasledujúce štyri:
 \begin{itemize}
   \item Imperatívna paradigma.
   \item Funkcionálna paradigma.
@@ -8,13 +8,13 @@
 \end{itemize}
 
 \subsection{Imperatívna paradigma}
-\noindent Základnou myšlienkou je príkaz, ktorý má merateľný dopad na aktuálny stav 
+\noindent \par Základnou myšlienkou je príkaz, ktorý má merateľný dopad na aktuálny stav 
 programu. Pri imperatívnej paradigme je rovnako dôležité aj poradie príkazov. Stav 
 programu po vykonaní príkazov v ľubovoľnom poradí nemusí byť rovnaký ak by boli príkazy 
 vykonané v inom poradí \cite{imperativParadigm}. 
 
 \subsection{Funkcionálna paradigma}
-\noindent Je postavená na koncepte matematických funkcií, ktoré používajú podmienené 
+\noindent \par Funkcionálna paradigma je postavená na koncepte matematických funkcií, ktoré používajú podmienené 
 výrazy a rekurziu na vykonanie výpočtu. Zameriava sa na výsledok, nie na spôsobom akým 
 sa k výsledku dopracovať. Jednou z jeho základných vlastností je nemennosť dát. To 
 znamená, že ak už bola nejaká štruktúra vytvorená nie je možné meniť jej vnútorný stav. 
@@ -22,7 +22,7 @@ V prípade potreby zmeny stavu je nutné celú štruktúru vytvoriť odznova. Me
 najpoužívanejšie funkcionálne jazyky patrí Haskell, Clojure alebo SQL \cite{functionalParadigm}.
 
 \subsection{Objektovo orientovaná paradigma}
-\noindent Paradigma, ktorej myšlienka je inšpirovaná svetom okolo nás. Čokoľvek môže 
+\noindent \par Paradigma, ktorej myšlienka je inšpirovaná svetom okolo nás. Čokoľvek môže 
 byť objekt. Auto, dom, kniha či dokument. Každý z týchto objektov má špecifické vlastnosti 
 a určité správanie. Rovnakým spôsobom modelujeme program. Takéto rozmýšľanie o 
 objektoch nám umožňuje písať kód, ktorý je jednoduchší na pochopenie a zároveň je 
@@ -33,8 +33,8 @@ patrí dedičnosť, zapuzdrenosť, polymorfizmus a abstrakcia \cite{objectOrient
 {stack-overflow-survey-2020}.
 
 \subsection{Udalosťami riadená paradigma}
-\noindent V tejto paradigme je tok programu určený udalosťami. Udalosti môžu byť
-rôzne. Väčšinou sa generujú pri akciách používateľa ako napríklad stlačenie tlačidla
+\noindent \par V tejto paradigme je tok programu určený udalosťami. Udalosti môžu byť
+rôzne. Väčšinou sa generujú pri akciách používateľa. Príkladom môže byť stlačenie tlačidla
 alebo písanie na klávesnici. Udalosti môžu byť generované aj rôznymi perifériami systému ako napríklad pomocou senzorov alebo komunikačnými protokolmi. Niekedy môže byť udalosť generovaná interne, napríklad časovačom alebo prerušením. Bez ohľadu na
 zdroj alebo typ udalostí, udalosťami riadené programovanie 
 hovorí o programovacej paradigme, v ktorej sa tok
@@ -52,7 +52,7 @@ Táto časť programu je zodpovedná za zachytávanie vygenerovaných udalostí,
 \end{enumerate}
 
 \noindent \par
-Po zachytení udalosti nasleduje jej rozposlanie. V tejto časti program identifikuje obsluhy udalostí, ktoré je potrebné vyvolať na základe typu udalosti. Ak daný typ udalosti nemá zaregistrovanú žiadnu oblužnú funkciu, program buď udalosť odignoruje, alebo vygeneruje výnimku.
+Po zachytení udalosti nasleduje jej rozposlanie. V tejto časti program identifikuje obsluhy udalostí, ktoré je potrebné vyvolať na základe typu udalosti. Ak daný typ udalosti nemá zaregistrovanú žiadnu oblužnú funkciu, program buď udalosť odignoruje alebo vygeneruje výnimku.
 
 \begin{enumerate}[resume]
   \item Obsluha udalostí
@@ -70,5 +70,5 @@ Po zachytení udalosti nasleduje jej rozposlanie. V tejto časti program identif
 \end{figure}
 
 \par
-Udalosťami riadené programy je možné rozdeliť na dva typy. Prvým typom sú programy, ktoré si neuchovávajú aktuálny stav v ktorom sa nachádzajú. To znamená, že pri obluhe udalosti vykonajú vždy rovnakú aktivitu bez ohľadu na to aké udalosti nastali v minulosti. Druhým typom sú programy, kde tok vykonávania závisí nielen od aktuálnej udalosti, ale aj sledu predchádzajúcich udalostí \cite{dashEventDrivenProgramming2011}. 
+Udalosťami riadené programy je možné rozdeliť na dva typy. Prvým typom sú programy, ktoré si neuchovávajú aktuálny stav v ktorom sa nachádzajú. To znamená, že pri obsluhe udalosti vykonajú vždy rovnakú aktivitu bez ohľadu na to aké udalosti nastali v minulosti. Druhým typom sú programy, kde tok vykonávania závisí nielen od aktuálnej udalosti, ale aj sledu predchádzajúcich udalostí \cite{dashEventDrivenProgramming2011}. 
 \par Táto diplomová práca sa venuje práve týmto druhým typom udalosťami riadených programov a ich modelovaním pomocou deterministických konečných automatov.
