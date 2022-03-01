@@ -1,14 +1,52 @@
 #include <State_machine.h>
+#include <Trigger.hpp>
 #include <Arduino.h>
 
-enum State {Idle, On, Off };
-enum Events { TimeElapsed };
+#define END -1
 
-State_machine machine;
+enum State { Idle, On, Off };
+enum Triggers { Timer1, ButtonClicked};
 
-void setup() {
-   auto state = machine.Configure(Idle);
-   state->onEntry().onTrigger(TimeElapsed, Off);
+State_machine machine(Idle);
+Trigger buttonTrigger(ButtonClicked);
+
+void callback(int a);
+
+const int idle_state_table[] PROGMEM {
+   ButtonClicked, On,
+   END
+};
+
+const int off_table[] PROGMEM {
+   Timer1, On,
+   ButtonClicked, Idle,
+   END
+};
+
+const int on_state_table[] PROGMEM {
+   Timer1, Off,
+   ButtonClicked, Idle,
+   END
+};
+
+void setup() {   
+   machine.configure(Idle)
+          .onEntry(&callback)
+          .onExit(&callback)
+          .onTrigger(idle_state_table);
+
+   machine.configure(On)
+          .onEntry(&callback)
+          .onExit(&callback)
+          .onTrigger(on_state_table);
+
+   machine.configure(Off)
+          .onEntry(&callback)
+          .onExit(&callback)
+          .onTrigger(off_table);
+
+
+   
 }
 
 void loop() {
