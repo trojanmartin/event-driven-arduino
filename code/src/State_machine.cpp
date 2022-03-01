@@ -4,14 +4,11 @@
 
 #include "State_machine.h"
 
-State_machine::State_machine() {
+State_machine::State_machine(const int intialState) {
     
 }
 
-void State_machine::trigger(int trigger) {
-    current->trigger(trigger);
-}
 
-State_configuration* State_machine::Configure(int state) {
-    return new State_configuration();
+State_configuration& State_machine::configure(const int state) {
+    return *new State_configuration(state);
 }
