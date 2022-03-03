@@ -1,17 +1,17 @@
 
-typedef void (*stateCallback)(int state);
+typedef void (*state_callback)(int state);
 
-class State_configuration
+class state_configuration
 {
 private:
     int current;
     const int* transition_table;
-    stateCallback entryCallback;
-    stateCallback exitCallback;
+    state_callback entry_callback;
+    state_callback exit_callback;
 public:
-    State_configuration& onEntry(const stateCallback callback);
-    State_configuration& onExit(const stateCallback callback);
-    State_configuration& onTrigger(const int* transitionTable);
-    State_configuration(const int state);
-    ~State_configuration();
+    state_configuration& onEntry(const state_callback callback);
+    state_configuration& onExit(const state_callback callback);
+    state_configuration& onTrigger(const int* transition_table);
+    state_configuration(const int state);
+    ~state_configuration();
 };

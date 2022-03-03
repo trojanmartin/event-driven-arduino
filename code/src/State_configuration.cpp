@@ -1,25 +1,25 @@
-#include <State_configuration.hpp>
+#include <state_configuration.hpp>
 
-State_configuration::State_configuration(const int state)
+state_configuration::state_configuration(const int state)
 {
     current = state;
 }
 
-State_configuration::~State_configuration()
+state_configuration::~state_configuration()
 {
 }
 
-State_configuration& State_configuration::onEntry(const stateCallback callback){
-    entryCallback = callback;
+state_configuration& state_configuration::onEntry(const state_callback callback){
+    entry_callback = callback;
     return *this;    
 }
 
-State_configuration& State_configuration::onExit(const stateCallback callback){
-    entryCallback = callback;
+state_configuration& state_configuration::onExit(const state_callback callback){
+    entry_callback = callback;
     return *this;    
 }
 
-State_configuration& State_configuration::onTrigger(const int* transitionTable ){
+state_configuration& state_configuration::onTrigger(const int* transitionTable ){
     transition_table = transitionTable;
     return *this;
 }

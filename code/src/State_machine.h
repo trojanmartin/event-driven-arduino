@@ -2,20 +2,25 @@
 // Created by marti on 2/22/2022.
 //
 
-#include <State_configuration.hpp>
+#include <dictionary.hpp>
+#include <state_configuration.hpp>
+
 
 #ifndef UNTITLED_STATE_MACHINE_H
 #define UNTITLED_STATE_MACHINE_H
 
 
-class State_machine {
+class state_machine {
 private:
+    int initial;
     void trigger(int trigger);
-    State_configuration *current;
+    dictionary<state_configuration>* dic;
+    state_configuration *current;
 
 public:
-    State_configuration& configure(int state);
-    State_machine(const int initialState);
+    state_configuration& configure(int state);
+    state_machine(const int initial_state);
+    ~state_machine();
 };
 
 

@@ -2,13 +2,18 @@
 // Created by marti on 2/28/2022.
 //
 
-#include "State_machine.h"
+#include "state_machine.h"
 
-State_machine::State_machine(const int intialState) {
-    
+state_machine::state_machine(const int initial_state) {
+    initial = initial_state;
+    dic = new dictionary<state_configuration>(10); 
 }
 
 
-State_configuration& State_machine::configure(const int state) {
-    return *new State_configuration(state);
+state_configuration& state_machine::configure(const int state) {
+    return *new state_configuration(state);
+}
+
+state_machine::~state_machine(){
+    delete dic;
 }

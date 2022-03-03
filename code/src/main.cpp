@@ -1,14 +1,15 @@
 #include <State_machine.h>
 #include <Trigger.hpp>
 #include <Arduino.h>
+#include <dictionary.hpp>
 
 #define END -1
 
 enum State { Idle, On, Off };
-enum Triggers { Timer1, ButtonClicked};
+enum Triggers { Timer1, ButtonClicked };
 
-State_machine machine(Idle);
-Trigger buttonTrigger(ButtonClicked);
+state_machine machine(Idle);
+trigger buttonTrigger(ButtonClicked);
 
 void callback(int a);
 
@@ -43,10 +44,7 @@ void setup() {
    machine.configure(Off)
           .onEntry(&callback)
           .onExit(&callback)
-          .onTrigger(off_table);
-
-
-   
+          .onTrigger(off_table);   
 }
 
 void loop() {

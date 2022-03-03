@@ -1,19 +1,19 @@
 
-class Trigger
+class trigger
 {
 private:
-     int trigger;
-     void addListener(void (*triggerCallback)(int));
+     int id;
+     void addListener(void (*trigger_callback)(int));
 public:
-    Trigger(int trigger);
-    ~Trigger();
+    trigger(int trigger);
+    ~trigger();
 };
 
-Trigger::Trigger(int trigger)
+trigger::trigger(int trigger)
 {
 }
 
-Trigger::~Trigger()
+trigger::~trigger()
 {
 }
 
