@@ -10,6 +10,9 @@
             "includePath": [
                 "c:/Users/marti/Documents/skola/event-driven-arduino/code/include",
                 "c:/Users/marti/Documents/skola/event-driven-arduino/code/src",
+                "c:/Users/marti/Documents/skola/event-driven-arduino/code/lib/Interro",
+                "c:/Users/marti/Documents/skola/event-driven-arduino/code/lib/Interro/trigger",
+                "c:/Users/marti/Documents/skola/event-driven-arduino/code/lib/Interro/trigger/base",
                 "C:/Users/marti/.platformio/packages/framework-arduino-avr/cores/arduino",
                 "C:/Users/marti/.platformio/packages/framework-arduino-avr/variants/mega",
                 "C:/Users/marti/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
@@ -24,6 +27,9 @@
                 "path": [
                     "c:/Users/marti/Documents/skola/event-driven-arduino/code/include",
                     "c:/Users/marti/Documents/skola/event-driven-arduino/code/src",
+                    "c:/Users/marti/Documents/skola/event-driven-arduino/code/lib/Interro",
+                    "c:/Users/marti/Documents/skola/event-driven-arduino/code/lib/Interro/trigger",
+                    "c:/Users/marti/Documents/skola/event-driven-arduino/code/lib/Interro/trigger/base",
                     "C:/Users/marti/.platformio/packages/framework-arduino-avr/cores/arduino",
                     "C:/Users/marti/.platformio/packages/framework-arduino-avr/variants/mega",
                     "C:/Users/marti/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",

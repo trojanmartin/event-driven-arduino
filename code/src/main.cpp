@@ -1,15 +1,12 @@
-#include <State_machine.h>
-#include <Trigger.hpp>
-#include <Arduino.h>
-#include <dictionary.hpp>
+#include <Interro.hpp>
 
 #define END -1
 
 enum State { Idle, On, Off };
-enum Triggers { Timer1, ButtonClicked };
+enum Events { Timer1, ButtonClicked };
 
 state_machine machine(Idle);
-trigger buttonTrigger(ButtonClicked);
+
 
 void callback(int a);
 
@@ -31,6 +28,21 @@ const int on_state_table[] PROGMEM {
 };
 
 void setup() {   
+/*
+
+   timer_1_trigger.configure()
+                  .onTimeElapsed(100)
+                  .fireEvent(Timer1)
+
+                  .configure()
+                  .onTimeElapsed(500)
+                  .fireEvent(Timer2);
+                   
+   buttonTrigger.configure();
+                .onClick()
+                .fireEvent(ButtonClicked);                 
+
+
    machine.configure(Idle)
           .onEntry(&callback)
           .onExit(&callback)
@@ -45,6 +57,8 @@ void setup() {
           .onEntry(&callback)
           .onExit(&callback)
           .onTrigger(off_table);   
+
+          */
 }
 
 void loop() {

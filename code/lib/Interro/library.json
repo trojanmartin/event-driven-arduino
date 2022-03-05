@@ -1,0 +1,15 @@
+{
+    "name": "Interro",
+    "version": "0.0.0",
+    "keywords": "rtos, timing, thread, task, mutex, semaphore",
+    "description": "Real Time Operating System",
+    "frameworks": "*",
+    "platforms": "*",
+    "build": {
+        "libArchive": false,
+        "flags": [
+            "-I trigger/",
+            "-I trigger/base"
+        ]
+    }
+}

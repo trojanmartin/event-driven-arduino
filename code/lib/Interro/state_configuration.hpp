@@ -1,3 +1,4 @@
+#pragma once
 
 typedef void (*state_callback)(int state);
 
