@@ -9,7 +9,8 @@
         "libArchive": false,
         "flags": [
             "-I trigger/",
-            "-I trigger/base"
+            "-I trigger/base",
+            "-I trigger/Hardware"
         ]
     }
 }

@@ -2,7 +2,7 @@
 
 template <typename T> 
 struct entry { 
-  int key; 
+  int8_t key; 
   T *value; 
 }; 
 
@@ -11,26 +11,27 @@ template <typename T>
 class dictionary
 {
 private:
-    int capacity = 0;
-    int current_size = 0;
+    int8_t capacity = 0;
+    int8_t current_size = 0;
     entry<T>* store;    
 
 public:
-    T& get(int key);
-    void add(int key, T& value);
-    dictionary(int initial_capacity);
+    T& get(int8_t key);
+    void add(int8_t key, T& value);
+    dictionary(int8_t initial_capacity);
     ~dictionary();
 };
 
 template <typename T>
-dictionary<T>::dictionary(int initial_capacity) {
+dictionary<T>::dictionary(int8_t initial_capacity) {
     capacity = initial_capacity;
     store = new entry<T>[initial_capacity];
 }
 
 template <typename T>
-void dictionary<T>::add(int key, T& value) {
+void dictionary<T>::add(int8_t key, T& value) {
     if(current_size == capacity) {
+        
        //TODO: Allocate new array.
        return;
     }
@@ -43,7 +44,7 @@ void dictionary<T>::add(int key, T& value) {
 }
 
 template <typename T>
-T& dictionary<T>::get(int key){
+T& dictionary<T>::get(int8_t key){
     for(int i = 0; i < current_size; i++){
         if((store + i)->key == key){
             return *((store + i)->value);

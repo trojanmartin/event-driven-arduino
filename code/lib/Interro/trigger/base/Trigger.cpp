@@ -1,11 +1,21 @@
-
 #include <Interro.hpp>
 
 
-
-Trigger::Trigger()
+Trigger::Trigger(TriggerType trigger)
 {
-  //  triggerType = type;
+    type = trigger;
+}
+
+Trigger& Trigger::configure()
+{
+    interro.add(*this);
+    return *this;
+} 
+
+
+bool Trigger::isSoftwareTrigger()
+{
+    return false;
 }
 
 Trigger::~Trigger()

@@ -2,13 +2,15 @@
 
 #include <Interro.hpp>
 
-class ButtonTrigger{
+class ButtonTrigger : public HardwareTrigger {
 private:
-    uint8_t pin;
-    /* data */
+    interrupt currentInterrupt;
+    void handleInterrupt(interrupt interrupt); 
+    uint8_t currentPin;
+    uint8_t onClickTrigger;
 public:
-    void configure();
+    ButtonTrigger& configure() override;
+    ButtonTrigger& onClick(const uint8_t trigger);
     ButtonTrigger(const uint8_t pin);
     ~ButtonTrigger();
 };
-

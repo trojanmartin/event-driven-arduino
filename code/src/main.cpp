@@ -5,24 +5,39 @@
 enum State { Idle, On, Off };
 enum Events { Timer1, ButtonClicked };
 
-state_machine machine(Idle);
+ButtonTrigger buttonTrigger(2);
+StateMachine machine(Idle);
 
 
-void callback(int a);
 
-const int idle_state_table[] PROGMEM {
+
+void callback(int8_t a)
+{
+   Serial.print("\n entering state");
+   Serial.print(a);
+}
+
+void callbackexit(int8_t a)
+{
+    Serial.print("\n exiting state");
+    Serial.print(a);
+}
+
+state_callback cb = &callback;
+
+static const int8_t idle_state_table[] {
    ButtonClicked, On,
    END
 };
 
-const int off_table[] PROGMEM {
-   Timer1, On,
-   ButtonClicked, Idle,
+static const int8_t on_state_table[] {
+   Timer1, Off,
+   ButtonClicked, Off,
    END
 };
 
-const int on_state_table[] PROGMEM {
-   Timer1, Off,
+static const int8_t off_table[] {
+   Timer1, On,
    ButtonClicked, Idle,
    END
 };
@@ -37,30 +52,30 @@ void setup() {
                   .configure()
                   .onTimeElapsed(500)
                   .fireEvent(Timer2);
-                   
-   buttonTrigger.configure();
-                .onClick()
-                .fireEvent(ButtonClicked);                 
+   */
+   Serial.begin(9600);
 
+   buttonTrigger.configure()
+                .onClick(ButtonClicked);                 
 
-   machine.configure(Idle)
+   auto a = machine.configure(Idle)
           .onEntry(&callback)
-          .onExit(&callback)
-          .onTrigger(idle_state_table);
+          .onExit(&callbackexit)
+          .onTrigger(idle_state_table);  
 
    machine.configure(On)
           .onEntry(&callback)
-          .onExit(&callback)
+          .onExit(&callbackexit)
           .onTrigger(on_state_table);
 
    machine.configure(Off)
           .onEntry(&callback)
-          .onExit(&callback)
+          .onExit(&callbackexit)
           .onTrigger(off_table);   
 
-          */
+         
 }
 
 void loop() {
-// write your code here
+   interro.run();
 }
