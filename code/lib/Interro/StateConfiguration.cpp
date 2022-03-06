@@ -19,7 +19,7 @@ StateConfiguration& StateConfiguration::onExit(const state_callback callback){
     return *this;    
 }
 
-StateConfiguration& StateConfiguration::onTrigger(const int8_t* transitionTable ){
+StateConfiguration& StateConfiguration::onEvent(const int8_t* transitionTable ){
     transition_table = transitionTable;
     return *this;
 }

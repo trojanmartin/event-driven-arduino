@@ -43,7 +43,6 @@ void Interro::handleInterrupt(interrupt interrupt)
     current = triggerRoot;
     while(current)
     {
-        HardwareTrigger* trigger = static_cast<HardwareTrigger*>(current);
         if(current->isSoftwareTrigger())
         {
             current = current->next;
@@ -51,18 +50,17 @@ void Interro::handleInterrupt(interrupt interrupt)
         }
                         
         static_cast<HardwareTrigger*>(current)->handleInterrupt(interrupt);
-        current = current->next;
-        
+        current = current->next;        
     }
 }
 
-void Interro::onTrigger(uint8_t trigger)
+void Interro::onEvent(uint8_t event)
 {    
     StateMachine* current;
     current = machineRoot;
     while(current)
     {
-        current->onTrigger(trigger);
+        current->onEvent(event);
         current = current->next;
     }
 }

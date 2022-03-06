@@ -41,7 +41,7 @@ private:
     StateMachine* machineRoot;
 public:
     void handleInterrupt(interrupt interrupt);
-    void onTrigger(uint8_t trigger);
+    void onEvent(uint8_t onEvent);
     void run();
     void add(Trigger& trigger);
     void add(StateMachine& machine);

@@ -10,14 +10,14 @@ StateMachine::StateMachine(const int8_t initial_state) {
     interro.add(*this); 
 }
 
-void StateMachine::onTrigger(int8_t trigger) {
+void StateMachine::onEvent(int8_t event) {
    auto table = current->transition_table;
    int8_t index = 0;
    
    while (table[index] != -1)
    {
-       int8_t currentTrigger = table[index];        
-       if(currentTrigger == trigger)
+       int8_t currentEvent = table[index];        
+       if(currentEvent == event)
        {    
             current->exit_callback(current->currentState);
             current = &dic->get(table[index + 1]);

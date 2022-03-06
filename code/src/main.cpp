@@ -8,22 +8,8 @@ enum Events { Timer1, ButtonClicked };
 ButtonTrigger buttonTrigger(2);
 StateMachine machine(Idle);
 
-
-
-
-void callback(int8_t a)
-{
-   Serial.print("\n entering state");
-   Serial.print(a);
-}
-
-void callbackexit(int8_t a)
-{
-    Serial.print("\n exiting state");
-    Serial.print(a);
-}
-
-state_callback cb = &callback;
+void callback(int8_t a);
+void callbackexit(int8_t a);
 
 static const int8_t idle_state_table[] {
    ButtonClicked, On,
@@ -58,24 +44,34 @@ void setup() {
    buttonTrigger.configure()
                 .onClick(ButtonClicked);                 
 
-   auto a = machine.configure(Idle)
+   machine.configure(Idle)
           .onEntry(&callback)
           .onExit(&callbackexit)
-          .onTrigger(idle_state_table);  
+          .onEvent(idle_state_table);  
 
    machine.configure(On)
           .onEntry(&callback)
           .onExit(&callbackexit)
-          .onTrigger(on_state_table);
+          .onEvent(on_state_table);
 
    machine.configure(Off)
           .onEntry(&callback)
           .onExit(&callbackexit)
-          .onTrigger(off_table);   
-
-         
+          .onEvent(off_table);            
 }
 
 void loop() {
    interro.run();
+}
+
+void callback(int8_t a)
+{
+   Serial.print("\n entering state");
+   Serial.print(a);
+}
+
+void callbackexit(int8_t a)
+{
+    Serial.print("\n exiting state");
+    Serial.print(a);
 }

@@ -15,7 +15,7 @@ private:
     StateMachine* next;
     dictionary<StateConfiguration>* dic;
     
-    void onTrigger(int8_t trigger);
+    void onEvent(int8_t event);
     friend class Interro;
 public:
     StateConfiguration *current;

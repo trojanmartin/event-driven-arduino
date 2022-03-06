@@ -20,9 +20,9 @@ ButtonTrigger& ButtonTrigger::configure()
     return *this;
 }
 
-ButtonTrigger& ButtonTrigger::onClick(const uint8_t trigger)
+ButtonTrigger& ButtonTrigger::onClick(const uint8_t event)
 {
-    onClickTrigger = trigger;
+    onClickEvent = event;
     return *this;   
 }
 
@@ -36,7 +36,7 @@ void ButtonTrigger::handleInterrupt(interrupt interrupt)
 
     //TODO: Debounce and call interro action.
 
-    interro.onTrigger(onClickTrigger);
+    interro.onEvent(onClickEvent);
 }
 
 ButtonTrigger::~ButtonTrigger()
