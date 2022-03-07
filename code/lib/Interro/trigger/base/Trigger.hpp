@@ -1,16 +1,20 @@
 #pragma once
 
-
-enum TriggerType { Hardware, Software };
+enum TriggerType
+{
+    Hard,
+    Soft
+};
 class Trigger
-{     
-private: 
+{
+private:
     TriggerType type;
+
 public:
-    Trigger* next;
+    Trigger *next;
+    uint32_t trigger_miliss;
     Trigger(TriggerType trigger);
-    virtual Trigger& configure();
+    virtual Trigger &configure();
     bool isSoftwareTrigger();
     ~Trigger();
 };
-

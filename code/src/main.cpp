@@ -2,65 +2,73 @@
 
 #define END -1
 
-enum State { Idle, On, Off };
-enum Events { Timer1, ButtonClicked };
+enum State
+{
+   Idle,
+   On,
+   Off
+};
+enum Events
+{
+   Timer1,
+   ButtonClicked
+};
 
 ButtonTrigger buttonTrigger(2);
-StateMachine machine(Idle);
+StateMachine machine(Off);
 
 void callback(int8_t a);
 void callbackexit(int8_t a);
 
-static const int8_t idle_state_table[] {
-   ButtonClicked, On,
-   END
-};
+static const int8_t idle_state_table[]{
+    ButtonClicked, On,
+    END};
 
-static const int8_t on_state_table[] {
-   Timer1, Off,
-   ButtonClicked, Off,
-   END
-};
+static const int8_t on_state_table[]{
+    Timer1, Off,
+    ButtonClicked, Off,
+    END};
 
-static const int8_t off_table[] {
-   Timer1, On,
-   ButtonClicked, Idle,
-   END
-};
+static const int8_t off_table[]{
+    Timer1, On,
+    ButtonClicked, Idle,
+    END};
 
-void setup() {   
-/*
+void setup()
+{
+   /*
 
-   timer_1_trigger.configure()
-                  .onTimeElapsed(100)
-                  .fireEvent(Timer1)
+      timer_1_trigger.configure()
+                     .onTimeElapsed(100)
+                     .fireEvent(Timer1)
 
-                  .configure()
-                  .onTimeElapsed(500)
-                  .fireEvent(Timer2);
-   */
+                     .configure()
+                     .onTimeElapsed(500)
+                     .fireEvent(Timer2);
+      */
    Serial.begin(9600);
 
    buttonTrigger.configure()
-                .onClick(ButtonClicked);                 
+       .onClick(ButtonClicked);
 
    machine.configure(Idle)
-          .onEntry(&callback)
-          .onExit(&callbackexit)
-          .onEvent(idle_state_table);  
+       .onEntry(&callback)
+       .onExit(&callbackexit)
+       .onEvent(idle_state_table);
 
    machine.configure(On)
-          .onEntry(&callback)
-          .onExit(&callbackexit)
-          .onEvent(on_state_table);
+       .onEntry(&callback)
+       .onExit(&callbackexit)
+       .onEvent(on_state_table);
 
    machine.configure(Off)
-          .onEntry(&callback)
-          .onExit(&callbackexit)
-          .onEvent(off_table);            
+       .onEntry(&callback)
+       .onExit(&callbackexit)
+       .onEvent(off_table);
 }
 
-void loop() {
+void loop()
+{
    interro.run();
 }
 
@@ -72,6 +80,6 @@ void callback(int8_t a)
 
 void callbackexit(int8_t a)
 {
-    Serial.print("\n exiting state");
-    Serial.print(a);
+   Serial.print("\n exiting state");
+   Serial.print(a);
 }

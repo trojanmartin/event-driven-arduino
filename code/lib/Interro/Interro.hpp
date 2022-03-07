@@ -27,7 +27,6 @@ typedef uint8_t interrupt;
 #define PICINT1_INTERRUPT_ID 8
 #define PICINT2_INTERRUPT_ID 9
 
-
 class Interro;
 class Trigger;
 class StateMachine;
@@ -37,25 +36,26 @@ extern Interro interro;
 class Interro
 {
 private:
-    Trigger* triggerRoot;
-    StateMachine* machineRoot;
+    Trigger *triggerRoot;
+    StateMachine *machineRoot;
+
 public:
     void handleInterrupt(interrupt interrupt);
     void onEvent(uint8_t onEvent);
     void run();
-    void add(Trigger& trigger);
-    void add(StateMachine& machine);
+    void add(Trigger &trigger);
+    void add(StateMachine &machine);
     Interro(/* args */);
     ~Interro();
 };
 
-    
-#include <dictionary.hpp>
 #include <StateConfiguration.hpp>
 #include <StateMachine.hpp>
+#include <TimerMillis.hpp>
+#include <dictionary.hpp>
 
-
+#include <HardTrigger.hpp>
+#include <SoftTrigger.hpp>
 #include <Trigger.hpp>
-#include <HardwareTrigger.hpp>
 
 #include <ButtonTrigger.hpp>

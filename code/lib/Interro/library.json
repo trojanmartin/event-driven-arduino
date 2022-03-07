@@ -10,7 +10,8 @@
         "flags": [
             "-I trigger/",
             "-I trigger/base",
-            "-I trigger/Hardware"
+            "-I trigger/Hard",
+            "-I trigger/Soft"
         ]
     }
 }

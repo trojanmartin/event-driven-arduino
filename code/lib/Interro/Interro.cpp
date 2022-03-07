@@ -1,6 +1,6 @@
 #include <Interro.hpp>
 
-Interro interro; //global container
+Interro interro; // global container
 
 Interro::Interro()
 {
@@ -10,13 +10,13 @@ Interro::~Interro()
 {
 }
 
-void Interro::add(Trigger& trigger)
+void Interro::add(Trigger &trigger)
 {
     trigger.next = triggerRoot;
     triggerRoot = &trigger;
 }
 
-void Interro::add(StateMachine& machine)
+void Interro::add(StateMachine &machine)
 {
     machine.next = machineRoot;
     machineRoot = &machine;
@@ -24,41 +24,41 @@ void Interro::add(StateMachine& machine)
 
 void Interro::run()
 {
-  /*  Trigger* current;
-    current = root;
-    while(current)
-    {
-        if(current->isSoftwareTrigger())
-        {
-            current->cycle();
-        }
-        current = current->next;
-    }
-    */
+    /*  Trigger* current;
+      current = root;
+      while(current)
+      {
+          if(current->isSoftwareTrigger())
+          {
+              current->cycle();
+          }
+          current = current->next;
+      }
+      */
 }
 
 void Interro::handleInterrupt(interrupt interrupt)
 {
-    Trigger* current;
+    Trigger *current;
     current = triggerRoot;
-    while(current)
+    while (current)
     {
-        if(current->isSoftwareTrigger())
+        if (current->isSoftwareTrigger())
         {
             current = current->next;
             continue;
         }
-                        
-        static_cast<HardwareTrigger*>(current)->handleInterrupt(interrupt);
-        current = current->next;        
+
+        static_cast<HardTrigger *>(current)->handleInterrupt(interrupt);
+        current = current->next;
     }
 }
 
 void Interro::onEvent(uint8_t event)
-{    
-    StateMachine* current;
+{
+    StateMachine *current;
     current = machineRoot;
-    while(current)
+    while (current)
     {
         current->onEvent(event);
         current = current->next;
