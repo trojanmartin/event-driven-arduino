@@ -15,7 +15,3 @@ bool Trigger::isSoftwareTrigger()
 {
     return false;
 }
-
-Trigger::~Trigger()
-{
-}

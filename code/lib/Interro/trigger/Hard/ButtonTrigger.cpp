@@ -8,7 +8,6 @@ ButtonTrigger::ButtonTrigger(const uint8_t pin) : HardTrigger()
 ButtonTrigger &ButtonTrigger::configure()
 {
     Trigger::configure();
-
     pinMode(currentPin, INPUT);
     EICRB = 0; // reset register value
     EIMSK = 0; // reset register value
@@ -16,6 +15,7 @@ ButtonTrigger &ButtonTrigger::configure()
     EICRB |= (1 << ISC40); // INT4 (Digital pin 2), triggered on RISING edge
     EIMSK |= (1 << INT4);  // Enable only INT4 interrupts
     currentInterrupt = INT4_INTERRUPT_ID;
+    debounce_timer.set(500);
     return *this;
 }
 
@@ -25,17 +25,16 @@ ButtonTrigger &ButtonTrigger::onClick(const uint8_t event)
     return *this;
 }
 
-uint8_t ButtonTrigger::handleInterrupt(interrupt interrupt)
+void ButtonTrigger::handleInterrupt(interrupt interrupt)
 {
-    HardTrigger::handleInterrupt(interrupt);
     if (interrupt != currentInterrupt)
     {
-        return 0;
+        return;
     }
 
-    return debounce_timer.expired(this);
-}
-
-ButtonTrigger::~ButtonTrigger()
-{
+    if (debounce_timer.expired(this))
+    {
+        interro.onEvent(onClickEvent);
+        trigger_miliss = millis();
+    }
 }

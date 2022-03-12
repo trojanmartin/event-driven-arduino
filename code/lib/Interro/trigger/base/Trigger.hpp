@@ -5,6 +5,7 @@ enum TriggerType
     Hard,
     Soft
 };
+
 class Trigger
 {
 private:
@@ -16,5 +17,4 @@ public:
     Trigger(TriggerType trigger);
     virtual Trigger &configure();
     bool isSoftwareTrigger();
-    ~Trigger();
 };

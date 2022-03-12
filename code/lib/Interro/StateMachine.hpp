@@ -3,7 +3,7 @@
 //
 #pragma once
 
-#include <Interro.hpp>
+#include <dictionary.hpp>
 
 #ifndef UNTITLED_STATE_MACHINE_H
 #define UNTITLED_STATE_MACHINE_H

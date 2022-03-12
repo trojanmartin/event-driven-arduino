@@ -5,7 +5,7 @@
 class HardTrigger : public Trigger
 {
 protected:
-    virtual uint8_t handleInterrupt(interrupt interrupt);
+    virtual void handleInterrupt(interrupt interrupt);
     friend class Interro;
 
 public:

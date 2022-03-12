@@ -2,7 +2,7 @@
 // Created by marti on 2/28/2022.
 //
 
-#include <StateMachine.hpp>
+#include <Interro.hpp>
 
 StateMachine::StateMachine(const int8_t initial_state)
 {

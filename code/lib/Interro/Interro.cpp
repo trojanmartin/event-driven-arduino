@@ -24,17 +24,13 @@ void Interro::add(StateMachine &machine)
 
 void Interro::run()
 {
-    /*  Trigger* current;
-      current = root;
-      while(current)
-      {
-          if(current->isSoftwareTrigger())
-          {
-              current->cycle();
-          }
-          current = current->next;
-      }
-      */
+    Trigger *current;
+    current = triggerRoot;
+    while (current)
+    {
+        // current->trigger_miliss = millis();
+        current = current->next;
+    }
 }
 
 void Interro::handleInterrupt(interrupt interrupt)
@@ -63,4 +59,17 @@ void Interro::onEvent(uint8_t event)
         current->onEvent(event);
         current = current->next;
     }
+}
+
+// handle diagnostic informations given by assertion and abort program execution:
+void __assert(const char *__func, const char *__file, int __lineno, const char *__sexp)
+{
+    // transmit diagnostic informations through serial link.
+    Serial.println(__func);
+    Serial.println(__file);
+    Serial.println(__lineno, DEC);
+    Serial.println(__sexp);
+    Serial.flush();
+    // abort program execution.
+    abort();
 }
