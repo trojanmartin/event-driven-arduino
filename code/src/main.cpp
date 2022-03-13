@@ -16,7 +16,7 @@ enum Events
 uint8_t ledPin = 13;
 
 ButtonTrigger buttonTrigger(2);
-Timer1Trigger timer1(TimerMode::CTC);
+Timer5Trigger timer1;
 StateMachine machine(Idle);
 
 void callback(int8_t a);
@@ -41,12 +41,13 @@ static const int8_t off_table[]{
 
 void setup()
 {
-    // Serial.begin(9600);
+    Serial.begin(9600);
 
     pinMode(ledPin, OUTPUT);
 
-    timer1.configure()
-        .onTimeElapsed(1000, Timer1);
+    timer1.configure(TimerMode::CTC)
+        .onEvery(200, Timer1)
+        .onEvery(500, Timer1);
 
     buttonTrigger.configure()
         .onClick(ButtonClicked);

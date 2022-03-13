@@ -30,30 +30,117 @@ ISR(INT4_vect)
 
 /* Timer1 */
 
-#if Timer1_OVF_INTERRUPT
+#if TIMER1_OVF_INTERRUPT
 ISR(TIMER1_OVF_vect)
 {
-   interro.handleInterrupt(Timer1_OVF_INTERRUPT_ID);
+   interro.handleInterrupt(TIMER1_OVF_INTERRUPT_ID);
 }
 #endif
 
-#if Timer1_COMPA_INTERRUPT
+#if TIMER1_COMPA_INTERRUPT
 ISR(TIMER1_COMPA_vect)
 {
-   interro.handleInterrupt(Timer1_COMPA_INTERRUPT_ID);
+   interro.handleInterrupt(TIMER1_COMPA_INTERRUPT_ID);
 }
 #endif
 
-#if Timer1_COMPB_INTERRUPT
+#if TIMER1_COMPB_INTERRUPT
 ISR(TIMER1_COMPB_vect)
 {
-   interro.handleInterrupt(Timer1_COMPB_INTERRUPT_ID);
+   interro.handleInterrupt(TIMER1_COMPB_INTERRUPT_ID);
 }
 #endif
 
-#if Timer1_COMPC_INTERRUPT
+#if TIMER1_COMPC_INTERRUPT
 ISR(TIMER1_COMPC_vect)
 {
-   interro.handleInterrupt(Timer1_COMPC_INTERRUPT_ID);
+   interro.handleInterrupt(TIMER1_COMPC_INTERRUPT_ID);
+}
+#endif
+
+/* TIMER3 */
+#if TIMER3_OVF_INTERRUPT
+ISR(TIMER3_OVF_vect)
+{
+   interro.handleInterrupt(TIMER3_OVF_INTERRUPT_ID);
+}
+#endif
+
+#if TIMER3_COMPA_INTERRUPT
+ISR(TIMER3_COMPA_vect)
+{
+   interro.handleInterrupt(TIMER3_COMPA_INTERRUPT_ID);
+}
+#endif
+
+#if TIMER3_COMPB_INTERRUPT
+ISR(TIMER3_COMPB_vect)
+{
+   interro.handleInterrupt(TIMER3_COMPB_INTERRUPT_ID);
+}
+#endif
+
+#if TIMER3_COMPC_INTERRUPT
+ISR(TIMER3_COMPC_vect)
+{
+   interro.handleInterrupt(TIMER3_COMPC_INTERRUPT_ID);
+}
+#endif
+
+/* TIMER4 */
+#if TIMER4_OVF_INTERRUPT
+ISR(TIMER4_OVF_vect)
+{
+   interro.handleInterrupt(TIMER4_OVF_INTERRUPT_ID);
+}
+#endif
+
+#if TIMER4_COMPA_INTERRUPT
+ISR(TIMER4_COMPA_vect)
+{
+   interro.handleInterrupt(TIMER4_COMPA_INTERRUPT_ID);
+}
+#endif
+
+#if TIMER4_COMPB_INTERRUPT
+ISR(TIMER4_COMPB_vect)
+{
+   interro.handleInterrupt(TIMER4_COMPB_INTERRUPT_ID);
+}
+#endif
+
+#if TIMER4_COMPC_INTERRUPT
+ISR(TIMER4_COMPC_vect)
+{
+   interro.handleInterrupt(TIMER4_COMPC_INTERRUPT_ID);
+}
+#endif
+
+/* TIMER5 */
+#if TIMER5_OVF_INTERRUPT
+ISR(TIMER5_OVF_vect)
+{
+   interro.handleInterrupt(TIMER5_OVF_INTERRUPT_ID);
+}
+#endif
+
+#if TIMER5_COMPA_INTERRUPT
+ISR(TIMER5_COMPA_vect)
+{
+   interro.handleInterrupt(TIMER5_COMPA_INTERRUPT_ID);
+}
+#endif
+
+#if TIMER5_COMPB_INTERRUPT
+ISR(TIMER5_COMPB_vect)
+{
+   interro.handleInterrupt(TIMER5_COMPB_INTERRUPT_ID);
+}
+#endif
+
+#if TIMER5_COMPC_INTERRUPT
+ISR(TIMER5_COMPC_vect)
+{
+   interro.handleInterrupt(TIMER5_COMPC_INTERRUPT_ID);
 }
 #endif

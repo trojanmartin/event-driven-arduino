@@ -10,5 +10,4 @@ protected:
 
 public:
     HardTrigger();
-    virtual Trigger &configure();
 };
