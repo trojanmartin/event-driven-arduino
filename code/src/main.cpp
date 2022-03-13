@@ -16,7 +16,7 @@ enum Events
 uint8_t ledPin = 13;
 
 ButtonTrigger buttonTrigger(2);
-Timer5Trigger timer1;
+Timer1Trigger timer1;
 StateMachine machine(Idle);
 
 void callback(int8_t a);
@@ -46,7 +46,7 @@ void setup()
     pinMode(ledPin, OUTPUT);
 
     timer1.configure(TimerMode::CTC)
-        .onEvery(200, Timer1)
+        .onEvery(1000, Timer1)
         .onEvery(500, Timer1);
 
     buttonTrigger.configure()
@@ -75,6 +75,7 @@ void loop()
 
 void onOffEntryCallback(int8_t a)
 {
+
     digitalWrite(ledPin, 0);
 }
 void onOnEntryCallback(int8_t a)

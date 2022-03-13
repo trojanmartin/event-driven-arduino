@@ -53,6 +53,8 @@ private:
     void handleInterrupt(interrupt interrupt);
     void calculateCompareRegisterValue(double frequency, uint8_t *prescalerIndex, uint16_t *compareValue);
     void setPrescaler(uint8_t index);
+    uint8_t findIntersection(uint8_t result[], uint8_t first[], size_t firstCount, uint8_t second[], size_t secondCount);
+    void setCompareMatchRegister(volatile uint16_t *occrnx, uint16_t compareValue, volatile uint8_t *timskn, uint8_t ocienx);
     void getPossiblePrescalers(double frequency, uint8_t prescalerindexes[], uint16_t compareValues[], uint8_t *count);
     double getFrequency(uint8_t prescalerIndex, uint16_t comapareValue);
 
