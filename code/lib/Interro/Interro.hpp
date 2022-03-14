@@ -108,7 +108,6 @@ public:
 #include <StateMachine.hpp>
 #include <TimerMillis.hpp>
 #include <assert.h>
-#include <dictionary.hpp>
 
 #include <HardTrigger.hpp>
 #include <SoftTrigger.hpp>
