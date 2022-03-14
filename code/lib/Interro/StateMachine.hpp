@@ -13,8 +13,8 @@ class StateMachine
 private:
     int8_t initial;
     StateMachine *next;
-    dictionary<StateConfiguration> *dic;
-
+    StateConfiguration *configurationRoot;
+    StateConfiguration *getState(uint8_t state);
     void onEvent(int8_t event);
     friend class Interro;
 

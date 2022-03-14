@@ -7,7 +7,6 @@
 StateMachine::StateMachine(const int8_t initial_state)
 {
     initial = initial_state;
-    dic = new dictionary<StateConfiguration>(10);
     interro.add(*this);
 }
 
@@ -22,7 +21,7 @@ void StateMachine::onEvent(int8_t event)
         if (currentEvent == event)
         {
             current->exit_callback(current->currentState);
-            current = &dic->get(table[index + 1]);
+            current = getState(table[index + 1]);
             current->entry_callback(current->currentState);
             break;
         }
@@ -34,8 +33,9 @@ void StateMachine::onEvent(int8_t event)
 StateConfiguration &StateMachine::configure(const int8_t state)
 {
     auto newOne = new StateConfiguration(state);
+    newOne->next = configurationRoot;
+    configurationRoot = newOne;
 
-    dic->add(state, *newOne);
     if (state == initial)
     {
         current = newOne;
@@ -43,7 +43,33 @@ StateConfiguration &StateMachine::configure(const int8_t state)
     return *newOne;
 }
 
+StateConfiguration *StateMachine::getState(uint8_t state)
+{
+    StateConfiguration *current;
+    current = configurationRoot;
+    while (current)
+    {
+        if (current->currentState == state)
+        {
+            return current;
+        }
+        current = current->next;
+    }
+    // never should get there
+    assert(false);
+
+    return 0;
+}
+
 StateMachine::~StateMachine()
 {
-    delete dic;
+    StateConfiguration *current;
+    current = configurationRoot;
+    while (current)
+    {
+        StateConfiguration *next;
+        next = current->next;
+        delete current;
+        current = next;
+    }
 }

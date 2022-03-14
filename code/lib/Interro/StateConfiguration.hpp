@@ -8,7 +8,7 @@ class StateConfiguration
 {
 private:
     uint8_t currentState;
-
+    StateConfiguration *next;
     friend class StateMachine;
 
 public:
