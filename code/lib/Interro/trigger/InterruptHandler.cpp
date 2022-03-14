@@ -58,6 +58,8 @@ ISR(TIMER1_COMPB_vect)
 #if TIMER1_COMPC_INTERRUPT
 ISR(TIMER1_COMPC_vect)
 {
+   Serial.print("\n C ");
+   Serial.print(millis());
    interro.handleInterrupt(TIMER1_COMPC_INTERRUPT_ID);
 }
 #endif

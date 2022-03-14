@@ -46,8 +46,9 @@ void setup()
     pinMode(ledPin, OUTPUT);
 
     timer1.configure(TimerMode::CTC)
-        .onEvery(1000, Timer1)
-        .onEvery(500, Timer1);
+        .onTimeElapsed(1000, Timer1)
+        .onTimeElapsed(500, Timer1)
+        .onTimeElapsed(250, Timer1);
 
     buttonTrigger.configure()
         .onClick(ButtonClicked);
@@ -75,7 +76,6 @@ void loop()
 
 void onOffEntryCallback(int8_t a)
 {
-
     digitalWrite(ledPin, 0);
 }
 void onOnEntryCallback(int8_t a)

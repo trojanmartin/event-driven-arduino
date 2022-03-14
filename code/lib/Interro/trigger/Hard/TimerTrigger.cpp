@@ -50,46 +50,50 @@ TimerTrigger &TimerTrigger::onOverflow(const uint8_t event)
     return *this;
 }
 
-TimerTrigger &TimerTrigger::onEvery(const uint32_t millis, const uint8_t event)
+TimerTrigger &TimerTrigger::onTimeElapsed(const uint32_t millis, const uint8_t event)
 {
     assert(timerMode == TimerMode::CTC);
 
-    uint8_t prescalerIndex = 0;
+    double freq = millis / 1000.0f;
+    uint8_t calculatedPrescalerIndex = 0;
     uint16_t compareValue = 0;
-    calculateCompareRegisterValue(millis / 1000.0f, &prescalerIndex, &compareValue);
+    calculateCompareRegisterValue(freq, &calculatedPrescalerIndex, &compareValue);
 
     uint8_t freeEventSlots = 0;
     if (onCompareMatchAEvent == UNDEFINED)
     {
         setCompareMatchRegister(OCRnA, compareValue, TIMSKn, OCIEnA);
         onCompareMatchAEvent = event;
+        ocrnaFrequency = freq;
         freeEventSlots++;
     }
     else if (onCompareMatchBEvent == UNDEFINED)
     {
         setCompareMatchRegister(OCRnB, compareValue, TIMSKn, OCIEnB);
         onCompareMatchBEvent = event;
+        ocrnbFrequency = freq;
+
+        assert(ocrnaFrequency > ocrnbFrequency);
         freeEventSlots++;
     }
     else if (onCompareMatchCEvent == UNDEFINED)
     {
         setCompareMatchRegister(OCRnC, compareValue, TIMSKn, OCIEnC);
         onCompareMatchCEvent = event;
+        ocrncFrequency = freq;
+        assert(ocrnaFrequency > ocrncFrequency);
         freeEventSlots++;
     }
 
     // just check if we handled this properly. If there no free slot user will know that something wrong happend
     assert(freeEventSlots > 0);
 
-    setPrescaler(prescalerIndex);
+    setPrescaler(calculatedPrescalerIndex);
     return *this;
 }
 
 void TimerTrigger::setCompareMatchRegister(volatile uint16_t *occrnx, uint16_t compareValue, volatile uint8_t *timskn, uint8_t ocienx)
 {
-    Serial.print("\n setting compare register to ");
-    Serial.print(compareValue);
-
     *occrnx = compareValue;   // set compare value register
     *timskn |= (1 << ocienx); // enable COMPC interrupts
 }
@@ -118,15 +122,14 @@ void TimerTrigger::setPrescaler(uint8_t index)
         uint8_t ocrapossibleCount = 0;
         if (*OCRnA != 0)
         {
-            getPossiblePrescalers(getFrequency(prescalerIndex, *OCRnA), ocraPossiblePrescalerIndexes, ocraPossibleCompareValues, &ocrapossibleCount);
+            getPossiblePrescalers(ocrnaFrequency, ocraPossiblePrescalerIndexes, ocraPossibleCompareValues, &ocrapossibleCount);
         }
-
         uint8_t ocrbPossiblePrescalerIndexes[5];
         uint16_t ocrbPossibleCompareValues[5];
         uint8_t ocrbpossibleCount = 0;
         if (*OCRnB != 0)
         {
-            getPossiblePrescalers(getFrequency(prescalerIndex, *OCRnB), ocrbPossiblePrescalerIndexes, ocrbPossibleCompareValues, &ocrbpossibleCount);
+            getPossiblePrescalers(ocrnbFrequency, ocrbPossiblePrescalerIndexes, ocrbPossibleCompareValues, &ocrbpossibleCount);
         }
 
         uint8_t ocrcPossiblePrescalerIndexes[5];
@@ -134,7 +137,7 @@ void TimerTrigger::setPrescaler(uint8_t index)
         uint8_t ocrcpossibleCount = 0;
         if (*OCRnC != 0)
         {
-            getPossiblePrescalers(getFrequency(prescalerIndex, *OCRnC), ocrcPossiblePrescalerIndexes, ocrcPossibleCompareValues, &ocrcpossibleCount);
+            getPossiblePrescalers(ocrncFrequency, ocrcPossiblePrescalerIndexes, ocrcPossibleCompareValues, &ocrcpossibleCount);
         }
 
         uint8_t result[5];
@@ -144,24 +147,25 @@ void TimerTrigger::setPrescaler(uint8_t index)
             resultCount = findIntersection(result, ocraPossiblePrescalerIndexes, ocrapossibleCount, ocraPossiblePrescalerIndexes, ocrbpossibleCount);
         }
 
+        uint8_t *finalresult = result;
+        uint8_t ocnrcIntersection[5];
         if (*OCRnC != 0)
         {
-            uint8_t finalresult[5];
-            resultCount = findIntersection(finalresult, result, resultCount, ocrcPossiblePrescalerIndexes, ocrcpossibleCount);
+            resultCount = findIntersection(ocnrcIntersection, result, resultCount, ocrcPossiblePrescalerIndexes, ocrcpossibleCount);
+            finalresult = ocnrcIntersection;
         }
 
         assert(resultCount > 0);
 
-        for (size_t i = 0; i < resultCount; i++)
-        {
-        }
-
-        uint8_t finalPrescalerIndex = result[0];
+        uint8_t finalPrescalerIndex = finalresult[0];
         setCompareMatchRegister(OCRnA, ocraPossibleCompareValues[getIndexOfValue(ocraPossiblePrescalerIndexes, finalPrescalerIndex)], TIMSKn, OCIEnA);
         setCompareMatchRegister(OCRnB, ocrbPossibleCompareValues[getIndexOfValue(ocrbPossiblePrescalerIndexes, finalPrescalerIndex)], TIMSKn, OCIEnB);
 
-        Serial.print("\n ocrA");
-        Serial.print(ocraPossibleCompareValues[getIndexOfValue(ocraPossiblePrescalerIndexes, finalPrescalerIndex)]);
+        if (*OCRnC != 0)
+        {
+            setCompareMatchRegister(OCRnC, ocrcPossibleCompareValues[getIndexOfValue(ocrcPossiblePrescalerIndexes, finalPrescalerIndex)], TIMSKn, OCIEnC);
+        }
+
         index = finalPrescalerIndex;
     }
     *TCCRnB |= (index + 1); // set prescaler

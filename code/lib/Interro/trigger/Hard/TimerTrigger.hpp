@@ -21,8 +21,13 @@ private:
     volatile uint8_t *TCCRnB;
     volatile uint8_t *TCCRnC;
 
+    double ocrnaFrequency;
     volatile uint16_t *OCRnA;
+
+    double ocrnbFrequency;
     volatile uint16_t *OCRnB;
+
+    double ocrncFrequency;
     volatile uint16_t *OCRnC;
 
     uint8_t WGMn3 = 4;
@@ -61,7 +66,7 @@ private:
 public:
     TimerTrigger &configure(TimerMode mode);
     TimerTrigger &onOverflow(const uint8_t event);
-    TimerTrigger &onEvery(const uint32_t miliss, const uint8_t event);
+    TimerTrigger &onTimeElapsed(const uint32_t miliss, const uint8_t event);
     TimerTrigger(volatile uint8_t *TCCRnA,
                  volatile uint8_t *TCCRnB,
                  volatile uint8_t *TCCRnC,
