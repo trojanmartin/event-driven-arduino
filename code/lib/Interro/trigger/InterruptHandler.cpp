@@ -40,8 +40,6 @@ ISR(TIMER1_OVF_vect)
 #if TIMER1_COMPA_INTERRUPT
 ISR(TIMER1_COMPA_vect)
 {
-   Serial.print("\n A ");
-   Serial.print(millis());
    interro.handleInterrupt(TIMER1_COMPA_INTERRUPT_ID);
 }
 #endif
@@ -49,8 +47,6 @@ ISR(TIMER1_COMPA_vect)
 #if TIMER1_COMPB_INTERRUPT
 ISR(TIMER1_COMPB_vect)
 {
-   Serial.print("\n B ");
-   Serial.print(millis());
    interro.handleInterrupt(TIMER1_COMPB_INTERRUPT_ID);
 }
 #endif
@@ -58,8 +54,6 @@ ISR(TIMER1_COMPB_vect)
 #if TIMER1_COMPC_INTERRUPT
 ISR(TIMER1_COMPC_vect)
 {
-   Serial.print("\n C ");
-   Serial.print(millis());
    interro.handleInterrupt(TIMER1_COMPC_INTERRUPT_ID);
 }
 #endif

@@ -25,16 +25,19 @@ ButtonTrigger &ButtonTrigger::onClick(const uint8_t event)
     return *this;
 }
 
-void ButtonTrigger::handleInterrupt(interrupt interrupt)
+int8_t ButtonTrigger::handleInterrupt(interrupt interrupt)
 {
     if (interrupt != currentInterrupt)
     {
         return;
     }
 
-    if (debounce_timer.expired(this))
+    if (!debounce_timer.expired(this))
     {
-        interro.onEvent(onClickEvent);
-        trigger_miliss = millis();
+        Serial.print("\n DEBOUNCE ");
+        return UNDEFINED;
     }
+
+    HardTrigger::handleInterrupt(interrupt);
+    return onClickEvent;
 }

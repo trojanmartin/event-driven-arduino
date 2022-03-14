@@ -228,7 +228,7 @@ void TimerTrigger::getPossiblePrescalers(double frequency, uint8_t prescalerinde
     *count = current;
 }
 
-void TimerTrigger::handleInterrupt(interrupt interrupt)
+int8_t TimerTrigger::handleInterrupt(interrupt interrupt)
 {
     uint8_t event;
     if (interrupt == onEverflowInterrupt && onOverflowEvent != UNDEFINED)
@@ -252,5 +252,5 @@ void TimerTrigger::handleInterrupt(interrupt interrupt)
         return;
     }
 
-    interro.onEvent(event);
+    return event;
 }

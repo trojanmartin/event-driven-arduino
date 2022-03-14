@@ -11,7 +11,9 @@ enum State
 enum Events
 {
     Timer1,
-    ButtonClicked
+    ButtonClicked,
+    TimerV1,
+    TimerV2
 };
 uint8_t ledPin = 13;
 

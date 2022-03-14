@@ -45,7 +45,12 @@ void Interro::handleInterrupt(interrupt interrupt)
             continue;
         }
 
-        static_cast<HardTrigger *>(current)->handleInterrupt(interrupt);
+        int8_t event = static_cast<HardTrigger *>(current)->handleInterrupt(interrupt);
+        if (event != UNDEFINED)
+        {
+            onEvent(event);
+        }
+
         current = current->next;
     }
 }

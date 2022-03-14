@@ -9,7 +9,7 @@ private:
     uint8_t currentPin;
     uint8_t onClickEvent;
     TimerMillis debounce_timer;
-    void handleInterrupt(interrupt interrupt);
+    int8_t handleInterrupt(interrupt interrupt);
 
 public:
     ButtonTrigger &configure() override;

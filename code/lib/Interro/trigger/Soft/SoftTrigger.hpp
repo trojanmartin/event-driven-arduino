@@ -4,11 +4,15 @@
 
 class SoftTrigger : public Trigger
 {
+
+protected:
+    
+
 private:
     friend class Interro;
 
 public:
-    SoftTrigger(/* args */);
+    SoftTrigger();
+    void cycle();
     virtual Trigger &configure();
-    ~SoftTrigger();
 };

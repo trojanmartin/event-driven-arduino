@@ -4,7 +4,8 @@ HardTrigger::HardTrigger() : Trigger(TriggerType::Hard)
 {
 }
 
-void HardTrigger::handleInterrupt(interrupt interrupt)
+int8_t HardTrigger::handleInterrupt(interrupt interrupt)
 {
     trigger_miliss = millis();
+    return UNDEFINED;
 }

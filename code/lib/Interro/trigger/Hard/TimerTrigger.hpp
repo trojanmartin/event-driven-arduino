@@ -55,7 +55,7 @@ private:
     uint8_t onCompareMatchCInterrupt;
     int8_t onCompareMatchCEvent = UNDEFINED;
 
-    void handleInterrupt(interrupt interrupt);
+    int8_t handleInterrupt(interrupt interrupt);
     void calculateCompareRegisterValue(double frequency, uint8_t *prescalerIndex, uint16_t *compareValue);
     void setPrescaler(uint8_t index);
     uint8_t findIntersection(uint8_t result[], uint8_t first[], size_t firstCount, uint8_t second[], size_t secondCount);
