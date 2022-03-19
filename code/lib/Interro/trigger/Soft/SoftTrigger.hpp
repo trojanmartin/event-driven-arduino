@@ -6,13 +6,11 @@ class SoftTrigger : public Trigger
 {
 
 protected:
-    
-
 private:
     friend class Interro;
 
 public:
     SoftTrigger();
-    void cycle();
+    virtual int8_t handleCycle();
     virtual Trigger &configure();
 };

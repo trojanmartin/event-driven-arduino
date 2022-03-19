@@ -73,7 +73,7 @@ TimerTrigger &TimerTrigger::onTimeElapsed(const uint32_t millis, const uint8_t e
         onCompareMatchBEvent = event;
         ocrnbFrequency = freq;
 
-        assert(ocrnaFrequency > ocrnbFrequency);
+        assert(ocrnaFrequency >= ocrnbFrequency);
         freeEventSlots++;
     }
     else if (onCompareMatchCEvent == UNDEFINED)
@@ -81,7 +81,7 @@ TimerTrigger &TimerTrigger::onTimeElapsed(const uint32_t millis, const uint8_t e
         setCompareMatchRegister(OCRnC, compareValue, TIMSKn, OCIEnC);
         onCompareMatchCEvent = event;
         ocrncFrequency = freq;
-        assert(ocrnaFrequency > ocrncFrequency);
+        assert(ocrnaFrequency >= ocrncFrequency);
         freeEventSlots++;
     }
 
@@ -230,7 +230,7 @@ void TimerTrigger::getPossiblePrescalers(double frequency, uint8_t prescalerinde
 
 int8_t TimerTrigger::handleInterrupt(interrupt interrupt)
 {
-    uint8_t event;
+    uint8_t event = UNDEFINED;
     if (interrupt == onEverflowInterrupt && onOverflowEvent != UNDEFINED)
     {
         event = onOverflowEvent;
@@ -246,10 +246,6 @@ int8_t TimerTrigger::handleInterrupt(interrupt interrupt)
     else if (interrupt == onCompareMatchCInterrupt && onCompareMatchCEvent != UNDEFINED)
     {
         event = onCompareMatchCEvent;
-    }
-    else
-    {
-        return;
     }
 
     return event;

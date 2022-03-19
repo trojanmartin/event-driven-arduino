@@ -24,11 +24,23 @@ void Interro::add(StateMachine &machine)
 
 void Interro::run()
 {
+
     Trigger *current;
     current = triggerRoot;
     while (current)
     {
-        // current->trigger_miliss = millis();
+        if (!current->isSoftwareTrigger())
+        {
+            current = current->next;
+            continue;
+        }
+
+        int8_t event = static_cast<SoftTrigger *>(current)->handleCycle();
+        if (event != UNDEFINED)
+        {
+            onEvent(event);
+        }
+
         current = current->next;
     }
 }

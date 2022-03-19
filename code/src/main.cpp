@@ -6,18 +6,16 @@ enum State
 {
     Idle,
     On,
-    Off
+    Off,
 };
 enum Events
 {
     Timer1,
     ButtonClicked,
-    TimerV1,
-    TimerV2
 };
 uint8_t ledPin = 13;
 
-ButtonTrigger buttonTrigger(2);
+ButtonTrigger buttonTrigger;
 Timer1Trigger timer1;
 StateMachine machine(Idle);
 
@@ -48,11 +46,9 @@ void setup()
     pinMode(ledPin, OUTPUT);
 
     timer1.configure(TimerMode::CTC)
-        .onTimeElapsed(1000, Timer1)
-        .onTimeElapsed(500, Timer1)
-        .onTimeElapsed(250, Timer1);
+        .onTimeElapsed(1000, Timer1);
 
-    buttonTrigger.configure()
+    buttonTrigger.configure(2)
         .onClick(ButtonClicked);
 
     machine.configure(Idle)

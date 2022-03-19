@@ -13,5 +13,5 @@ Trigger &Trigger::configure()
 
 bool Trigger::isSoftwareTrigger()
 {
-    return false;
+    return type == TriggerType::Soft;
 }

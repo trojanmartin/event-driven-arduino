@@ -113,10 +113,11 @@ public:
 #include <SoftTrigger.hpp>
 #include <Trigger.hpp>
 
-#include <ButtonTrigger.hpp>
 #include <TimerTrigger.hpp>
 
 #include <Timer1Trigger.hpp>
 #include <Timer3Trigger.hpp>
 #include <Timer4Trigger.hpp>
 #include <Timer5Trigger.hpp>
+
+#include <ButtonTrigger.hpp>
