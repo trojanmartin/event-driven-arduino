@@ -1,5 +1,14 @@
 #include <Interro.hpp>
 
+/* External interrupts */
+
+#if INT0_INTERRUPT
+ISR(INT0_vect)
+{
+   interro.handleInterrupt(INT0_INTERRUPT_ID);
+}
+#endif
+
 #if INT1_INTERRUPT
 ISR(INT1_vect)
 {
@@ -25,6 +34,27 @@ ISR(INT3_vect)
 ISR(INT4_vect)
 {
    interro.handleInterrupt(INT4_INTERRUPT_ID);
+}
+#endif
+
+#if INT5_INTERRUPT
+ISR(INT5_vect)
+{
+   interro.handleInterrupt(INT5_INTERRUPT_ID);
+}
+#endif
+
+#if INT6_INTERRUPT
+ISR(INT6_vect)
+{
+   interro.handleInterrupt(INT6_INTERRUPT_ID);
+}
+#endif
+
+#if INT7_INTERRUPT
+ISR(INT7_vect)
+{
+   interro.handleInterrupt(INT7_INTERRUPT_ID);
 }
 #endif
 

@@ -31,8 +31,6 @@ int8_t ButtonTrigger::handleCycle()
 
     if (digitalRead(buttonPin) == HIGH)
     {
-        Serial.print("\n");
-        Serial.print("CLICKED  ");
         trigger_miliss = millis();
         return onClickEvent;
     }

@@ -8,6 +8,7 @@ typedef uint8_t interrupt;
 #define UNDEFINED -1
 #define CLOCK_SPEED 16000000
 
+#define INT0_INTERRUPT 0
 #define INT1_INTERRUPT 0
 #define INT2_INTERRUPT 0
 #define INT3_INTERRUPT 0
@@ -40,6 +41,7 @@ typedef uint8_t interrupt;
 #define TIMER5_COMPB_INTERRUPT 1
 #define TIMER5_COMPC_INTERRUPT 1
 
+#define INT0_INTERRUPT_ID 0
 #define INT1_INTERRUPT_ID 1
 #define INT2_INTERRUPT_ID 2
 #define INT3_INTERRUPT_ID 3
@@ -113,11 +115,21 @@ public:
 #include <SoftTrigger.hpp>
 #include <Trigger.hpp>
 
+#include <ExternalTrigger.hpp>
 #include <TimerTrigger.hpp>
 
 #include <Timer1Trigger.hpp>
 #include <Timer3Trigger.hpp>
 #include <Timer4Trigger.hpp>
 #include <Timer5Trigger.hpp>
+
+#include <ExternalTrigger0.hpp>
+#include <ExternalTrigger1.hpp>
+#include <ExternalTrigger2.hpp>
+#include <ExternalTrigger3.hpp>
+#include <ExternalTrigger4.hpp>
+#include <ExternalTrigger5.hpp>
+#include <ExternalTrigger6.hpp>
+#include <ExternalTrigger7.hpp>
 
 #include <ButtonTrigger.hpp>

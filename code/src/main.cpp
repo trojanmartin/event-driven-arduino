@@ -15,7 +15,8 @@ enum Events
 };
 uint8_t ledPin = 13;
 
-ButtonTrigger buttonTrigger;
+// ButtonTrigger buttonTrigger;
+ExternalTrigger4 external4Trigger;
 Timer1Trigger timer1;
 StateMachine machine(Idle);
 
@@ -46,11 +47,15 @@ void setup()
     pinMode(ledPin, OUTPUT);
 
     timer1.configure(TimerMode::CTC)
-        .onTimeElapsed(1000, Timer1);
+        .onTimeElapsed(500, Timer1);
 
-    buttonTrigger.configure(2)
-        .onClick(ButtonClicked);
+    external4Trigger.configure(ExternalTriggerMode::Change)
+        .onOccurrence(ButtonClicked);
 
+    /*
+        buttonTrigger.configure(2)
+            .onClick(ButtonClicked);
+    */
     machine.configure(Idle)
         .onEntry(&callback)
         .onExit(&callbackexit)
