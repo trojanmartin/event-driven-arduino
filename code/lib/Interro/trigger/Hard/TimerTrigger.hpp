@@ -14,7 +14,7 @@ class TimerTrigger : public HardTrigger
 private:
     const uint16_t prescalers[5]{1, 8, 64, 256, 1024};
     const uint16_t maxTick = 65535;
-    int8_t prescalerIndex = -1;
+    int8_t prescalerIndex = UNDEFINED;
     TimerMode timerMode;
 
     volatile uint8_t *TCCRnA;
@@ -65,6 +65,7 @@ private:
 
 public:
     TimerTrigger &configure(TimerMode mode);
+    TimerTrigger &setPrescalerValue(uint16_t value);
     TimerTrigger &onOverflow(const uint8_t event);
     TimerTrigger &onTimeElapsed(const uint32_t miliss, const uint8_t event);
     TimerTrigger(volatile uint8_t *TCCRnA,

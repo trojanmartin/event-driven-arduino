@@ -2,14 +2,6 @@
 
 Interro interro; // global container
 
-Interro::Interro()
-{
-}
-
-Interro::~Interro()
-{
-}
-
 void Interro::add(Trigger &trigger)
 {
     trigger.next = triggerRoot;

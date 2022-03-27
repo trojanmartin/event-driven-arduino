@@ -47,15 +47,11 @@ void setup()
     pinMode(ledPin, OUTPUT);
 
     timer1.configure(TimerMode::CTC)
-        .onTimeElapsed(500, Timer1);
+        .onTimeElapsed(50, Timer1);
 
     external4Trigger.configure(ExternalTriggerMode::Change)
         .onOccurrence(ButtonClicked);
 
-    /*
-        buttonTrigger.configure(2)
-            .onClick(ButtonClicked);
-    */
     machine.configure(Idle)
         .onEntry(&callback)
         .onExit(&callbackexit)

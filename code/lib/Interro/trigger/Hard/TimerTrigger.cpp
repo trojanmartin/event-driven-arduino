@@ -35,18 +35,41 @@ TimerTrigger &TimerTrigger::configure(TimerMode mode)
 
     if (timerMode == TimerMode::Normal)
     {
-        // nothing to do, by resetting timer register we set it to normal mode.
+        *TCCRnB |= (1 << CSn0);  // Set prescaler to 1;
+        *TIMSKn |= (1 << TOIEn); // Enable overflow interrupt
+        return *this;
     }
-    else
+
+    if (timerMode == TimerMode::CTC)
     {
         *TCCRnB |= (1 << WGMn2); // CTC Mode
+        return *this;
     }
+
     return *this;
 }
 
 TimerTrigger &TimerTrigger::onOverflow(const uint8_t event)
 {
+    assert(timerMode == TimerMode::Normal);
     onOverflowEvent = event;
+    return *this;
+}
+
+TimerTrigger &TimerTrigger::setPrescalerValue(uint16_t prescaler)
+{
+    assert(timerMode == TimerMode::Normal);
+
+    for (uint8_t i = 0; i < 5; i++)
+    {
+        if (prescalers[i] == prescaler)
+        {
+            setPrescaler(i);
+            break;
+        }
+    }
+
+    assert(prescalerIndex != UNDEFINED);
     return *this;
 }
 
@@ -95,7 +118,7 @@ TimerTrigger &TimerTrigger::onTimeElapsed(const uint32_t millis, const uint8_t e
 void TimerTrigger::setCompareMatchRegister(volatile uint16_t *occrnx, uint16_t compareValue, volatile uint8_t *timskn, uint8_t ocienx)
 {
     *occrnx = compareValue;   // set compare value register
-    *timskn |= (1 << ocienx); // enable COMPC interrupts
+    *timskn |= (1 << ocienx); // enable COMPx interrupts
 }
 
 uint8_t getIndexOfValue(uint8_t *array, uint8_t value)
@@ -114,7 +137,7 @@ uint8_t getIndexOfValue(uint8_t *array, uint8_t value)
 // set prescaler
 void TimerTrigger::setPrescaler(uint8_t index)
 {
-    if (prescalerIndex != -1)
+    if (prescalerIndex != UNDEFINED)
     {
         // prescaler was already set, we need to try recalculate it
         uint8_t ocraPossiblePrescalerIndexes[5];
