@@ -6,8 +6,6 @@ ExternalTrigger::ExternalTrigger(volatile uint8_t *EICRx, uint8_t INTn, uint8_t 
                                                                                                                              ISCn1{ISCn1},
                                                                                                                              occurrenceInterrupt{interrupt}
 {
-    *EICRx |= (1 << 1);
-    EIMSK |= (1 << INTn); // Enable INTn interrupts
 }
 
 ExternalTrigger &ExternalTrigger::configure(ExternalTriggerMode mode)
@@ -15,6 +13,8 @@ ExternalTrigger &ExternalTrigger::configure(ExternalTriggerMode mode)
     Trigger::configure();
     debounceTimer.set(debounceTime);
     cli();
+    *EICRx |= (1 << ISCn0); // initial value. logical change will trigger interrupt
+    EIMSK |= (1 << INTn);   // Enable INTn interrupts
     *EICRx |= (((uint8_t)mode) << ISCn0);
     sei();
 

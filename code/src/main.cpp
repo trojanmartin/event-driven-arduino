@@ -17,6 +17,7 @@ uint8_t ledPin = 13;
 
 // ButtonTrigger buttonTrigger;
 ExternalTrigger4 external4Trigger;
+PinChangeTrigger0 pinChangeTrigger;
 Timer1Trigger timer1;
 StateMachine machine(Idle);
 
@@ -47,10 +48,15 @@ void setup()
     pinMode(ledPin, OUTPUT);
 
     timer1.configure(TimerMode::CTC)
-        .onTimeElapsed(50, Timer1);
+        .onTimeElapsed(500, Timer1);
 
-    external4Trigger.configure(ExternalTriggerMode::Change)
-        .onOccurrence(ButtonClicked);
+    /*  external4Trigger.configure(ExternalTriggerMode::Change)
+          .onOccurrence(ButtonClicked);
+  */
+
+    pinChangeTrigger.configure()
+        .onOccurrence(ButtonClicked)
+        .enablePin(4);
 
     machine.configure(Idle)
         .onEntry(&callback)

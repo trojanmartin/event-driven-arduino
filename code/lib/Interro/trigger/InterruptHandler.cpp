@@ -58,6 +58,29 @@ ISR(INT7_vect)
 }
 #endif
 
+/* Pin change */
+
+#if PICINT0_INTERRUPT
+ISR(PCINT0_vect)
+{
+   interro.handleInterrupt(PICINT0_INTERRUPT_ID);
+}
+#endif
+
+#if PICINT1_INTERRUPT
+ISR(PCINT1_vect)
+{
+   interro.handleInterrupt(PICINT1_INTERRUPT_ID);
+}
+#endif
+
+#if PICINT2_INTERRUPT
+ISR(PCINT2_vect)
+{
+   interro.handleInterrupt(PICINT2_INTERRUPT_ID);
+}
+#endif
+
 /* Timer1 */
 
 #if TIMER1_OVF_INTERRUPT

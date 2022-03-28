@@ -17,9 +17,9 @@ typedef uint8_t interrupt;
 #define INT6_INTERRUPT 0
 #define INT7_INTERRUPT 0
 
-#define PICINT0_INTERRUPT 0
-#define PICINT1_INTERRUPT 0
-#define PICINT2_INTERRUPT 0
+#define PICINT0_INTERRUPT 1
+#define PICINT1_INTERRUPT 1
+#define PICINT2_INTERRUPT 1
 
 #define TIMER1_OVF_INTERRUPT 1
 #define TIMER1_COMPA_INTERRUPT 1
@@ -119,6 +119,7 @@ public:
 #include <Trigger.hpp>
 
 #include <ExternalTrigger.hpp>
+#include <PinChangeTrigger.hpp>
 #include <TimerTrigger.hpp>
 
 #include <Timer1Trigger.hpp>
@@ -134,5 +135,9 @@ public:
 #include <ExternalTrigger5.hpp>
 #include <ExternalTrigger6.hpp>
 #include <ExternalTrigger7.hpp>
+
+#include <PinChangeTrigger0.hpp>
+#include <PinChangeTrigger1.hpp>
+#include <PinChangeTrigger2.hpp>
 
 #include <ButtonTrigger.hpp>
