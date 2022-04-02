@@ -122,6 +122,7 @@ public:
 #include <PinChangeTrigger.hpp>
 #include <TimerTrigger.hpp>
 
+/* Hard triggers implemented by library */
 #include <Timer1Trigger.hpp>
 #include <Timer3Trigger.hpp>
 #include <Timer4Trigger.hpp>
@@ -140,4 +141,5 @@ public:
 #include <PinChangeTrigger1.hpp>
 #include <PinChangeTrigger2.hpp>
 
+/* Soft triggers implemented by library */
 #include <ButtonTrigger.hpp>
