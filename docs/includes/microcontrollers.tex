@@ -1,5 +1,7 @@
-\section{Mikrokontrolér}
+\section{Vstavané systémy a mikrokontroléry}
 \noindent
+Pojmom vstavaný systém označujeme spojenie počítačového hardvéru a softvéru, ktorý je navrhnutý tak, aby vykonával vyhradenú aktivitu. Tá môže byť súčasťou komplexného systému, avšak môže fungovať aj samostatne. Jadrom vstaveného systému
+je integrovaný obvod určený na vykonávanie výpočtov pre operácie v reálnom čase \cite{WhatEmbeddedSystem}. \par
 Mikrokontrolér je procesor, ktorý je vybavený pamäťou, časovačmi, radičom prerušení, I/O pinmi a rôznymi ďalšími periférnymi
 zariadeniami. Vďaka tomu dokáže fungovať samostatne a vykonávať rôzne úlohy. Mikrokontroléry tiež obsahujú bitové operácie, ktoré nám umožňujú zmeniť jeden bit v rámci bajtu bez toho, aby sme sa dotkli ostatných bitov. \par
 Všetky prvky mikrokontroléra sú integrované na jednom čipe, čím sa šetrí miesto.
@@ -9,7 +11,60 @@ jednoduchosť modernizácie komponentov mikrokontroléra a vyššia spoľahlivos
 celého systému. Tieto výhody patria medzi dôležité aspekty vstavaných systémov. \par
 K nevýhodám môžeme zaradiť rýchlosť zariadenia, keďže tá bude takmer vždy určite
 nižšia ako by sme vedeli dosiahnuť len pomocou hardvérového riešenia. Väčšina aplikácii, a najmä tie, ktoré vyžadujú istý druh ľudskej interakcie, nepotrebujú
-dosiahnuť také rýchle reakčné časy. Preto je mikrokontrolér pre ne dobrou voľbou.
-\cite{guntherIntroductionMicrocontrollers2007}
+dosiahnuť také rýchle reakčné časy. Preto je mikrokontrolér pre ne dobrou voľbou
+\cite{guntherIntroductionMicrocontrollers2007}.
+
+\subsection{Typy mikrokontrolérov}
+\noindent
+V dnešnej dobe poznáme niekoľko typov mikrokontrolérov. Medzi najznámejšie patria:
+\begin{itemize}
+    \item PIC mikrokontrolér
+    \item ARM mikrokontrolér
+    \item AVR mikrokontrolér
+\end{itemize}
+
+\subsubsection{PIC mikrokontrolér}
+\noindent
+PIC je rodina mikrokontrolérov vyrábaných technológiou mikročipov, pôvodne navrhnutou pre vývoj všobecných elektronických zariadení.
+Názov PIC pôvodne označoval Peripheral Interface Controller a v súčasnosti je
+rozšírený ako Programmable Intelligent Computer. Zariadenia PIC je známe pre
+svoju nízku cenu, širokú dostupnosť a veľkú používateľskú základňu. \par
+
+Z periférnych zariadení je tento mikrokontrolér vybavený:
+\begin{itemize}
+    \item Tromi časovačmi
+    \item Dvomi takzvanými Capture/Compare/PWM modulmi
+    \item 10 bitovým analógovo-digitálnym prevodníkom
+    \item Synchrónnym sériovym portom s podporou I2C master/slave komunikácie
+    \item 8 bitovým paralelným slave portom
+\end{itemize}
+
+Medzi výhody PIC patrí spoľahlivosť. Zároveň je aj veľmi rýchly vďaka použitiu architektúry RISC.
+Spotreba energie je taktiež menšia ak ju porovnáme so spotrebou iných mikrokontrolérov. K nevýhodám môžeme zaradiť dĺžku pogramu. Tá bude väčšia práve kvôli použitiu RISC architektúry(35 inštrukcií) \cite{shidlingDifferentTypesMicrocontrollers2020}.
+
+\subsubsection{ARM mikrokontrolér}
+\noindent
+Názov ARM označuje Advanced Risk machine. ARM mikrokontrolér taktiež využíva architektúru procesora RISC. Procesor ARM patrí medzi jeden z najrozsiahlejších
+a najviac licencovaných procesorov na svete. Prvýkrát bol vyvinutý v roku 1978 Cambridgskou univerzitou. Firma ARM v súčasnosti vyvíja ARM architektúru a
+licencuje ju rôznym ďalším spoločnostiam, ktoré vyvíjajú svoje vlastné produkty.
+Procesory ARM majú menší počet tranzistorov kvôli menšiemu počtu podporovaných inštrukcií. Vďaka tomu je ARM procesor menší ako rôzne iné modely a preto sa nachádza v obrovskom množstve elektronických zariadení. Spojením procesora ARM
+s RAM a ROM pamäťou a ďalšími periférnymi zariadeniami dostaneme ARM mikrokontrolér.\par
+
+V porovnaní s inými procesormi sú lacné a zároveň majú menšiu energetickú spotrebu. Z toho vyplýva aj väčšia výdrž batérie. Medzi nevýhody určite patrí to, že architektúra ARM nieje kompatibilná s architektúrou x86 \cite{shidlingDifferentTypesMicrocontrollers2020}.
+
+\subsubsection{AVR mikrokontrolér}
+\noindent
+AVR bol vyvinutý v roku 1996 spoločnosťou Atmel Corporation. Názov AVR je odvodený od mien vývojarov, ktorý na ňom pracovali. Je to skratka od  Alf-Egil Bogen Vegan Wollan RISC mikrokontrolér. Tkatiež je známy aj pod názvom Advanced Virtual RISC. AVR mikrokontrolér je dostupný v troch kategóriach:
+\begin{itemize}
+    \item TinyAVR: Najmenší dostupný model. Je určený len pre jednoduché aplikácie.
+    \item MegaAVR: Najpopulárnejší model AVR mikrokontrolérov. Má väčšie množstvo pamäte a viac zabudovaných periférnych zariadení. Je vhodný pre stredné náročné až zložité aplikácie.
+    \item XmegaAVR: Je určený na komerčné použitie pre komplexné aplikácie, ktoré vyžadujú veľké množstvo pamäte a vysokú rýchlosť procesora.
+\end{itemize}
+
+AVR je jednou z prvých architekúr mikrokontrolérov, ktoré používajú zabudovanú flash pamäť, narozdiel od jednorazovo programovateľnej pamäte ROM, EPROM alebo EEPROM, ktoré v tom čase používali ostatné mikrokontroléry.
+\par
+Medzi hlavné výhody patrí cena, jednoduchosť používania a v neposlednom rade aj možnosť výberu rôznych typov na základe užívateľských požiadaviek \cite{shidlingDifferentTypesMicrocontrollers2020}. AVR je taktiež využívané platformou Arduino \cite{AVRVsArduinoWhich2017}.
+
+
 \input{includes/interrupts}
 \input{includes/timers}
