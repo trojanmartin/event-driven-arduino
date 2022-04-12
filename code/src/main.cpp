@@ -45,33 +45,42 @@ void setup()
 {
     Serial.begin(9600);
 
-    pinMode(ledPin, OUTPUT);
+    // pinMode(ledPin, OUTPUT);
 
-    timer1.configure(TimerMode::CTC)
-        .onTimeElapsed(500, Timer1);
+    pinMode(10, OUTPUT);
+    pinMode(9, OUTPUT);
+    TCCR2A = _BV(COM2A1) | _BV(COM2B1) | _BV(WGM21) | _BV(WGM20);
+    TCCR2B = _BV(CS22);
+    OCR2A = 200; // Duty cycle (200 + 1)/256 = 79%
+    OCR2B = 100; // Duty cycle (100 + 1)/256 =  39%
+    /*
+              timer1.configure(TimerMode::CTC)
+                  .onTimeElapsed(500, Timer1);
 
-    /*  external4Trigger.configure(ExternalTriggerMode::Change)
-          .onOccurrence(ButtonClicked);
-  */
+    external4Trigger.configure(ExternalTriggerMode::Change)
+            .onOccurrence(ButtonClicked);
 
-    pinChangeTrigger.configure()
-        .onOccurrence(ButtonClicked)
-        .enablePin(4);
 
-    machine.configure(Idle)
-        .onEntry(&callback)
-        .onExit(&callbackexit)
-        .onEvent(idle_state_table);
+      pinChangeTrigger.configure()
+          .onOccurrence(ButtonClicked)
+          .enablePin(4);
 
-    machine.configure(On)
-        .onEntry(&onOnEntryCallback)
-        .onExit(&callbackexit)
-        .onEvent(on_state_table);
+      machine.configure(Idle)
+          .onEntry(&callback)
+          .onExit(&callbackexit)
+          .onEvent(idle_state_table);
 
-    machine.configure(Off)
-        .onEntry(&onOffEntryCallback)
-        .onExit(&callbackexit)
-        .onEvent(off_table);
+      machine.configure(On)
+          .onEntry(&onOnEntryCallback)
+          .onExit(&callbackexit)
+          .onEvent(on_state_table);
+
+      machine.configure(Off)
+          .onEntry(&onOffEntryCallback)
+          .onExit(&callbackexit)
+          .onEvent(off_table);
+
+            */
 }
 
 void loop()
