@@ -21,10 +21,10 @@ typedef uint8_t interrupt;
 #define PICINT1_INTERRUPT 1
 #define PICINT2_INTERRUPT 1
 
-#define TIMER1_OVF_INTERRUPT 1
-#define TIMER1_COMPA_INTERRUPT 1
-#define TIMER1_COMPB_INTERRUPT 1
-#define TIMER1_COMPC_INTERRUPT 1
+#define TIMER1_OVF_INTERRUPT 0
+#define TIMER1_COMPA_INTERRUPT 0
+#define TIMER1_COMPB_INTERRUPT 0
+#define TIMER1_COMPC_INTERRUPT 0
 
 #define TIMER3_OVF_INTERRUPT 1
 #define TIMER3_COMPA_INTERRUPT 1
@@ -89,6 +89,7 @@ typedef uint8_t interrupt;
 #define TIMER5_COMPB_INTERRUPT_ID 27
 #define TIMER5_COMPC_INTERRUPT_ID 28
 
+
 class Interro;
 class Trigger;
 class StateMachine;
@@ -109,9 +110,11 @@ public:
     void add(StateMachine &machine);
 };
 
+#include <PinMapping.hpp>
 #include <StateConfiguration.hpp>
 #include <StateMachine.hpp>
 #include <TimerMillis.hpp>
+#include <TimerPwmConfiguration.hpp>
 #include <assert.h>
 
 #include <HardTrigger.hpp>

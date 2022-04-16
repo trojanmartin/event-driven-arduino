@@ -46,7 +46,35 @@ TimerTrigger &TimerTrigger::configure(TimerMode mode)
         return *this;
     }
 
+    //Fast pwm with top valu
+    if(timerMode == TimerMode::FastPWM)
+    {
+        *TCCRnA |= (1 << WGMn0);
+        //*TCCRnA |= (1 << WGMn1);
+        *TCCRnA |= (1 << COM1A1);
+        *TCCRnA |= (1 << COM1B1);
+        *TCCRnA |= (1 << COM1C1);
+
+        *TCCRnB |= (1 << WGMn2);
+        //*TCCRnB |= (1 << WGMn3);
+    }
+
     return *this;
+}
+
+void pinOutputMode()
+{
+    
+}
+
+void pwmFrequency()
+{
+
+}
+
+void setDutyCycle()
+{
+
 }
 
 TimerTrigger &TimerTrigger::onOverflow(const uint8_t event)
@@ -58,7 +86,7 @@ TimerTrigger &TimerTrigger::onOverflow(const uint8_t event)
 
 TimerTrigger &TimerTrigger::setPrescalerValue(uint16_t prescaler)
 {
-    assert(timerMode == TimerMode::Normal);
+    assert(timerMode != TimerMode::CTC);
 
     for (uint8_t i = 0; i < 5; i++)
     {

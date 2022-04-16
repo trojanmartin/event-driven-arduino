@@ -6,7 +6,8 @@
 enum TimerMode
 {
     Normal,
-    CTC
+    CTC,
+    FastPWM
 };
 
 class TimerTrigger : public HardTrigger
@@ -32,6 +33,8 @@ private:
 
     uint8_t WGMn3 = 4;
     uint8_t WGMn2 = 3;
+    uint8_t WGMn1 = 1;
+    uint8_t WGMn0 = 0;
     uint8_t CSn2 = 2;
     uint8_t CSn1 = 1;
     uint8_t CSn0 = 0;

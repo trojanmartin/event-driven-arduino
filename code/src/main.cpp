@@ -46,13 +46,27 @@ void setup()
     Serial.begin(9600);
 
     // pinMode(ledPin, OUTPUT);
-
     pinMode(10, OUTPUT);
     pinMode(9, OUTPUT);
     TCCR2A = _BV(COM2A1) | _BV(COM2B1) | _BV(WGM21) | _BV(WGM20);
     TCCR2B = _BV(CS22);
+    OCR2A = 254; // Duty cycle (200 + 1)/256 = 79%
+    OCR2B = 100; // Duty cycle (100 + 1)/256 =  39%
+    
+    pinMode(13, OUTPUT);
+    pinMode(12, OUTPUT);
+    pinMode(11, OUTPUT);
+    OCR1A = 254;
+    OCR1B = 100;
+    timer1.configure(TimerMode::FastPWM);
+    TCCR1B |= (1 << CS11);
+    TCCR1B |= (1 << CS10);
+          //.setPrescalerValue(256);
+   /* TCCR2A = _BV(COM2A1) | _BV(COM2B1) | _BV(WGM21) | _BV(WGM20);
+    TCCR2B = _BV(CS22);
     OCR2A = 200; // Duty cycle (200 + 1)/256 = 79%
     OCR2B = 100; // Duty cycle (100 + 1)/256 =  39%
+    */
     /*
               timer1.configure(TimerMode::CTC)
                   .onTimeElapsed(500, Timer1);
