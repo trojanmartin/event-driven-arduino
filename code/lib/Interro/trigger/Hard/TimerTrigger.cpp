@@ -10,17 +10,19 @@ TimerTrigger::TimerTrigger(volatile uint8_t *TCCRnA,
                            uint8_t onEverflowInterrupt,
                            uint8_t onCompareMatchAInterrupt,
                            uint8_t onCompareMatchBInterrupt,
-                           uint8_t onCompareMatchCInterrupt) : TCCRnA{TCCRnA},
-                                                               TCCRnB{TCCRnB},
-                                                               TCCRnC{TCCRnC},
-                                                               OCRnA{OCRnA},
-                                                               OCRnB{OCRnB},
-                                                               OCRnC{OCRnC},
-                                                               TIMSKn{TIMSKn},
-                                                               onEverflowInterrupt{onEverflowInterrupt},
-                                                               onCompareMatchAInterrupt{onCompareMatchAInterrupt},
-                                                               onCompareMatchBInterrupt{onCompareMatchBInterrupt},
-                                                               onCompareMatchCInterrupt{onCompareMatchCInterrupt}
+                           uint8_t onCompareMatchCInterrupt,
+                           TimerPwmConfiguration pwm) : TCCRnA{TCCRnA},
+                                                        TCCRnB{TCCRnB},
+                                                        TCCRnC{TCCRnC},
+                                                        OCRnA{OCRnA},
+                                                        OCRnB{OCRnB},
+                                                        OCRnC{OCRnC},
+                                                        TIMSKn{TIMSKn},
+                                                        onEverflowInterrupt{onEverflowInterrupt},
+                                                        onCompareMatchAInterrupt{onCompareMatchAInterrupt},
+                                                        onCompareMatchBInterrupt{onCompareMatchBInterrupt},
+                                                        onCompareMatchCInterrupt{onCompareMatchCInterrupt},
+                                                        pwmConfiguration(pwm)
 
 {
 }
@@ -46,35 +48,22 @@ TimerTrigger &TimerTrigger::configure(TimerMode mode)
         return *this;
     }
 
-    //Fast pwm with top valu
-    if(timerMode == TimerMode::FastPWM)
+    // Fast pwm with top valu
+    if (timerMode == TimerMode::PWM)
     {
-        *TCCRnA |= (1 << WGMn0);
-        //*TCCRnA |= (1 << WGMn1);
-        *TCCRnA |= (1 << COM1A1);
-        *TCCRnA |= (1 << COM1B1);
-        *TCCRnA |= (1 << COM1C1);
+        /* *TCCRnA |= (1 << WGMn0);
+         //*TCCRnA |= (1 << WGMn1);
+         *TCCRnA |= (1 << COM1A1);
+         *TCCRnA |= (1 << COM1B1);
+         *TCCRnA |= (1 << COM1C1);
 
-        *TCCRnB |= (1 << WGMn2);
-        //*TCCRnB |= (1 << WGMn3);
+         *TCCRnB |= (1 << WGMn2);
+         //*TCCRnB |= (1 << WGMn3);
+
+         */
     }
 
     return *this;
-}
-
-void pinOutputMode()
-{
-    
-}
-
-void pwmFrequency()
-{
-
-}
-
-void setDutyCycle()
-{
-
 }
 
 TimerTrigger &TimerTrigger::onOverflow(const uint8_t event)
@@ -160,6 +149,18 @@ uint8_t getIndexOfValue(uint8_t *array, uint8_t value)
     }
 
     return 0;
+}
+
+TimerPwmConfiguration &TimerTrigger::getPwmConfigurator(PwmMode mode)
+{
+    if (mode == PwmMode::FastPwm8Bit)
+    {
+        *TCCRnA |= (1 << WGMn0);
+        *TCCRnB |= (1 << WGMn2);
+    }
+
+    pwmConfiguration.mode = mode;
+    return pwmConfiguration;
 }
 
 // set prescaler

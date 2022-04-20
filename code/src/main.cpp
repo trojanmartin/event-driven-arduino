@@ -52,21 +52,48 @@ void setup()
     TCCR2B = _BV(CS22);
     OCR2A = 254; // Duty cycle (200 + 1)/256 = 79%
     OCR2B = 100; // Duty cycle (100 + 1)/256 =  39%
-    
+
     pinMode(13, OUTPUT);
     pinMode(12, OUTPUT);
     pinMode(11, OUTPUT);
-    OCR1A = 254;
-    OCR1B = 100;
-    timer1.configure(TimerMode::FastPWM);
-    TCCR1B |= (1 << CS11);
-    TCCR1B |= (1 << CS10);
-          //.setPrescalerValue(256);
-   /* TCCR2A = _BV(COM2A1) | _BV(COM2B1) | _BV(WGM21) | _BV(WGM20);
-    TCCR2B = _BV(CS22);
-    OCR2A = 200; // Duty cycle (200 + 1)/256 = 79%
-    OCR2B = 100; // Duty cycle (100 + 1)/256 =  39%
+    // OCR1A = 254;
+    // OCR1B = 100;
+
+    auto pwmConfigurator = timer1.configure(TimerMode::PWM)
+                               .setPrescalerValue(256)
+                               .getPwmConfigurator(PwmMode::FastPwm8Bit);
+
+    pwmConfigurator.setUpPin(26, PwmPinBehavior::ClearOnCompareMatch, 200);
+    pwmConfigurator.setUpPin(25, PwmPinBehavior::ClearOnCompareMatch, 254);
+    pwmConfigurator.setUpPin(24, PwmPinBehavior::ClearOnCompareMatch, 100);
+
+    /*    TCCR1B |= (1 << CS11);
+        TCCR1B |= (1 << CS10);
+        TCCR2A = _BV(COM2A1) | _BV(COM2B1) | _BV(WGM21) | _BV(WGM20);
+        TCCR2B = _BV(CS22);
+        TCCR1B |= (1 << CS11);
+        TCCR1B |= (1 << CS10);
+        OCR2A = 100;
+        OCR2B = 254;
+        OCR2B = 254;
     */
+    /*
+        auto pwmConfigurator = timer1.configure(TimerMode::PWM)
+                                   .getPwmConfigurator(PwmMode::FastPwm);
+
+        pwmConfigurator.pwmPin(Arduino2560Pin::DigitalPin10)
+            .setpin(PwmPinBehavior::ClearOnCompareMatch, 250);
+
+        pwmConfigurator.setUpPin(Arduino2560Pin::DigitalPin11, PwmPinBehavior::ClearOnCompareMatch, 260);
+    */
+    //  TCCR1B |= (1 << CS11);
+    //  TCCR1B |= (1 << CS10);
+    //.setPrescalerValue(256);
+    /* TCCR2A = _BV(COM2A1) | _BV(COM2B1) | _BV(WGM21) | _BV(WGM20);
+     TCCR2B = _BV(CS22);
+     OCR2A = 200; // Duty cycle (200 + 1)/256 = 79%
+     OCR2B = 100; // Duty cycle (100 + 1)/256 =  39%
+     */
     /*
               timer1.configure(TimerMode::CTC)
                   .onTimeElapsed(500, Timer1);

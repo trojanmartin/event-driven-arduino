@@ -7,7 +7,7 @@ enum TimerMode
 {
     Normal,
     CTC,
-    FastPWM
+    PWM
 };
 
 class TimerTrigger : public HardTrigger
@@ -58,6 +58,8 @@ private:
     uint8_t onCompareMatchCInterrupt;
     int8_t onCompareMatchCEvent = UNDEFINED;
 
+    TimerPwmConfiguration pwmConfiguration;
+
     int8_t handleInterrupt(interrupt interrupt);
     void calculateCompareRegisterValue(double frequency, uint8_t *prescalerIndex, uint16_t *compareValue);
     void setPrescaler(uint8_t index);
@@ -71,6 +73,7 @@ public:
     TimerTrigger &setPrescalerValue(uint16_t value);
     TimerTrigger &onOverflow(const uint8_t event);
     TimerTrigger &onTimeElapsed(const uint32_t miliss, const uint8_t event);
+    TimerPwmConfiguration &getPwmConfigurator(PwmMode mode);
     TimerTrigger(volatile uint8_t *TCCRnA,
                  volatile uint8_t *TCCRnB,
                  volatile uint8_t *TCCRnC,
@@ -81,5 +84,6 @@ public:
                  uint8_t onEverflowInterrupt,
                  uint8_t onCompareMatchAInterrupt,
                  uint8_t onCompareMatchBInterrupt,
-                 uint8_t onCompareMatchCInterrupt);
+                 uint8_t onCompareMatchCInterrupt,
+                 TimerPwmConfiguration pwm);
 };

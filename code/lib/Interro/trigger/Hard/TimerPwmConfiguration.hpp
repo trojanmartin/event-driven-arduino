@@ -2,18 +2,16 @@
 
 enum PwmMode
 {
-    FastPwm,
+    FastPwm8Bit,
     PhaseCorrectPwm
 };
 
-enum FastPwmModePinBehavior
+enum PwmPinBehavior
 {
+    NormalBehavior,
     SetOnCompareMatch,
     ClearOnCompareMatch,
-};
 
-enum PhaseCorrectPwmModePinBehavior
-{
     UpClearDownSetOnCompareMatch,
     DownClearUpSetOnCompareMatch,
 };
@@ -24,23 +22,41 @@ enum TimerType
     Bit16
 };
 
+struct PwmPin
+{
+    uint8_t physicalPin;
+    PwmPinBehavior behavior;
+    volatile uint16_t *OCRnx;
+
+    uint8_t pinBitx0;
+    uint8_t pinBitx1;
+
+    PwmPin(uint8_t physicalPin, volatile uint16_t *OCRnx, uint8_t pinBitx0, uint8_t pinBitx1) : physicalPin{physicalPin},
+                                                                                                OCRnx{OCRnx},
+                                                                                                pinBitx0{pinBitx0},
+                                                                                                pinBitx1{pinBitx1}
+    {
+    }
+};
+
 class TimerPwmConfiguration
 {
 private:
     PwmMode mode;
     TimerType timerType;
     uint16_t currentTopValue;
-    
-    volatile uint16_t *OCRnA;
-    volatile uint16_t *OCRnB;
-    volatile uint16_t *OCRnC;
 
-    volatile uint8_t *pinRegisterA;
-    volatile uint8_t *pinRegisterB;
-    volatile uint8_t *pinRegisterC;
+    volatile uint8_t *TCCRnA;
+    PwmPin pwmPinA;
+    PwmPin pwmPinB;
+    PwmPin pwmPinC;
+    friend class TimerTrigger;
+    PwmPin &getPin(uint8_t physicalPin);
+
 public:
-    TimerPwmConfiguration &changeCompareValue(uint8_t *pin, double percantage);
-    TimerPwmConfiguration &fastPwmPinBehavior(uint8_t *compareMatchPin, FastPwmModePinBehavior behavior, uint16_t compareValue);
-    TimerPwmConfiguration &phaseCorrectPwmPinBehavior(uint8_t *compareMatchPin, PhaseCorrectPwmModePinBehavior behavior, uint16_t compareValue);
-    TimerPwmConfiguration(/* args */);
+    TimerPwmConfiguration &setUpPin(uint8_t physicalPin, PwmPinBehavior behavior, uint16_t compareValue);
+    TimerPwmConfiguration(volatile uint8_t *TCCRnA,
+                          PwmPin pinA,
+                          PwmPin pinB,
+                          PwmPin pinC);
 };
