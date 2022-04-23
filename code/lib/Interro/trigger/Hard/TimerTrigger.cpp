@@ -157,6 +157,36 @@ TimerPwmConfiguration &TimerTrigger::getPwmConfigurator(PwmMode mode)
     {
         *TCCRnA |= (1 << WGMn0);
         *TCCRnB |= (1 << WGMn2);
+        pwmConfiguration.currentTopValue = 255;
+    }
+    else if (mode == PwmMode::FastPwm9Bit)
+    {
+        *TCCRnA |= (1 << WGMn1);
+        *TCCRnB |= (1 << WGMn2);
+        pwmConfiguration.currentTopValue = 511;
+    }
+    else if (mode == PwmMode::FastPwm10Bit)
+    {
+        *TCCRnA |= (1 << WGMn0);
+        *TCCRnA |= (1 << WGMn1);
+        *TCCRnB |= (1 << WGMn2);
+        pwmConfiguration.currentTopValue = 1023;
+    }
+    else if (mode == PwmMode::PhaseCorrectPwm8bit)
+    {
+        *TCCRnA |= (1 << WGMn0);
+        pwmConfiguration.currentTopValue = 255;
+    }
+    else if (mode == PwmMode::PhaseCorrectPwm9bit)
+    {
+        *TCCRnA |= (1 << WGMn1);
+        pwmConfiguration.currentTopValue = 511;
+    }
+    else if (mode == PwmMode::PhaseCorrectPwm10bit)
+    {
+        *TCCRnA |= (1 << WGMn0);
+        *TCCRnA |= (1 << WGMn1);
+        pwmConfiguration.currentTopValue = 511;
     }
 
     pwmConfiguration.mode = mode;
@@ -246,7 +276,7 @@ void TimerTrigger::calculateCompareRegisterValue(double frequency, uint8_t *pres
 {
     for (size_t i = 0; i < 5; i++)
     {
-        uint32_t compRegister = (CLOCK_SPEED / (prescalers[i] / frequency)) - 1;
+        uint32_t compRegister = (F_CPU / (prescalers[i] / frequency)) - 1;
         if (compRegister < maxTick && compRegister > 0)
         {
             *prescalerIndex = i;
@@ -260,7 +290,7 @@ void TimerTrigger::calculateCompareRegisterValue(double frequency, uint8_t *pres
 
 double TimerTrigger::getFrequency(uint8_t prescalerIndex, uint16_t comapareValue)
 {
-    return (prescalers[prescalerIndex] * (double)(comapareValue + 1)) / CLOCK_SPEED;
+    return (prescalers[prescalerIndex] * (double)(comapareValue + 1)) / F_CPU;
 }
 
 void TimerTrigger::getPossiblePrescalers(double frequency, uint8_t prescalerindexes[], uint16_t compareValues[], uint8_t *count)
@@ -268,7 +298,7 @@ void TimerTrigger::getPossiblePrescalers(double frequency, uint8_t prescalerinde
     uint8_t current = 0;
     for (size_t i = 0; i < 5; i++)
     {
-        uint32_t compRegister = (CLOCK_SPEED / (prescalers[i] / frequency)) - 1;
+        uint32_t compRegister = (F_CPU / (prescalers[i] / frequency)) - 1;
         if (compRegister < maxTick && compRegister > 0)
         {
             prescalerindexes[current] = i;

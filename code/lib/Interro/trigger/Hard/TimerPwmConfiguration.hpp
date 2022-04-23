@@ -3,17 +3,28 @@
 enum PwmMode
 {
     FastPwm8Bit,
-    PhaseCorrectPwm
+    FastPwm9Bit,
+    FastPwm10Bit,
+    PhaseCorrectPwm8bit,
+    PhaseCorrectPwm9bit,
+    PhaseCorrectPwm10bit,
 };
 
 enum PwmPinBehavior
 {
     NormalBehavior,
-    SetOnCompareMatch,
-    ClearOnCompareMatch,
+    SetOnCompareMatchFastPwm,
+    ClearOnCompareMatchFastPwm,
 
-    UpClearDownSetOnCompareMatch,
-    DownClearUpSetOnCompareMatch,
+    UpClearDownSetOnCompareMatchPhaseCorrectPwm,
+    UpSetDownSetOnCompareMatchPhaseCorrectPwm,
+};
+
+enum TimerPwmOutput
+{
+    OutputA,
+    OutputB,
+    OutputC,
 };
 
 enum TimerType
@@ -51,10 +62,10 @@ private:
     PwmPin pwmPinB;
     PwmPin pwmPinC;
     friend class TimerTrigger;
-    PwmPin &getPin(uint8_t physicalPin);
+    PwmPin &getPin(TimerPwmOutput physicalPin);
 
 public:
-    TimerPwmConfiguration &setUpPin(uint8_t physicalPin, PwmPinBehavior behavior, uint16_t compareValue);
+    TimerPwmConfiguration &setUpOutput(TimerPwmOutput output, PwmPinBehavior behavior, uint16_t compareValue);
     TimerPwmConfiguration(volatile uint8_t *TCCRnA,
                           PwmPin pinA,
                           PwmPin pinB,

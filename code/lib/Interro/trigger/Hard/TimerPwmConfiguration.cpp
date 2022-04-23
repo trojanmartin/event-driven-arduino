@@ -10,32 +10,36 @@ TimerPwmConfiguration::TimerPwmConfiguration(volatile uint8_t *TCCRnA,
 {
 }
 
-PwmPin &TimerPwmConfiguration::getPin(uint8_t physicalPin)
+PwmPin &TimerPwmConfiguration::getPin(TimerPwmOutput output)
 {
-    assert(pwmPinA.physicalPin == physicalPin || pwmPinB.physicalPin == physicalPin || pwmPinC.physicalPin == physicalPin);
-
-    if (pwmPinA.physicalPin == physicalPin)
+    if (output == TimerPwmOutput::OutputA)
     {
         return pwmPinA;
     }
 
-    if (pwmPinB.physicalPin == physicalPin)
+    if (output == TimerPwmOutput::OutputB)
     {
         return pwmPinB;
     }
 
-    if (pwmPinC.physicalPin == physicalPin)
-    {
-        return pwmPinC;
-    }
-
-    return pwmPinA;
+    return pwmPinC;
 }
 
-TimerPwmConfiguration &TimerPwmConfiguration::setUpPin(uint8_t physicalPin, PwmPinBehavior behavior, uint16_t compareValue)
+TimerPwmConfiguration &TimerPwmConfiguration::setUpOutput(TimerPwmOutput output, PwmPinBehavior behavior, uint16_t compareValue)
 {
-    auto pin = getPin(physicalPin);
-    auto reg = pin.OCRnx;
+    assert(compareValue <= currentTopValue);
+
+    auto pin = getPin(output);
+
+    if (mode <= PwmMode::FastPwm10Bit)
+    {
+        assert(behavior <= PwmPinBehavior::ClearOnCompareMatchFastPwm);
+    }
+    else
+    {
+        assert(behavior >= PwmPinBehavior::UpClearDownSetOnCompareMatchPhaseCorrectPwm);
+    }
+
     uint8_t comnx0 = pin.pinBitx0;
     uint8_t comnx1 = pin.pinBitx1;
 
@@ -43,16 +47,18 @@ TimerPwmConfiguration &TimerPwmConfiguration::setUpPin(uint8_t physicalPin, PwmP
     *TCCRnA &= ~(1 << comnx0);
     *TCCRnA &= ~(1 << comnx1);
 
-    if (behavior == PwmPinBehavior::ClearOnCompareMatch || behavior == PwmPinBehavior::UpClearDownSetOnCompareMatch)
+    if (behavior == PwmPinBehavior::ClearOnCompareMatchFastPwm || behavior == PwmPinBehavior::UpClearDownSetOnCompareMatchPhaseCorrectPwm)
     {
+        pin.behavior = behavior;
         *TCCRnA |= (1 << comnx1);
     }
-    else if (behavior == PwmPinBehavior::SetOnCompareMatch || behavior == PwmPinBehavior::DownClearUpSetOnCompareMatch)
+    else if (behavior == PwmPinBehavior::SetOnCompareMatchFastPwm || behavior == PwmPinBehavior::UpSetDownSetOnCompareMatchPhaseCorrectPwm)
     {
         *TCCRnA |= (1 << comnx0);
         *TCCRnA |= (1 << comnx1);
     }
 
-    *reg = compareValue;
+    *(pin.OCRnx) = compareValue;
+    pin.behavior = behavior;
     return *this;
 }

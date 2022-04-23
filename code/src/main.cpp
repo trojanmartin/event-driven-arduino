@@ -45,6 +45,14 @@ void setup()
 {
     Serial.begin(9600);
 
+    int output = 1;
+    int timer = 0;
+
+    auto pin = timerPwmOutputToArduinoPin(1, TimerPwmOutput::OutputB);
+
+    Serial.print("\n asaaaaaaaaaaa");
+    Serial.print(pin);
+
     // pinMode(ledPin, OUTPUT);
     pinMode(10, OUTPUT);
     pinMode(9, OUTPUT);
@@ -61,12 +69,11 @@ void setup()
 
     auto pwmConfigurator = timer1.configure(TimerMode::PWM)
                                .setPrescalerValue(256)
-                               .getPwmConfigurator(PwmMode::FastPwm8Bit);
+                               .getPwmConfigurator(PwmMode::FastPwm10Bit);
 
-    pwmConfigurator.setUpPin(26, PwmPinBehavior::ClearOnCompareMatch, 200);
-    pwmConfigurator.setUpPin(25, PwmPinBehavior::ClearOnCompareMatch, 254);
-    pwmConfigurator.setUpPin(24, PwmPinBehavior::ClearOnCompareMatch, 100);
-
+    pwmConfigurator.setUpOutput(TimerPwmOutput::OutputC, PwmPinBehavior::ClearOnCompareMatchFastPwm, 200);
+    pwmConfigurator.setUpOutput(TimerPwmOutput::OutputB, PwmPinBehavior::ClearOnCompareMatchFastPwm, 255);
+    pwmConfigurator.setUpOutput(TimerPwmOutput::OutputA, PwmPinBehavior::ClearOnCompareMatchFastPwm, 100);
     /*    TCCR1B |= (1 << CS11);
         TCCR1B |= (1 << CS10);
         TCCR2A = _BV(COM2A1) | _BV(COM2B1) | _BV(WGM21) | _BV(WGM20);
