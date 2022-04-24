@@ -73,7 +73,7 @@ void setup()
         .onClick(ButtonClicked);
 
     auto pwmConfigurator = timer1.configure(TimerMode::PWM)
-                               .setPrescalerValue(64)
+                               .setPrescalerValue(Prescalers::Prescaler64)
                                .setPwmMode(PwmMode::FastPwm8Bit);
 
     pwmConfigurator.setUpOutput(TimerPwmOutput::C, 0);

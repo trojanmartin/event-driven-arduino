@@ -10,6 +10,15 @@ enum TimerMode
     PWM
 };
 
+enum Prescalers
+{
+    Prescaler1,
+    Prescaler8,
+    Prescaler64,
+    Prescaler256,
+    Prescaler1024
+};
+
 class TimerTrigger : public HardTrigger
 {
 private:
@@ -70,7 +79,7 @@ private:
 
 public:
     TimerTrigger &configure(TimerMode mode);
-    TimerTrigger &setPrescalerValue(uint16_t value);
+    TimerTrigger &setPrescalerValue(Prescalers value);
     TimerTrigger &onOverflow(const uint8_t event);
     TimerTrigger &onTimeElapsed(const uint32_t miliss, const uint8_t event);
     TimerPwmConfiguration &setPwmMode(PwmMode mode);

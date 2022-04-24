@@ -48,21 +48,7 @@ TimerTrigger &TimerTrigger::configure(TimerMode mode)
         return *this;
     }
 
-    // Fast pwm with top valu
-    if (timerMode == TimerMode::PWM)
-    {
-        /* *TCCRnA |= (1 << WGMn0);
-         //*TCCRnA |= (1 << WGMn1);
-         *TCCRnA |= (1 << COM1A1);
-         *TCCRnA |= (1 << COM1B1);
-         *TCCRnA |= (1 << COM1C1);
-
-         *TCCRnB |= (1 << WGMn2);
-         //*TCCRnB |= (1 << WGMn3);
-
-         */
-    }
-
+    // PWM mode is handled in TimerPwmConfiguration
     return *this;
 }
 
@@ -73,20 +59,12 @@ TimerTrigger &TimerTrigger::onOverflow(const uint8_t event)
     return *this;
 }
 
-TimerTrigger &TimerTrigger::setPrescalerValue(uint16_t prescaler)
+TimerTrigger &TimerTrigger::setPrescalerValue(Prescalers prescaler)
 {
     assert(timerMode != TimerMode::CTC);
+    assert(prescaler <= 4);
 
-    for (uint8_t i = 0; i < 5; i++)
-    {
-        if (prescalers[i] == prescaler)
-        {
-            setPrescaler(i);
-            break;
-        }
-    }
-
-    assert(prescalerIndex != UNDEFINED);
+    setPrescaler(prescaler);
     return *this;
 }
 
