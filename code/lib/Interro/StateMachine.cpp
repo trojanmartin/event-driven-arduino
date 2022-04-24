@@ -20,9 +20,18 @@ void StateMachine::onEvent(int8_t event)
         int8_t currentEvent = table[index];
         if (currentEvent == event)
         {
-            current->exit_callback(current->currentState);
+            if (current->exit_callback)
+            {
+                current->exit_callback(current->currentState);
+            }
+
             current = getState(table[index + 1]);
-            current->entry_callback(current->currentState);
+
+            if (current->entry_callback)
+            {
+                current->entry_callback(current->currentState);
+            }
+
             break;
         }
 

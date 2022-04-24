@@ -2,11 +2,10 @@
 
 StateConfiguration::StateConfiguration(const uint8_t state)
 {
+    entry_callback = 0;
+    exit_callback = 0;
+    transition_table = 0;
     currentState = state;
-}
-
-StateConfiguration::~StateConfiguration()
-{
 }
 
 StateConfiguration &StateConfiguration::onEntry(const state_callback callback)

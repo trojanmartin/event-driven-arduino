@@ -151,7 +151,12 @@ uint8_t getIndexOfValue(uint8_t *array, uint8_t value)
     return 0;
 }
 
-TimerPwmConfiguration &TimerTrigger::getPwmConfigurator(PwmMode mode)
+TimerPwmConfiguration &TimerTrigger::getPwmConfigurator()
+{
+    return pwmConfiguration;
+}
+
+TimerPwmConfiguration &TimerTrigger::setPwmMode(PwmMode mode)
 {
     if (mode == PwmMode::FastPwm8Bit)
     {

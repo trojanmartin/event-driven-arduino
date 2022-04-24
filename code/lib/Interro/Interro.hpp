@@ -6,7 +6,6 @@
 
 typedef uint8_t interrupt;
 #define UNDEFINED -1
-#define CLOCK_SPEED 16000000
 
 #define INT0_INTERRUPT 0
 #define INT1_INTERRUPT 0
@@ -88,7 +87,6 @@ typedef uint8_t interrupt;
 #define TIMER5_COMPA_INTERRUPT_ID 26
 #define TIMER5_COMPB_INTERRUPT_ID 27
 #define TIMER5_COMPC_INTERRUPT_ID 28
-
 
 class Interro;
 class Trigger;

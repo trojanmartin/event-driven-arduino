@@ -13,9 +13,10 @@ Timer4Trigger::Timer4Trigger()
                    TIMER4_COMPA_INTERRUPT_ID,
                    TIMER4_COMPB_INTERRUPT_ID,
                    TIMER4_COMPC_INTERRUPT_ID,
-                   TimerPwmConfiguration(&TCCR4A,
-                                         PwmPin(24, &OCR4A, COM4A0, COM4A1),
-                                         PwmPin(25, &OCR4B, COM4B0, COM4B1),
-                                         PwmPin(26, &OCR4C, COM4C0, COM4C1)))
+                   TimerPwmConfiguration(4,
+                                         &TCCR4A,
+                                         PwmPin(&OCR4A, COM4A0, COM4A1),
+                                         PwmPin(&OCR4B, COM4B0, COM4B1),
+                                         PwmPin(&OCR4C, COM4C0, COM4C1)))
 {
 }

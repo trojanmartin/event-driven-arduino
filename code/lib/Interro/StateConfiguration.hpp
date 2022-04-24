@@ -19,5 +19,4 @@ public:
     StateConfiguration &onExit(const state_callback callback);
     StateConfiguration &onEvent(const int8_t *transition_table);
     StateConfiguration(const uint8_t state);
-    ~StateConfiguration();
 };

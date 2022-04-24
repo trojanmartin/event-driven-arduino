@@ -73,7 +73,8 @@ public:
     TimerTrigger &setPrescalerValue(uint16_t value);
     TimerTrigger &onOverflow(const uint8_t event);
     TimerTrigger &onTimeElapsed(const uint32_t miliss, const uint8_t event);
-    TimerPwmConfiguration &getPwmConfigurator(PwmMode mode);
+    TimerPwmConfiguration &setPwmMode(PwmMode mode);
+    TimerPwmConfiguration &getPwmConfigurator();
     TimerTrigger(volatile uint8_t *TCCRnA,
                  volatile uint8_t *TCCRnB,
                  volatile uint8_t *TCCRnC,

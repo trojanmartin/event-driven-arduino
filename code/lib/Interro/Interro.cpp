@@ -16,7 +16,6 @@ void Interro::add(StateMachine &machine)
 
 void Interro::run()
 {
-
     Trigger *current;
     current = triggerRoot;
     while (current)

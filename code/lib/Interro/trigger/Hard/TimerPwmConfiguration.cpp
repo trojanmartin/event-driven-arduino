@@ -1,23 +1,27 @@
 #include <Interro.hpp>
 
-TimerPwmConfiguration::TimerPwmConfiguration(volatile uint8_t *TCCRnA,
+TimerPwmConfiguration::TimerPwmConfiguration(uint8_t timerNumber,
+                                             volatile uint8_t *TCCRnA,
                                              PwmPin pinA,
                                              PwmPin pinB,
-                                             PwmPin pinC) : TCCRnA{TCCRnA},
+                                             PwmPin pinC) : timerNumber{timerNumber},
+                                                            TCCRnA{TCCRnA},
                                                             pwmPinA(pinA),
                                                             pwmPinB(pinB),
                                                             pwmPinC(pinC)
 {
+    defaultFastPwmBehavior = PwmPinBehavior::ClearOnCompareMatchFastPwm;
+    defaultPhaseCorrectBehavior = PwmPinBehavior::UpClearDownSetOnCompareMatchPhaseCorrectPwm;
 }
 
 PwmPin &TimerPwmConfiguration::getPin(TimerPwmOutput output)
 {
-    if (output == TimerPwmOutput::OutputA)
+    if (output == TimerPwmOutput::A)
     {
         return pwmPinA;
     }
 
-    if (output == TimerPwmOutput::OutputB)
+    if (output == TimerPwmOutput::B)
     {
         return pwmPinB;
     }
@@ -25,10 +29,22 @@ PwmPin &TimerPwmConfiguration::getPin(TimerPwmOutput output)
     return pwmPinC;
 }
 
+TimerPwmConfiguration &TimerPwmConfiguration::setUpOutput(TimerPwmOutput output, double dutyCycle)
+{
+    assert(0 <= dutyCycle && dutyCycle <= 1);
+    uint16_t compareValue = 0;
+    compareValue = dutyCycle * (currentTopValue + 1);
+
+    if (compareValue > currentTopValue)
+    {
+        compareValue = currentTopValue;
+    }
+
+    return setUpOutput(output, mode <= PwmMode::FastPwm10Bit ? defaultFastPwmBehavior : defaultPhaseCorrectBehavior, compareValue);
+}
+
 TimerPwmConfiguration &TimerPwmConfiguration::setUpOutput(TimerPwmOutput output, PwmPinBehavior behavior, uint16_t compareValue)
 {
-    assert(compareValue <= currentTopValue);
-
     auto pin = getPin(output);
 
     if (mode <= PwmMode::FastPwm10Bit)
@@ -58,7 +74,16 @@ TimerPwmConfiguration &TimerPwmConfiguration::setUpOutput(TimerPwmOutput output,
         *TCCRnA |= (1 << comnx1);
     }
 
-    *(pin.OCRnx) = compareValue;
+    setOutputValue(output, compareValue);
+    pinMode(timerPwmOutputToArduinoPin(timerNumber, output), OUTPUT);
     pin.behavior = behavior;
+    return *this;
+}
+
+TimerPwmConfiguration &TimerPwmConfiguration::setOutputValue(TimerPwmOutput output, uint16_t compareValue)
+{
+    assert(compareValue <= currentTopValue);
+    auto pin = getPin(output);
+    *pin.OCRnx = compareValue;
     return *this;
 }

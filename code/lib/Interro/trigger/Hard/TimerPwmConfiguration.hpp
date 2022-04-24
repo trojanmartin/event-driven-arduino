@@ -22,15 +22,9 @@ enum PwmPinBehavior
 
 enum TimerPwmOutput
 {
-    OutputA,
-    OutputB,
-    OutputC,
-};
-
-enum TimerType
-{
-    Bit8,
-    Bit16
+    A,
+    B,
+    C,
 };
 
 struct PwmPin
@@ -42,10 +36,9 @@ struct PwmPin
     uint8_t pinBitx0;
     uint8_t pinBitx1;
 
-    PwmPin(uint8_t physicalPin, volatile uint16_t *OCRnx, uint8_t pinBitx0, uint8_t pinBitx1) : physicalPin{physicalPin},
-                                                                                                OCRnx{OCRnx},
-                                                                                                pinBitx0{pinBitx0},
-                                                                                                pinBitx1{pinBitx1}
+    PwmPin(volatile uint16_t *OCRnx, uint8_t pinBitx0, uint8_t pinBitx1) : OCRnx{OCRnx},
+                                                                           pinBitx0{pinBitx0},
+                                                                           pinBitx1{pinBitx1}
     {
     }
 };
@@ -54,8 +47,11 @@ class TimerPwmConfiguration
 {
 private:
     PwmMode mode;
-    TimerType timerType;
+    uint8_t timerNumber;
     uint16_t currentTopValue;
+
+    PwmPinBehavior defaultFastPwmBehavior;
+    PwmPinBehavior defaultPhaseCorrectBehavior;
 
     volatile uint8_t *TCCRnA;
     PwmPin pwmPinA;
@@ -66,7 +62,10 @@ private:
 
 public:
     TimerPwmConfiguration &setUpOutput(TimerPwmOutput output, PwmPinBehavior behavior, uint16_t compareValue);
-    TimerPwmConfiguration(volatile uint8_t *TCCRnA,
+    TimerPwmConfiguration &setUpOutput(TimerPwmOutput output, double dutyCycle);
+    TimerPwmConfiguration &setOutputValue(TimerPwmOutput output, uint16_t compareValue);
+    TimerPwmConfiguration(uint8_t timerNumber,
+                          volatile uint8_t *TCCRnA,
                           PwmPin pinA,
                           PwmPin pinB,
                           PwmPin pinC);
