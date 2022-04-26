@@ -28,10 +28,20 @@ PinChangeTrigger &PinChangeTrigger::onOccurrence(uint8_t event)
     return *this;
 }
 
-PinChangeTrigger &PinChangeTrigger::enablePin(uint8_t pin)
+PinChangeTrigger &PinChangeTrigger::enableAnalogPin(uint8_t pin)
 {
-    assert(minPin <= pin && pin <= maxPin);
-    *PCMSKn |= (1 << pin); // enable pin
+    return enablePin(arduinoAnalogPinToPCINT(pin));
+}
+
+PinChangeTrigger &PinChangeTrigger::enableDigitalPin(uint8_t pin)
+{
+    return enablePin(arduinoDigitalPinToPCINT(pin));
+}
+
+PinChangeTrigger &PinChangeTrigger::enablePin(uint8_t pcint)
+{
+    assert(minPin <= pcint && pcint <= maxPin);
+    *PCMSKn |= (1 << pcint); // enable pin
     return *this;
 }
 

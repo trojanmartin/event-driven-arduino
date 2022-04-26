@@ -7,17 +7,28 @@ enum State
     Half,
     ThreQuarter
 };
+enum SecondMachineStates
+{
+    SecondIdle = 4,
+    Active
+};
+
 enum Events
 {
     ButtonClicked,
     TimeElapsed,
 };
+enum SecondMachineEvents
+{
+    PinChanged = 3
+};
 
 ButtonTrigger buttonTrigger;
 Timer1Trigger timer1;
 Timer3Trigger timer3;
-StateMachine machine(Idle);
+PinChangeTrigger0 pinChange0Trigger;
 
+StateMachine machine(Idle);
 static const int8_t idle_state_table[]{
     ButtonClicked, Quarter,
     -1};
@@ -37,19 +48,30 @@ static const int8_t threQuarter_table[]{
     TimeElapsed, Quarter,
     -1};
 
+StateMachine secondMachine(SecondMachineStates::SecondIdle);
+static const int8_t second_idle_state_table[]{
+    PinChanged, Active,
+    -1};
+
+static const int8_t second_active_state_table[]{
+    PinChanged, SecondIdle,
+    -1};
+
 void setLedLuminance(double value)
 {
     auto pwmConfigurator = timer1.getPwmConfigurator();
     pwmConfigurator.setUpOutput(TimerPwmOutput::C, value);
 }
 
-void setup()
+uint8_t pinAa = 52;
+
+void configureBlinkingMachine()
 {
-    Serial.begin(9600);
     machine.configure(Idle)
         .onEvent(idle_state_table)
         .onEntry([](int8_t event)
-                 { setLedLuminance(0); });
+                 { setLedLuminance(0);
+                   digitalWrite(pinAa, !digitalRead(pinAa)); });
 
     machine.configure(Quarter)
         .onEvent(quarter_state_table)
@@ -77,6 +99,31 @@ void setup()
                                .setPwmMode(PwmMode::FastPwm8Bit);
 
     pwmConfigurator.setUpOutput(TimerPwmOutput::C, 0);
+}
+
+void configureSecondMachine()
+{
+    secondMachine.configure(SecondIdle)
+        .onEvent(second_idle_state_table)
+        .onEntry([](int8_t event)
+                 { Serial.println("Second machine idle entry"); });
+
+    secondMachine.configure(Active)
+        .onEvent(second_active_state_table)
+        .onEntry([](int8_t event)
+                 { Serial.println("Second machine Active entry"); });
+
+    pinChange0Trigger.configure()
+        .enableDigitalPin(pinAa)
+        .onOccurrence(PinChanged);
+}
+
+void setup()
+{
+    Serial.begin(9600);
+
+    configureBlinkingMachine();
+    configureSecondMachine();
 }
 
 void loop()
