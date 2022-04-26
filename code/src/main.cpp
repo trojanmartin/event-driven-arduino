@@ -70,8 +70,10 @@ void configureBlinkingMachine()
     machine.configure(Idle)
         .onEvent(idle_state_table)
         .onEntry([](int8_t event)
-                 { setLedLuminance(0);
-                   digitalWrite(pinAa, !digitalRead(pinAa)); });
+                 { setLedLuminance(0); })
+
+        .onExit([](int8_t event)
+                { digitalWrite(pinAa, !digitalRead(pinAa)); });
 
     machine.configure(Quarter)
         .onEvent(quarter_state_table)
