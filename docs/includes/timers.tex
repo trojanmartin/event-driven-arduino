@@ -1,11 +1,12 @@
-\subsection{Časovače a počítadlá}
+\subsection{AVR časovače a počítadlá}
 \noindent
 
 Ako názov napovedá, časovače sú určené na meranie času. Často ich nazývame aj počítadlá
 pretože vo svojom základnom princípe časovače len počítajú počet dokončených periód zdrojových hodín.
 Každý časovač má svoj vlastný register, kde je uložená jeho aktuálna hodnota a taktiež každý potrebuje zdroj hodín. V mikrokontroléroch často existuje niekoľko možných zdrojov
 hodín a ich výber je možné určiť pomocou prepínača. Niektoré mikrokontroléry umožňujú aj použitie
-externých hodín \cite{IntroductionMicrocontrollerTimers}. \par
+externých hodín \cite{IntroductionMicrocontrollerTimers}. Pri rôznych architektúrach sa môže spôsob fungovania časovačov líšiť. V tejto diplomovej práci sa budeme venovať
+mikrokontroléru s architektúrou AVR, preto aj nasledujúci opis fungovania časovačov sa vzťahuje na architektúru AVR.\par
 Fungovanie časovača si najlepšie opíšeme na konkrétnom príklade.
 Uvažujme časovač s 16-bitovým registrom a zdrojom hodín s frekvenciou 1 kilohertz. Po každom uplynutí cyklu v hodinách, časovač
 zvýši hodnotu uloženú v registri o 1. Dĺžku jedného cyklu časovača je možné vyjadriť vzorcom:
@@ -21,7 +22,9 @@ rovná dĺžke periódy vstupných hodín. V našom príklade s hodinami s frekv
                      & =  0.001\:sekundy
     \end{aligned}
 \end{equation}
-Dĺžka periódy je 0.001 sekundy. Z toho vyplýva, že časovač je schopný odmerať dĺžku času, ktorý je násobkom 0.001. Ak necháme časovač napočítať do 100, potrvá to 100 krát 0.001 sekundy, čiže 0.1 sekundy \cite{cameraNewbieGuideAVR2015}. Tu treba poznamenať, že v našom príklade počítame s frekvenciou 1kHz, čo je pomerne nízka frekvencia a dnešné mikrokontroléry sú podstatne rýchlejšie. Ako príklad uvedieme mikrokontrolér Arduino Mega2560, ktorý používa frekvenciu 16MHz čo je rádovo viac ako 1kHz \cite{ArduinoMega2560}.
+Dĺžka periódy je 0.001 sekundy. Z toho vyplýva, že časovač je schopný odmerať dĺžku času, ktorý je násobkom 0.001. Ak necháme časovač napočítať do 100, potrvá to 100 krát 0.001 sekundy, čiže 0.1 sekundy \cite{cameraNewbieGuideAVR2015}.
+Tu treba poznamenať, že v našom príklade počítame s frekvenciou 1kHz, čo je pomerne nízka frekvencia a dnešné mikrokontroléry sú podstatne rýchlejšie.
+Ako príklad uvedieme mikrokontrolér Arduino Mega2560, ktorý používa frekvenciu 16MHz čo je rádovo viac ako 1kHz \cite{ArduinoMega2560}.
 \par Pre reálnejšiu predstavu preto pokračujme v našom príklade s časovačom s frekvenciou 1MHz. Časovač má k dispozícii 16-bitový register. Maximálny počet
 možných hodnôt v registri je teda $2^{16}$ (65536, maximálna hodnota je 65365).
 Po dosiahnutí maximálnej hodnoty register pretečie a časovač začne počítať znova od 0.
@@ -37,12 +40,14 @@ Pri hodinách s frekvenciou 1MHz časovač dosiahne maximálnu hodnotu registra 
 \subsubsection{Preddelička}
 
 Pri použití 16-bitového registra je 66 milisekúnd najdhlší časový interval, ktorý dokážeme odmeriať pokým register nepretečie a časovač nezačne počítať od 0.
-Pre nás ľudí je to veľmi krátky časový úsek. Často chceme dosiahnuť interval, ktorý je dlhší a pre nás badateľný. Príkladom takého intervalu je  napríklad 1 sekunda. Existuje viacero spôsobov ako tento interval dosiahnuť, jedným z nich je použitie preddeličky (v anglickej literatúre sa používa termín prescaler).
+Pre nás ľudí je to veľmi krátky časový úsek. Často chceme dosiahnuť interval, ktorý je dlhší a pre nás badateľný. Príkladom takého intervalu je  napríklad 1 sekunda.
+Existuje viacero spôsobov ako tento interval dosiahnuť, jedným z nich je použitie preddeličky (v anglickej literatúre sa používa termín prescaler).
 \par
-Preddelička je súčasťou obvodu časovača, ktorý nám umožňuje preskočiť periódy zdrojových hodín o mocninu 2, čím sa zníži frekvencia, ale zároveň dostaneme dlhší rozsah časovača.
+Preddelička je súčasťou obvodu časovača, ktorý nám umožňuje preskočiť periódy zdrojových hodín o mocninu 2, čím sa zníži frekvencia,
+ale zároveň dostaneme dlhší rozsah časovača.
 Hodnoty preddeličky bývajú pevne dané a často sú to hodnoty 1, 8, 64, 256 a 1024. Vzorec pre výpočet dĺžky cyklu spolu s preddeličkou je nasledovný:
 
-\begin{equation}
+\begin{equation} \label{eq:cycle-length}
     \begin{aligned}
         Dĺžka\:cyklu & = \frac{1}{\frac{Frekvencia\:hodín}{Preddelička}} \\
                      & = \frac{Preddelička}{Frekvencia\:hodín}           \\
@@ -71,17 +76,19 @@ Pre časovač s frekvenciou 1MHz a hodnotami preddeličky 1, 8, 64, 256 s 1024 m
 Pre dosiahnutie 1 sekundového intervalu potrebujeme poznať aj hodnotu registra
 pri ktorej tento interval uplynie. Tú dosataneme použitím nasledujúceho vzorca:
 
-\begin{equation}
+\begin{equation} \label{eq:register-value}
     \begin{aligned}
         Hodnota\:registra & = \frac{ \frac{1}{Cieľová\:frekvencia}} { \frac{Preddelička}{Frekvencia\:hodín}} - 1 \\
                           & = (\frac{Frekvencia\:hodín}{Preddelička \times Cieľová\:frekvencia}) - 1             \\
     \end{aligned}
 \end{equation}
 
-Časovače AVR TODO!! aktualizujú svoju hodnotu iba pri každom tiknutí vstupných hodín. Je teda potrebný tik aby sa hodnota časovača dostala z maximálnej hodnoty späť na nulu. Preto v znáronenom vzorci
+Časovače AVR aktualizujú svoju hodnotu iba pri každom tiknutí vstupných hodín.
+Je teda potrebný tik aby sa hodnota časovača dostala z maximálnej hodnoty späť na nulu. Preto v znáronenom vzorci
 musíme znížiť počet tikov o jeden. \par
 
-Teraz sa vráťme späť k tomu ako dosiahneme interval 1 sekundy. Potrebujeme zistiť či existuje hodnota preddeličky, ktorá poskytne presné oneskorenie 1 Hz. Jeden Hertz je rovný jednému cyklu za sekundu.
+Teraz sa vráťme späť k tomu ako dosiahneme interval 1 sekundy.
+Potrebujeme zistiť či existuje hodnota preddeličky, ktorá poskytne presné oneskorenie 1 Hz. Jeden Hertz je rovný jednému cyklu za sekundu.
 Výsledky umiestnime do tabuľky č. \ref{table:timerPrescalerValues}:
 
 \begin{table}[!htbp]
@@ -104,7 +111,9 @@ Výsledky umiestnime do tabuľky č. \ref{table:timerPrescalerValues}:
 
 Pri pohľade na tabuľku môžeme hneď usúdiť, že preddeličky s hodnotou 256 a 1024 niesú vhodné pre dosiahnutie nášho cieľa. Hodnota v registri je vždy celé kladné číslo a preto nemôžme tieto hodnoty použiť. Ďalším kritériom pre výber preddeličky je veľkosť
 vypočítanej hodnoty. Náš časovač používa 16-bitový register, ktorého maximálna hodnota je $2^{16} -1$ (65365).
-Ostáva nám teda len jedna možnosť preddeličky: a to 64. Preddeličky s hodnotou 1 a 8 vyžadujú hodnotu registra väčšiu ako je schopný uložiť. Suma sumárum, pre dosiahnutie jedno sekundového intervalu pomocou 16 bitového časovača s frekvenciou 1MHz potrebujeme použiť preddeličku s hodnotou 64. 1 sekundu časovač dosiane po napočítaní do 15624. \par
+Ostáva nám teda len jedna možnosť preddeličky: a to 64. Preddeličky s hodnotou 1 a 8 vyžadujú hodnotu registra väčšiu ako je schopný uložiť.
+Suma sumárum, pre dosiahnutie jedno sekundového intervalu pomocou 16 bitového časovača s frekvenciou 1MHz potrebujeme použiť preddeličku s hodnotou 64.
+1 sekundu časovač dosiane po napočítaní do 15624. \par
 Čo však v prípade ak chceme dosiahnuť dlho trvajúce intervaly? Hodinu, deň, týždeň, mesiac prípadne rok?
 V tomto prípade je možné implementovať preddeličku aj softvérovo. Pre jednoduchšie vysvetlenie si riešenie problému ukážeme na príklade. Uvažujme rovnaké parametre časovača: 1MHz frekvencia, 16 bitový register. Chceme dosiahnuť časový interval jednej hodiny. Pomocou vyššie popísanej techniky vytvoríme interval 1 sekundy.
 Po každom uplynutí intervalu zvýšime hodnotu nášho počítadlá. 1 hodina je 3600 sekúnd. Teda vieme že pokiaľ naše počítadlo dosiahne hodnotu 3600 ubehla 1 hodina.
@@ -125,9 +134,96 @@ WHILE forever
     END IF
 END WHILE
 \end{lstlisting}
-Pri takejto implementácii je potrebné dať si pozor aj na najmenšie odchýlky od základného intervalu, ktorý je nastavený pomocou hardvérovej preddeličky. Aj najmenšia odchýlka môže po sčítaní znamenať veľkú nepresnosť v požadovanom konečnom intervale \cite{cameraNewbieGuideAVR2015}.
+Pri takejto implementácii je potrebné dať si pozor aj na najmenšie odchýlky od základného intervalu, ktorý je nastavený pomocou hardvérovej preddeličky.
+Aj najmenšia odchýlka môže po sčítaní znamenať veľkú nepresnosť v požadovanom konečnom intervale \cite{cameraNewbieGuideAVR2015}.
 
 \subsubsection{Časovače a prerušenia}
+Pomocou AVR časovačov existujú dva spôsoby ako vykonať kód v presne danom čase. Prvým je použitie cyklu.
+Pri tejto metóde dochádza k neustálej kontrole hodnoty registra časovača. Ak register dosiahne požadovanú hodnotu, vieme, že požadovaný interval skončil
+a je možné vykonať inú akciu/akcie. Druhou možnosťou je presunúť zodpovednosť toho, kedy je akciu potrebné vykonať na hardvér AVR mikrokontroléra.
+To je možné dosiahnuť pomocou prerušení časovača. AVR časovače podporujú niekoľko druhov prerušení.
+Najčastejšie ide o Overflow (pretečenie) a Compare and Capture (porovnanie a zachytenie) prerušenia. \par
+Overflow prerušenie nastáva pri pretečení registra časovača. Časovač napočíta do svojej maximálnej hodnoty a v nasledujúcom cykle sa hodnota registra nastaví na 0.
+Pri tomto pretečení časovač nastaví bit vo svojom stavovom registri a na základe toho je informovaná hlavná aplikácia o udalosti, ktorá nastala. Ak je dané prerušenie
+povolené a zároveň sú globálne povolené všetky prerušenia, tak mikrokontrolér prestane vykonávať aktuálnu činnosť a spustní obsluhu prerušenia. Takýmto spôsobom
+ponecháme rozhodnutie o vypršaní časového intervalu na hardvér AVR. Veľkou výhodou je, že zatiaľčo v prvej metóde bol procesor neustále zamestnaný kontrolou
+hodnoty registra, v tomto prípade môže namiesto toho vykonávať inú prospešnú činnosť. \par
+Pre zostavenie rovnice na výpočet časového intervalu pretečenia môžeme použiť vzorec číslo \ref{eq:cycle-length}. Ten hovorí o dĺžke jedného cyklu. Ak teda dĺžku cyklu
+vynásobíme počtom možných hodnôt, dostaneme časový interval potrebný na pretečenie registra:
+
+\begin{equation} \label{eq:overflow-frequency}
+    \begin{aligned}
+        Časový\:interval\:pretečenia =  2^{Veľkosť\:registra}  \times \frac{Preddelička}{Frekvencia\:hodín}
+    \end{aligned}
+\end{equation}
+
+V nasledujúcej tabuľke vidíme porovnanie frekvencií a časových intervalov pretečenia registra časovača. Pre zostrojenie tabuľky sme uvažovali 16 bitový časovač
+s frekvenciou 1MHz.  Vidíme, že čím väčšia hodnota preddeličky, tým menšia frekvencia
+pretečenia registra. Z takmer ľuďmi nebadateľnej hodnoty sme sa dostali až k intervalu viac ako 1 minúty.
+
+\begin{table}[!htbp]
+    \begin{center}
+        \begin{tabular}{|c|c|c|}
+            \hline
+            Hodnota preddeličky & Frekvencia & Časový interval \\
+            \hline
+            1                   & 15,259 Hz  & 65,5 ms         \\
+            8                   & 1,907 Hz   & 0,524 s         \\
+            64                  & 0,2384 Hz  & 4,195 s         \\
+            256                 & 0,0596 Hz  & 16,78 s         \\
+            1024                & 0,0149 Hz  & 67,11 s         \\
+            \hline
+        \end{tabular}
+        \caption{Frekvencie pretečenia registra pri rôznom nastavení preddeličky}
+        \label{table:overflow-frequency}
+    \end{center}
+\end{table}
+
+Použitie overflow prerušenia si ukážeme na už spomínanom príklade dosiahnutia 1 sekundového intervalu. V predchádzajúcim kapitolách sme si ukázali,
+že pri použítí 16-bitového časovača s frekvenciou 1MHz je možné dosiahnuť 1 sekundový interval po napočítaní do 15625 spolu použítím preddeličky s hodnotou 64.
+Zároveň vieme, že maximálna hodnota registra je 65535 a pri následnom pretečení nastane prerušenie. Vieme teda že ak časovač dosiahne maximálnu hodnotu registra každú
+sekundu, aj prerušenie bude vykonané pravidelne v tomto intervale. Z toho vyplýva, že časovač nesmie začať počítať od 0 ale od inej, presne danej hodnoty.
+Pre matematické vyjadrenie počiatočnej hodnoty registra použijeme vzorec číslo \ref{eq:register-value}. Pri vzorci sme uvažovali počiatočnú hodnotu 0. Tentokrát chceme
+dosiahnuť to, aby po uplynutí intervalu časovač dosiahol svoju maximálnu hodnotu. Vzorec pre tento výpočet bude teda nasledovný:
+
+\begin{equation} \label{eq:start-value}
+    \begin{aligned}
+        Počiatočná\:hodnota =  (2^{Veľkosť\:registra} - 1) - (\frac{Frekvencia\:hodín}{Preddelička \times Cieľová\:frekvencia})
+    \end{aligned}
+\end{equation}
+
+Čo v našom konkrétnom prípade predstavuje:
+
+\begin{equation}
+    \begin{aligned}
+        Počiatočná\:hodnota & =  (2^{Veľkosť\:registra} - 1) - 15625 \\
+                            & =  (2^{16} - 1) - 15625                \\
+                            & =  65535 - 15625                       \\
+                            & =  49910
+    \end{aligned}
+\end{equation}
+
+Hodnotu 49910 zapíšeme do kontrolného registra časovača na začiatku programu a následne pri
+každej obsluhe overflow prerušenia. Pseudokód 1 sekundového intervalu s použitím overflow prerušenia vyzerá nasledovne:
+
+\begin{lstlisting}[
+    label={lst:oveflow-interrupt},
+    language=c
+  ]  
+Enable timer overflow interrupt
+Enable global interrupts
+Set timer prescaler to 64
+Set register value to 49910
+
+WHILE forever
+END WHILE
+
+ISR Timer Overflow
+    Set timer register value to 49910
+    // Do some work
+END ISR
+
+\end{lstlisting}
 
 \subsubsection{CTC mód}
 
