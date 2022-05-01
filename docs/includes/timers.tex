@@ -11,7 +11,12 @@ Fungovanie časovača si najlepšie opíšeme na konkrétnom príklade.
 Uvažujme časovač s 16-bitovým registrom a zdrojom hodín s frekvenciou 1 kilohertz. Po každom uplynutí cyklu v hodinách, časovač
 zvýši hodnotu uloženú v registri o 1. Dĺžku jedného cyklu časovača je možné vyjadriť vzorcom:
 
-\[Dĺžka\:cyklu =\frac{1}{Frekvencia\:hodín}\]
+\begin{equation}
+    \begin{aligned}
+        Dĺžka\:cyklu = \frac{1}{Frekvencia\:hodín}
+    \end{aligned}
+\end{equation}
+
 To znamená že najkratší časový úsek, ktorý je možné pomocou časovača odmeriať sa
 rovná dĺžke periódy vstupných hodín. V našom príklade s hodinami s frekvenciou 1 kilohertz je dĺžka periódy nasledovná:
 \begin{equation}
@@ -88,8 +93,8 @@ Je teda potrebný tik aby sa hodnota časovača dostala z maximálnej hodnoty sp
 musíme znížiť počet tikov o jeden. \par
 
 Teraz sa vráťme späť k tomu ako dosiahneme interval 1 sekundy.
-Potrebujeme zistiť či existuje hodnota preddeličky, ktorá poskytne presné oneskorenie 1 Hz. Jeden Hertz je rovný jednému cyklu za sekundu.
-Výsledky umiestnime do tabuľky č. \ref{table:timerPrescalerValues}:
+Potrebujeme zistiť či existuje hodnota preddeličky, ktorá poskytne presné oneskorenie 1 Hz. Jeden Hertz je rovný jednému cyklu za sekundu. Na výpočet použijeme vzorec
+číslo \ref{eq:register-value} a výsledky umiestnime do tabuľky č. \ref{table:timerPrescalerValues}:
 
 \begin{table}[!htbp]
     \begin{center}
@@ -137,7 +142,7 @@ END WHILE
 Pri takejto implementácii je potrebné dať si pozor aj na najmenšie odchýlky od základného intervalu, ktorý je nastavený pomocou hardvérovej preddeličky.
 Aj najmenšia odchýlka môže po sčítaní znamenať veľkú nepresnosť v požadovanom konečnom intervale \cite{cameraNewbieGuideAVR2015}.
 
-\subsubsection{Časovače a prerušenia}
+\subsubsection{Časovače a prerušenia} \label{subsec:timers-interrupts}
 Pomocou AVR časovačov existujú dva spôsoby ako vykonať kód v presne danom čase. Prvým je použitie cyklu.
 Pri tejto metóde dochádza k neustálej kontrole hodnoty registra časovača. Ak register dosiahne požadovanú hodnotu, vieme, že požadovaný interval skončil
 a je možné vykonať inú akciu/akcie. Druhou možnosťou je presunúť zodpovednosť toho, kedy je akciu potrebné vykonať na hardvér AVR mikrokontroléra.
@@ -146,8 +151,9 @@ Najčastejšie ide o Overflow (pretečenie) a Compare and Capture (porovnanie a 
 Overflow prerušenie nastáva pri pretečení registra časovača. Časovač napočíta do svojej maximálnej hodnoty a v nasledujúcom cykle sa hodnota registra nastaví na 0.
 Pri tomto pretečení časovač nastaví bit vo svojom stavovom registri a na základe toho je informovaná hlavná aplikácia o udalosti, ktorá nastala. Ak je dané prerušenie
 povolené a zároveň sú globálne povolené všetky prerušenia, tak mikrokontrolér prestane vykonávať aktuálnu činnosť a spustní obsluhu prerušenia. Takýmto spôsobom
-ponecháme rozhodnutie o vypršaní časového intervalu na hardvér AVR. Veľkou výhodou je, že zatiaľčo v prvej metóde bol procesor neustále zamestnaný kontrolou
-hodnoty registra, v tomto prípade môže namiesto toho vykonávať inú prospešnú činnosť. \par
+ponecháme rozhodnutie o vypršaní časového intervalu na hardvér AVR. Ak nechceme používať prerušenia, možnosťou je aj neustála softvérová kontrola bitu časovača v kontrolnom registri.
+Práve na základe tohto bitu hardvér AVR vyvolá obsluhu prerušenia. Nevýhodou je že zatiaľčo v tejto metóde je procesor neustále zamestnaný kontrolou
+hodnoty registra, v prípade prerušenia môže namiesto toho vykonávať inú prospešnú činnosť. \par
 Pre zostavenie rovnice na výpočet časového intervalu pretečenia môžeme použiť vzorec číslo \ref{eq:cycle-length}. Ten hovorí o dĺžke jedného cyklu. Ak teda dĺžku cyklu
 vynásobíme počtom možných hodnôt, dostaneme časový interval potrebný na pretečenie registra:
 
@@ -180,7 +186,7 @@ pretečenia registra. Z takmer ľuďmi nebadateľnej hodnoty sme sa dostali až 
 \end{table}
 
 Použitie overflow prerušenia si ukážeme na už spomínanom príklade dosiahnutia 1 sekundového intervalu. V predchádzajúcim kapitolách sme si ukázali,
-že pri použítí 16-bitového časovača s frekvenciou 1MHz je možné dosiahnuť 1 sekundový interval po napočítaní do 15625 spolu použítím preddeličky s hodnotou 64.
+že pri použítí 16-bitového časovača s frekvenciou 1MHz je možné dosiahnuť 1 sekundový interval po napočítaní do 15625 spolu s použítím preddeličky s hodnotou 64.
 Zároveň vieme, že maximálna hodnota registra je 65535 a pri následnom pretečení nastane prerušenie. Vieme teda že ak časovač dosiahne maximálnu hodnotu registra každú
 sekundu, aj prerušenie bude vykonané pravidelne v tomto intervale. Z toho vyplýva, že časovač nesmie začať počítať od 0 ale od inej, presne danej hodnoty.
 Pre matematické vyjadrenie počiatočnej hodnoty registra použijeme vzorec číslo \ref{eq:register-value}. Pri vzorci sme uvažovali počiatočnú hodnotu 0. Tentokrát chceme
@@ -208,12 +214,11 @@ každej obsluhe overflow prerušenia. Pseudokód 1 sekundového intervalu s pou�
 
 \begin{lstlisting}[
     label={lst:oveflow-interrupt},
-    language=c
-  ]  
+    language=c]  
 Enable timer overflow interrupt
 Enable global interrupts
 Set timer prescaler to 64
-Set register value to 49910
+Set timer register value to 49910
 
 WHILE forever
 END WHILE
@@ -225,6 +230,90 @@ END ISR
 
 \end{lstlisting}
 
-\subsubsection{CTC mód}
+Spomínané Compare and Capture prerušenie sa vzťahuje hlavne k CTC módu časovača, preto si ho predstavíme až v kapitole číslo \ref{subsec:ctc-mode}.
+
+\subsubsection{CTC mód} \label{subsec:ctc-mode}
+Doteraz opísovaný spôsob fungovania AVR časovača sa vzťahuje na takzvaný normálny  mód. V tomto móde časovač ráta od 0 po maximálnu hodnotu.
+Je to základný a najjednoduchší spôsob fungovania AVR časovačov. Preto sme si na ňom predstavili spôsob akým tieto časovače fungujú a akým spôsobom sa dajú prakticky
+používať. Komplikovanejším módom je takzvaný "Clear timer on Compare" (vynulovanie časovača pri porovnaní) mód, označovaný ako CTC mód. \par
+CTC mód na hardvérovej úrovni porovnáva aktuálnu hodnotu časovača s požadovanou hodnotou. Ide o hardvérové porovnanie, ktoré je značne rýchlejšie ako porovnanie
+softvérové. Ak časovač požadovanú hodnotu dosiahne, CTC mód nastaví bit v stavovom registri
+a zároveň vynuluje hodnotu časovača. Týmto nám významným spôsobom uľahčuje prácu s časovačom. Nemusíme sa totiž starať o vynulovanie hodnoty časovača ako sme si ukázali
+v kapitole číslo \ref{subsec:timers-interrupts}. Zároveň nám ostáva možnosť použitia prerušenia na vykonanie akcie. Ak povolíme CTC prerušenia, tak po zapísaní bitu
+do stavového registra AVR vykoná obsluhu prerušenia Compare and Capture. Aktuálna hodnota časovača je porovnávaná s hodnotou alebo hodnotami v takzvaných Output Compare registrami.
+16 bitové časovače majú tieto registre tri. Označované sú ako Output Compare Register A, Output Compare Register B a Output Compare Register C. My ich ďalej budeme nazývať
+porovnávací register A, B, C. V 8 bitových časovačoch nájdeme len prvé dva. Vďaka viacerým porovnávacím registrom, dokážeme jeden časovač využiť na generovanie viacerých
+časových intervalov. \par
+Po každom tiku časovača je aktuálna hodnota  porovnaná s hodnotami v porovnávacích registroch. Každý porovnávací register funguje
+samostatne a podporuje nezávislé generovanie prerušení. Je dôležité poznamenať, že hodnota časovača je vynulovaná len v prípade zhody s porovnávacím registra A.
+To je obzvlášť dôležité ak chceme používať jeden časovač na generovanie viacerých intervalov. Ak by sme do porovnávacieho registra B zapísali hodnotu väčšiu ako
+do porovnávacieho registra A, časovač nikdy nedosiahne hodnotu v registri B. Rovnako to platí aj pre register C. Z uvedeného taktiež vyplýva, že maximálna hodnota
+časovača už nieje kapacita jeho registra, ale hodnota, ktorá je zapísaná v porovnávacom registri A. \par
+Ako príklad znovu využijeme 1 sekundový interval, označíme ho ako interval 1.
+Pridáme k nemu ešte interval 200 milisekúnd, ktorý chceme aby odštartoval v rovnaký moment ako 1 sekundového interval. Pomenujeme ho ako interval 2. Pre jednoduchšiu
+predstavu je na obrázku číslo \ref{figure:interval-timeline} zobrazená časová os spolu s označenými intervalmi.
+
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=0.85\textwidth]{img/interval-timeline.drawio.png}
+    \caption{Časová os požadovaných intervalov}
+    \label{figure:interval-timeline}
+\end{figure}
+
+Jeden časovač chceme použiť na dva rôzne intervaly. Preto v CTC móde potrebujeme 2 porovnávacie registre. Použijeme register A a porovnávací register B. Znovu uvažujeme
+16 bitový časovač s frekvenciou 1MHz. V predchádzajúcich kapitolách sme vypočítali, že pri použití preddeličky s hodnoutou 64, časovač dosiahne 1 sekundový interval
+po napočítaní do 15624. Potrebujeme ešte vypočítať porovnávaciu hodnotu pre interval 200 milisekúnd. Použijeme na to vzorec číslo \ref{eq:register-value}.
+
+\begin{equation}
+    \begin{aligned}
+        Hodnota\:registra & = (\frac{Frekvencia\:hodín}{Preddelička \times Cieľová\:frekvencia}) - 1 \\
+                          & = (\frac{1 \times 10^{6}}{64 \times 5}) - 1                              \\
+                          & = (\frac{1 \times 10^{6}}{320}) - 1                                      \\
+                          & = 3125 - 1                                                               \\
+                          & = 3124                                                                   \\
+    \end{aligned}
+\end{equation}
+
+Vypočítali sme obidve potrebné porovnávacie hodnoty. Porovnávacia hodnota intervalu 1 je väčšia ako hodnota pre interval 2. Väčšiu hodnotu teda zapíšeme do registra A a
+menšiu do registra B. Časovač zabezpečí neustále porovnávanie týchto hodnôt s aktuálnou hodnotou časovača. Ak zároveň povolíme Compare and Capture prerušenia pre register
+A a aj register B, mikrokontrolér vygeneruje prerušenia pri zhode hodnôt. Vďaka tomu dokážeme spúšťať kód v presných časových intervaloch. Zmena hodnoty časovača spolu
+s generovaním prerušení je zobrazené na obrázku číslo \ref{figure:ctc-timer-value}.
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=0.85\textwidth]{img/ctc-timer-value.png}
+    \caption{Zmena hodnoty časovača v CTC móde}
+    \label{figure:ctc-timer-value}
+\end{figure}
+
+Pseudokód daného riešenia vyzerá nasledovne:
+
+\begin{lstlisting}[
+    label={lst:ctc-interrupt},
+    language=c]  
+
+Enable timer Compare nad Capture A interrupt
+Enable timer Compare nad Capture B interrupt
+Enable global interrupts
+
+Set Output Compare Register A value to 15624
+Set Output Compare Register B value to 3124
+
+Set timer mode to CTC
+Set timer prescaler to 64
+
+WHILE forever
+END WHILE
+
+ISR Compare nad Capture A
+    // Do some work at 1 second interval
+END ISR
+
+ISR Compare nad Capture B
+    // Do some work at 200 milliseconds interval 
+END ISR
+
+
+\end{lstlisting}
 
 \subsubsection{PWM mód}
