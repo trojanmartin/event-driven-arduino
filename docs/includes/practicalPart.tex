@@ -1,7 +1,25 @@
 \section{Praktická časť}
 \noindent
 
-Praktická časť tejto diplomovej práce sa zaoberá spojením opisovaných častí do jednej softvérovej knižnice pre platformu Arduino Mega 2560. Tá využíva AVR
+Praktická časť tejto diplomovej práce sa zaoberá spojením opisovaných častí do jednej softvérovej knižnice pre platformu Arduino Mega 2560. Arduino využíva AVR
 architektúru mikrokontrolérov, preto sme značnú časť práce venovali práve štúdiu fungovania týchto mikrokontrolérov.
-Jednou z jej hlavných úloch vytvorenej knižnice je zjednodušenie použitia prerušení s dôrazom na prerušenia časovačov. Druhou úlohou je modelovanie programu mikrokontroléra pomocou konečných stavových automatov. Skombinovaním týchto dvoch fenoménov
-nám knižnica má umožniť
+Jednou z hlavných úloch vytvorenej knižnice je zjednodušenie použitia prerušení s dôrazom na prerušenia časovačov.
+Druhou úlohou je modelovanie programu mikrokontroléra pomocou konečných stavových automatov. Spojením týchto dvoch fenoménov sme sa pokúsili zjednodušiť
+a zrýchliť vývoj aplikácii aktívne využívajúcich prerušenia mikrokontroléra. Zároveň, knižnica by mala umožniť využitie týchto prerušení aj menej zdatným
+používateľom, keďže jej využitie by nemalo vyžadovať hĺbkové znalosti fungovania prerušení na mikrokontroléri Arduino Mega 2560. Knižnicu sme nazvali Interro
+a tento názov budeme používať aj neskôr v tejto práci pri opise fungovania a architektúry vytvorenej knižnice. Knižnica je zapísaná v jazyku C++.
+
+\subsection{Architekúra riešenia}
+Vďaka výberu jazyka C++ sme pri vývoji sme aktívne využívali princípy objektového orientované programovania. Architekúra Interra pozostáva z mnoho vytvorených tried.
+Tie je možné rozdeliť na tri hlavné skupiny: Spúšťače, triedy stavového stroja a triedu Interro, ktorá slúži ako globálny kontajner a koordinuje činnosť celej knižnice.
+Postupne sa pozrieme na každú túto skupinu a jej úlohy detailnejšie.
+
+\subsection{Implementovaná triggre}
+
+\subsubsection{Timer trigger}
+
+\subsubsection{External trigger}
+
+\subsubsection{Pin change trigger}
+
+\subsubsection{Soft triggers}
