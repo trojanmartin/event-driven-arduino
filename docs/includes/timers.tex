@@ -1,3 +1,6 @@
+\setcounter{tocdepth}{4}
+\setcounter{secnumdepth}{4}
+
 \subsection{AVR časovače a počítadlá}
 \noindent
 
@@ -124,7 +127,6 @@ V tomto prípade je možné implementovať preddeličku aj softvérovo. Pre jedn
 Po každom uplynutí intervalu zvýšime hodnotu nášho počítadlá. 1 hodina je 3600 sekúnd. Teda vieme že pokiaľ naše počítadlo dosiahne hodnotu 3600 ubehla 1 hodina.
 Pseudokód danej implementácie by mohol vyzerať nasledovne:
 \begin{lstlisting}[
-    label={lst:main-c},
     language=c
   ]  
 Initialise counter to 0
@@ -313,7 +315,92 @@ ISR Compare nad Capture B
     // Do some work at 200 milliseconds interval 
 END ISR
 
-
 \end{lstlisting}
 
+Za zmienky taktiež stojí, že pri použiťí CTC módu nieje možné nastaviť časovač tak aby generoval akéhokoľvek dva, respektíve tri intervaly. Pre časovač je možné nastaviť
+len jednu preddeličku. Z toho vyplýva, že aj všetky intervaly musia byť kompatibilné s danou preddeličkou. Ak náš predchádzajúcu príklad trochu upravíme
+a 200 milisekundový interval nahradíme 250 milisekundovým dostaneme spomínané nekompatibilné hodnoty. Pomocou vzorca \ref{eq:register-value} sa pokúsime vypočítať
+porovnávaciu hodnotu:
+\begin{equation}
+    \begin{aligned}
+        Hodnota\:registra & = (\frac{Frekvencia\:hodín}{Preddelička \times Cieľová\:frekvencia}) - 1 \\
+                          & = (\frac{1 \times 10^{6}}{64 \times 4}) - 1                              \\
+                          & = (\frac{1 \times 10^{6}}{256}) - 1                                      \\
+                          & = 3906,25 - 1                                                            \\
+                          & = 3905,25                                                                \\
+    \end{aligned}
+\end{equation}
+
+Vidíme, že sme výsledkom nieje celé číslo. Teoretickým riešením by mohlo byť zaokrúhlenie danej hodnoty na celé číslo. Tým by sme však do celého procesu vniesli nepresnosť,
+ktorá je vo väčšine prípadov neakceptovateľná.
+
 \subsubsection{PWM mód}
+\paragraph{PWM signál} \mbox{}\\
+Pulse Width Modulation (impulzová šírková modulácia) alebo aj PWM je technika pomocou ktorej je možné ovládať analógové zariadenia pomocou digitálneho signálu.
+Jednoduchým príkladom je stiemavanie led žiarovky alebo ovládanie rýchlosti motora. PWM signál nieje reálnym analógovým signálom, len ho určitým spôsobom dokáže napodobniť.
+Pomocou digitálneho ovládania dokážeme rýchlo napájanie vypínať alebo zapínať a riadiť tak prúd dodávaný zoriadenia. Ak necháme prúd zapnutý dlhší čas, ako čas v ktorom
+je vypnutý, tak zvýšime priemernú úroveň výkonu. V opačnom prípade priemernú úroveň výkonu znížime. Trvanie „času zapnutia“ sa nazýva šírka impulzu.
+Ak chceme získať rôzne analógové hodnoty, zmeníme šírku impulzu. Na vyjadrenie dĺžky času zapnutia sa používa termín Duty cycle (pracovný cyklus). Udáva sa v percentách
+a hovorí o dĺžke „času zapnutia"  počas jedného intervalu \cite{WhatPWMSignal}.
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=0.85\textwidth]{img/duty-cycle.jpg}
+    \caption{Ukážka rôznych pracovný cyklov v PWM signále}
+    \source{\cite{WhatPWMSignal}}
+    \label{figure:pwm-signal}
+\end{figure}
+
+Ako sme si ukázali, pre generovanie PWM signálu potrebujeme neustále v určitých časových intervalov „vypínať“ a „zapínať“ prúd. Na to môžu výborne poslúžiť časovače.
+Tie dokážu na presne dané piny mikrokontroléra zapisovať logickú jednotku, respektíve nulu čoho výsledkom môže byť PWM signál. To je možné docieliť
+pomocou špeciálnych PWM módov, ktoré si predstavíme v ďalších podkapitolách.
+
+\paragraph{Fast PWM mód} \mbox{}\\
+V tomto móde sa časovač jednoducho počíta od 0 po maximálnu kapacitu registra. Pri počítaní porovnáva svoju hodnotu, s hodnotami v porovnávacích registroch.
+Používajú sa rovnaké porovnávacie registre ako v už spomínanom CTC móde. Tieto registre sú naviac namapované na externé piny mikrokontroléra.
+Ná výstupné piny je zapísaná logická jednotka, keď je časovač na 0, a logická nula, keď sa časovač zhoduje s výstupným porovnávacím registrom. Čím vyššia je hodnota
+v porovnávacom registri, tým je na pine nastavšený vysší „duty cycle“ \cite{shirriffSecretsArduinoPWM}. \par
+Existujú aj rôzne variácie Fast PWM módu, kedy je možné nastaviť maximálnu hodnotu časovača a tým meniť frekvenciu. \par
+Na obrázku číslo \ref{figure:fast-pwm-mode} môžeme vidieť zmenu hodnoty v 8 bitovom AVR časovači spolu s PWM signálom, ktorý je schopný vygenerovať.
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=0.85\textwidth]{img/fast-pwm-graph.png}
+    \caption{Fast PWM mód použitý v 8 bitovom časovači}
+    \source{\cite{shirriffSecretsArduinoPWM}}
+    \label{figure:fast-pwm-mode}
+\end{figure}
+
+Porovnávací register A je vyznačený zelenou farbou, zatiaľ register B je označený farbou červenou. Obrázok číslo \ref{figure:fast-pwm-mode} znázorňuje následné hodnoty:
+\begin{itemize}
+    \item Porovnávací register A
+          \subitem{Hodnota porovnávacieho registra A: 180}
+          \subitem{Duty cycle pinu porovnávací registra A: (180 + 1)/256 = 70,7\%}
+    \item Porovnávací register B
+          \subitem{Hodnota porovnávacieho registra B: 50}
+          \subitem{Duty cycle pinu porovnávací registra B: (50 + 1)/256 = 19,9\%}
+\end{itemize}
+
+Pri výpočte  duty cycle si možeme všimnúť, že k hodnote v registri sme propočítali 1. Je to kvôli tomu, že AVR časovaču trvá jednu periódu navyše pokiaľ hodnotu
+na danom pine zmení \cite{shirriffSecretsArduinoPWM}.
+\paragraph{Phase-Correct PWM mód} \mbox{}\\
+Ďalším módom je takzvaný Phase-Correct PWM mód. V tomto móde časovač počíta od 0 po maximálnu hodnotu registra a následne sa hodnota nevunuluje
+ale časovač znovu počíta od najvačšej honoty po 0. Ná výstupné piny je zapísaná logická jednotka, keď je časovač na 0. Pri počítaní smerom nahor sa pri dosiahnutí porovnávacieho registra výstupný pin vypne
+a následne pri počítaní smerom nadol zapne. Výsledkom je symetrický výstup. Na obrázku  číslo \ref{figure:phase-correct-pwm-mode} si môžeme všímnúť,
+že dôsledkom počítania aj smerom nadol je polovičná frekvencia oproti režimu Fast PWM.
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=0.85\textwidth]{img/phase-correct.png}
+    \caption{Phase-Correct PWM mód použitý v 8 bitovom časovači}
+    \source{\cite{shirriffSecretsArduinoPWM}}
+    \label{figure:phase-correct-pwm-mode}
+\end{figure}
+
+Porovnávací register A je vyznačený zelenou farbou, zatiaľ register B je označený farbou červenou. Obrázok číslo \ref{figure:phase-correct-pwm-mode} znázorňuje následné hodnoty:
+\begin{itemize}
+    \item Porovnávací register A
+          \subitem{Hodnota porovnávacieho registra A: 180}
+          \subitem{Duty cycle pinu porovnávací registra A: (180 + 1)/256 = 70,7\%}
+    \item Porovnávací register B
+          \subitem{Hodnota porovnávacieho registra B: 50}
+          \subitem{Duty cycle pinu porovnávací registra B: (50 + 1)/256 = 19,9\%}
+\end{itemize}
