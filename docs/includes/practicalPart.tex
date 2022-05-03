@@ -9,7 +9,7 @@ a zrýchliť vývoj aplikácii aktívne využívajúcich prerušenia mikrokontro
 používateľom, keďže jej využitie by nemalo vyžadovať hĺbkové znalosti fungovania prerušení na mikrokontroléri Arduino Mega 2560. Knižnicu sme nazvali Interro
 a tento názov budeme používať aj neskôr v tejto práci pri opise fungovania a architektúry vytvorenej knižnice. Knižnica je zapísaná v jazyku C++.
 
-\subsection{Architekúra riešenia}
+\subsection{Predstavenie riešenia}
 \noindent
 Vďaka výberu jazyka C++ sme pri vývoji sme aktívne využívali princípy objektového orientované programovania. Architekúra Interra pozostáva z mnoho vytvorených tried.
 Tie je možné rozdeliť na tri hlavné skupiny: Spúšťače, triedy stavového stroja a triedu Interro, ktorá slúži ako globálny kontajner a koordinuje činnosť celej knižnice.
@@ -100,7 +100,7 @@ static const int8_t ledOnStateTable[]{
 Definícia je jednorozmerné pole, ktoré sa skladá z dvojíc udalostí a stavov. Táto dvojica reprezentuje prechod medzi stavmi. V prechodovej funkcii na obrázku číslo
 \ref{figure:blinking-led-state-machine} vidíme, že zo stavu \textit{LedOn} sa vieme dostať do stavu \textit{Idle} ale aj do stavu \textit{LedOff}.
 To aký bude ďalší stav definuje udalosť (vstupná abeceda), ktorá nastala. To vidíme aj v prechodovej tabuľke: Udalosť \textit{ButtonClicked} hovorí o prechode do stavu
-\textit{Idle} a udalosť \textit{TimeElapsed} definuje prechod do stavu \textit{LedOff}. Pre čitateľnosť kódu je dôležité zvoliť správne formátovanie poľa.
+\textit{Idle} a udalosť \textit{TimeElapsed} definuje prechod do stavu \textit{LedOff}. Pre čitateľnosť kódu je dôležité zvoliť správne formátovanie zápisu poľa.
 Prechodová tabuľka stavu musí byť vždy ukončená číslom -1. Na základe toho implementácia Interro knižnice zistí veľkosť poľa a je schopná s ním vykonávať operácie.
 Rovnakým spôsobom nadefinujeme prechodové tabuľky pre každý stav automatu \textit{P}:
 
@@ -178,10 +178,12 @@ timerTrigger.configure(TimerMode::CTC)
 \end{lstlisting}
 
 Daným kódom konfigurujeme spúšťač, v našom konkrétnom prípade časovač 1, aby používal CTC mód, a po uplynutí každých 1000 milisekúnd oboznámil stavové automaty
-o udalosti \textit{TimeElapsed}. \par
+o udalosti \textit{TimeElapsed}. Týmto spôsobom zabezpečíme generovanie udalosti \textit{TimeElapsed} každú sekundu. Ná základe tejto udalosti bude stavový automat
+prechádzať zo stavu \textit{LedOn} do stavu \textit{LedOff}, respektíve, to isté bude platiť aj opačným smerom. Dôsledkom týchto zmien stavu bude volanie funkcií
+\textit{TurnOnLed} respektíve \textit{TurnOffLed}, ktoré zabezpečia blikanie led žiarovky v 1 sekundovom intervale.  \par
 
 Druhým typom spúšťačov sú takzvané softvérove spúšťače. Pri hardvérových spúšťačoch je prvotným impulzom na vygenerovanie udalosti mikrokontrolér. Ten pomocou prerušenia
-o tom oboznámi hardvérový spúšťač. Ak žiadne prerušenie nenastalo, spúšťač nevykonáva žiadnu akciu. Pri softvérových spúšťačoch to funguje inak. Interro knižnica
+oboznámi hardvérový spúšťač o novej udalosti. Ak žiadne prerušenie nenastalo, spúšťač nevykonáva žiadnu akciu. Pri softvérových spúšťačoch to funguje inak. Interro knižnica
 má zoznam všetkých softvérových spúšťačov a neustále sa na ne dopytuje či niektorá z udalosí nenastala. Ak spúštač odpovie definovanou udalosťou,
 tak tá je rovnakým spôsobom preposlaná do všetkých zaregistrovaných stavových automatov. \par
 V našom príklade využijeme ako softvérový spúšťač nazvaný ako \textit{ButtonTrigger}. Ako aj v predošlých prípadoch, prvým krokom je definovanie globálnej premennej
@@ -198,7 +200,8 @@ buttonTrigger.configure(5)
 \end{lstlisting}
 
 Spúšťač \textit{buttonTrigger} sme nakonfigurovali tak aby sledoval Arduino pin číslo 5 a v prípade stlačenia tlačidla pripojeného na tento pin, vygeneroval udalosť
-\textit{ButtonClicked}. \par
+\textit{ButtonClicked}. Po jej vygenerovaní automat prejde do  \textit{Idle} a blikanie led žiarovky sa zastaví. Po opakovanom stlačení tlačidla automat prejde do
+stavu \textit{LedOn} a blikanie led žiarovky sa znovu spustí. \par
 Pre správnu funkčnosť celej knižnice je nakoniec nutné v Arduino funkcii \textit{loop} volať metódu \textit{run}, definovanú v globálnom kontajneri Interro knižnice.
 \begin{lstlisting}[language=c++]  
 void loop()
@@ -207,11 +210,6 @@ void loop()
 }
 \end{lstlisting}
 
-\subsection{Implementovaná triggre}
-\subsubsection{Timer trigger}
+Týmto posledným krokom sme dokončili funkčnosť celej názornej ukážky programu. Celý program je možné nájsť v prílohe číslo //TODO.
 
-\subsubsection{External trigger}
-
-\subsubsection{Pin change trigger}
-
-\subsubsection{Soft triggers}
+\subsection{Architekúra knižnice Interro}
