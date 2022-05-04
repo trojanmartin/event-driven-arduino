@@ -203,7 +203,7 @@ void loop()
 
 Týmto krokom sme dokončili funkčnosť názornej ukážky programu. Celý program je možné nájsť v prílohe číslo //TODO.
 
-\subsection{Architekúra knižnice Interro}
+\subsection{Architekúra knižnice Interro} \label{subsection:architecture-interro}
 Vďaka výberu jazyka C++ sme pri vývoji sme aktívne využívali princípy objektového orientované programovania. Architekúra Interra pozostáva z mnoho vytvorených tried.
 Tie je možné rozdeliť na tri hlavné skupiny: Spúšťače, triedy stavového stroja a triedu Interro.
 Postupne sa pozrieme na každú túto skupinu a jej úlohy detailnejšie. \par
@@ -220,8 +220,14 @@ metód. \par
 Spúšťače sú najzložitejšou a najrozsiahlejšou súčasťou knižnice Interro.
 Delíme ich na dva druhy: hardvérové a softvérové spúšťače. \par
 Hardvérový spúšťač používa na informovanie o udalosti prerušenia mikrokontroléra. Je napojený priamo na ISR prerušenia a obsahuje logiku pre konfiguráciu prerušení,
-ktoré podporuje. Knižnica Interro momentálne obsahuje spúšťače využívajúce prerušenia časovačov 1,3,4,5, externých prerušení 0 až 7 a taktiež  prerušenia hovoriace o zmene
-pinov, takzvané \textit{PinChangeInterrupt} 0 až 3. Každý z týchto spúšťačov má samostatnú triedu a fungujú nezávisle od seba. Preto je možné, respektíve nutné, každý z nich
+ktoré podporuje. Knižnica Interro momentálne obsahuje spúšťače pre tieto prerušenia:
+\begin{itemize}
+    \item Prerušenia časovačov 1, 3, 4 a 5.
+    \item Externých prerušení 0 až 7.
+    \item Prerušenia hovoriace o zmene hodnoty pinov, takzvané \textit{PinChangeInterrupt} 0 až 3.
+\end{itemize}
+
+Každý z týchto spúšťačov má samostatnú triedu a fungujú nezávisle od seba. Preto je možné, respektíve nutné, každý z nich
 nakonfigurovať samostatne. Jediným obmedzením je hardvérová implementácia mikrokontroléra. V niektorých prípadoch sú rôzne prerušenia napojené na rovnaký pin procesora,
 preto je nutné pre správnu funkčnosť takýmto zhodám predchádzať. \par
 
@@ -256,4 +262,100 @@ ISR(TIMER1_OVF_vect)
 Vidíme, že podmienkou kompilácie danej ISR je expanzia makra \textit{TIMER1\_OVF\_INTERRUPT} na logickú jednotku. Makro je definované v hlavičkovom súbore triedy Interro.
 Táto podmienená kompilácia je dostupná pre pokročilých užívateľov knižnice. Každý program môže obsahovať len jednu definúciu ISR pre každý vektor prerušenia. Preto je
 možné v hlavičkovom súbore prepísať expanziu makra \textit{TIMER1\_OVF\_INTERRUPT} na logickú 0 a odstrániť ho z kompilácie v Interro knižnici. Vďaka tomu užívateľ získa
-možnosť definovania ISR nezávisle od knižnice Interro.
+možnosť definovania ISR nezávisle od knižnice Interro. V ISR prerušenia sa nachádza volanie metódy \textit{handleInterrupt}, ktorá informáciu o prerušení dristribuuje
+do ostatným komponentov knižnice. Prerušenie je identifikované na základe jeho identifikátora. Ten je definovaný v hlavičkovom súbore triedy Interro, a je používaný
+ako argument metódy \textit{handleInterrupt}.
+Rovnakým spôsobom sú implementované všetky podporované prerušenia knižnice Interro.
+
+\subsubsection{Komunikácia medzi komponentami knižnice Interro}
+Komunikáciu s a vrámci knižnice je možné rozdeliť do dvoch fáz. \par
+Prvá fáza je konfiguračná a prebieha okamžite po spustení programu. Jej obsahom je správne
+nastavenie spúšťačov a definícia stavových automatov. Na platforme Arduine prebieha vo funkcii \textit{setup} a je spustená práve jeden krát. V tejto fáze sa knižnica
+rôznymi spôsobmi snaží konfiguráciu a nastavenie spúšťačov čo najviac zjednodušiť. Jedným zo spôsobov je implicitné pridávanie použitých komponentov do globálneho
+kontajnera knižnice. Vďaka tomu užívateľ nemusí písať veľa „zbytočného“ kódu. Ďalším je dodržiavanie konvencíí v rámci celej knižnice. Jednou z nich je napríklad
+volanie metódy \textit{configure}. Akákoľvek konfigurácia, akéhokoľvek komponentu knižnici musí začínať volaním tejto metódy.  \par
+
+Fáza číslo 2 začína okamžite po skončení prvej fázy. V tejto fáze prebieha generovanie  udalostí, zmena stavov automatov a volanie užívateľských funkcií pri prechodoch
+medzi stavmi. Udalosť môže byť vygenerovaná buď hardvérovým alebo softvérovým spúšťačom,  preto aj následná komunikácia je určitým spôsobom rozdielna.
+Ak bola udalosť vygenerovaná hardvérovým spúšťačom, komunikácia je zobrazená na sekvenčnom diagrame na obrázku číslo \ref{figure:interrupt-trigger}.
+Diagram zobrazuje nasledovné procesy:
+\begin{enumerate}
+    \item Procesor prestane vykonávať aktuálny kód, a spustí ISR daného prerušenia.
+    \item ISR definované v triede \textit{InterruptHandler} oboznámi o prerušení triedu \textit{Interro}.
+    \item Trieda \textit{Interro} sa následne „opýta“ každého hardvérového spúšťača či je potrebné vygenerovanie novej udalosti. Ak áno, spúšťač odpovie udalosťou, ktorú je potrebné vygenerovať.
+    \item Ak spúšťač odpovie nedefinovanou udalosťou, komunikácia sa končí. V opačnom prípade Interro oboznámi o novej udalosti všetky stavové automaty.
+    \item Automat sa po oboznámení o udalosti pozrie do svojej aktuálnej stavovej tabuľky. Ak sa v nej nachádza vygenerovaná udalosť, vykoná prechod z jedného stavu do druhého.
+          V prípade, že užívateľ zadefinoval funkcie, ktoré chce pri vstupe/výstupe zo stavu volať, zavolajú sa pri tomto procese.
+\end{enumerate}
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=0.95\textwidth]{img/interrupt-sequence.png}
+    \caption{Sekvenčný diagram komunikácie pri vygenerovaní udalosti prerušením}
+    \label{figure:interrupt-trigger}
+\end{figure}
+
+
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=0.95\textwidth]{img/softTrigger-sequence.png}
+    \caption{Sekvenčný diagram komunikácie pri vygenerovaní udalosti softvérovým spúšťačom}
+    \label{figure:soft-trigger}
+\end{figure}
+
+
+Podobný proces funguje aj pri softvérových prerušeniach. Ten je zobrazený na sekvenčným diagramom na obrázku číslo \ref{figure:soft-trigger}.
+Princíp fungovania softvérových spúšťačov je však iný ako v prípade hardvérových. Pre ich správnu funkčnosť je nutné aby bola v užívateľskom kóde neustále
+volaná metóda \textit{run} definovaná v triede \textit{Interro}. To zabezpečí cyklenie nižšie popísaného procesu a tým aj správne fungovanie knižnice:
+
+\begin{enumerate}
+    \item Intero sa dopytuje na všetky softvérové spúšťače či nastala nejaká udalosť.
+    \item Ak spúšťač odpovie nedefinovanou udalosťou, komunikácia sa končí. V opačnom prípade Interro oboznámi o novej udalosti všetky stavové automaty.
+    \item Automat sa po oboznámení o udalosti pozrie do svojej aktuálnej stavovej tabuľky. Ak sa v nej nachádza vygenerovaná udalosť, vykoná prechod z jedného stavu do druhého.
+          V prípade, že užívateľ zadefinoval funkcie, ktoré chce pri vstupe/výstupe zo stavu volať, zavolajú sa pri tomto procese.
+\end{enumerate}
+
+\subsubsection{Implementované spúšťače}
+
+Ako sme spomínali v kapitole číslo \ref{subsection:architecture-interro}, knižnica momentálne implementuje 16 hardvérových spúšťačov troch druhov. Vďaka použitiu
+objektovo orientovaného programovania a dedičnosti nebolo nutné každý z týchto spúšťačov implementovať samostatne.
+Na ich implementáciu je použitá štruktúra zobrazená na diagrame na obrázku číslo \ref{figure:timer-class-diagram}:
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=0.95\textwidth]{img/timer-class-diagram.png}
+    \caption{Diagram tried pre implementované časové spúšťače}
+    \label{figure:timer-class-diagram}
+\end{figure}
+
+Všetka logika implementácie a práce s registrami časovača sa nachádza v triede \textit{TimerTrigger}. V nej je definovaný parametrický konštruktor, ktorý
+je zavolaný z tried ktoré túto triedu zdedili. Na príklade nižšie vidíme spôsob akým je implementovaný časovač číslo 1. V implementácii sa nachádza len volanie
+konštruktora rodiča danej triedy s doplnenými parametrami. Každý z časovačov takýmto spôsobom posiela do triedy \textit{TimerTrigger} adresy na svoje
+kontrolné registre, porovnávacie registre, masku prerušení, identifikátory podporovaných prerušení a nakoniec konfiguráciu pre generovanie PWM signálu.
+
+\begin{lstlisting}[language=c++]  
+
+    #include <Timer1Trigger.hpp>
+
+    Timer1Trigger::Timer1Trigger()
+        : TimerTrigger(&TCCR1A,
+                       &TCCR1B,
+                       &TCCR1C,
+                       &OCR1A,
+                       &OCR1B,
+                       &OCR1C,
+                       &TIMSK1,
+                       TIMER1_OVF_INTERRUPT_ID,
+                       TIMER1_COMPA_INTERRUPT_ID,
+                       TIMER1_COMPB_INTERRUPT_ID,
+                       TIMER1_COMPC_INTERRUPT_ID,
+                       TimerPwmConfiguration(1,
+                                             &TCCR1A,
+                                             PwmPin(&OCR1A, COM1A0, COM1A1),
+                                             PwmPin(&OCR1B, COM1B0, COM1B1),
+                                             PwmPin(&OCR1C, COM1C0, COM1C1)))
+    {
+    }
+\end{lstlisting}
+
+Na rovnakom princípe je založená implementácia spúšťačov pre zvyšné dva druhy implementovaných spúšťačov.
