@@ -11,9 +11,6 @@ a tento názov budeme používať aj neskôr v tejto práci pri opise fungovania
 
 \subsection{Predstavenie riešenia}
 \noindent
-Vďaka výberu jazyka C++ sme pri vývoji sme aktívne využívali princípy objektového orientované programovania. Architekúra Interra pozostáva z mnoho vytvorených tried.
-Tie je možné rozdeliť na tri hlavné skupiny: Spúšťače, triedy stavového stroja a triedu Interro, ktorá slúži ako globálny kontajner a koordinuje činnosť celej knižnice.
-Postupne sa pozrieme na každú túto skupinu a jej úlohy detailnejšie. \par
 Pre jednoduchšie porozumenie si vytvorenú knižnicu predstavíme na nasledujúcom jednoduchom príklade: Vytvoríme program, ktorého úlohou je blikanie led žiarovky.
 Tá bude meniť svoj stav v 1 sekundovom intervale. Blikanie led žiarovky je možné vypnúť, respektíve zapnúť pomocou stlačenia tlačidla.
 
@@ -161,10 +158,8 @@ ktorá led žiarovku zhasne. Rovnakým spôsobom funguje aj volanie metódy
 V predchádzajúcej podkapitole sme namodelovali náš program pomocou stavového automatu a následne sme tento automat pomocou knižnice Interro aj implementovali.
 Automat definuje stavy v ktorých sa môže nachádzať. Zároveň definuje aj prechody medzi stavmi a umožnuje volanie vlastných metód užívateľa pri zmene aktuálneho stavu.
 Poslednou chýbajúcou časťou sú udalosti a ich spúšťanie. O to sa v Interro knižnici starajú takzvané spúšťače. \par
-Spúšťače sú zodpovedné za sledovanie udalostí a ich následnú propagáciu do stavových automatov Interra. Delíme ich na dva druhy: hardvérové a softvérové spúšťače. \par
-Hardvérový spúšťač používa na informovanie o udalosti prerušenia mikrokontroléra. Je napojený priamo na ISR prerušenia a obsahuje logiku pre konfiguráciu prerušení,
-ktoré podporuje. \par
-Príkladom hardvérového spúšťača je \textit{Timer1Trigger}. Využíva časovač číslo 1 mikrokontroléra Arduino Mega 2560 a podporuje rôzné módy.
+Spúšťače sú zodpovedné za sledovanie udalostí a ich následnú propagáciu do stavových automatov Interra.
+Príkladom spúšťača je \textit{Timer1Trigger}. Využíva časovač číslo 1 mikrokontroléra Arduino Mega 2560 a podporuje rôzné módy.
 Práve tento spúšťač použijeme na generovanie udalosti \textit{TimeElapsed}. Prvým krokom je vytvorenie ďalšej globálnej premennej typu \textit{Timer1Trigger}.
 Pomenujeme ju ako \textit{timerTrigger}.
 \begin{lstlisting}[language=c++]  
@@ -182,11 +177,7 @@ o udalosti \textit{TimeElapsed}. Týmto spôsobom zabezpečíme generovanie udal
 prechádzať zo stavu \textit{LedOn} do stavu \textit{LedOff}, respektíve, to isté bude platiť aj opačným smerom. Dôsledkom týchto zmien stavu bude volanie funkcií
 \textit{TurnOnLed} respektíve \textit{TurnOffLed}, ktoré zabezpečia blikanie led žiarovky v 1 sekundovom intervale.  \par
 
-Druhým typom spúšťačov sú takzvané softvérove spúšťače. Pri hardvérových spúšťačoch je prvotným impulzom na vygenerovanie udalosti mikrokontrolér. Ten pomocou prerušenia
-oboznámi hardvérový spúšťač o novej udalosti. Ak žiadne prerušenie nenastalo, spúšťač nevykonáva žiadnu akciu. Pri softvérových spúšťačoch to funguje inak. Interro knižnica
-má zoznam všetkých softvérových spúšťačov a neustále sa na ne dopytuje či niektorá z udalosí nenastala. Ak spúštač odpovie definovanou udalosťou,
-tak tá je rovnakým spôsobom preposlaná do všetkých zaregistrovaných stavových automatov. \par
-V našom príklade využijeme ako softvérový spúšťač nazvaný ako \textit{ButtonTrigger}. Ako aj v predošlých prípadoch, prvým krokom je definovanie globálnej premennej
+Na generovanie udalosti \textit{ButtonClicked} využijeme spúšťač nazvaný ako \textit{ButtonTrigger}. Ako aj v predošlých prípadoch, prvým krokom je definovanie globálnej premennej
 \textit{buttonTrigger} typu \textit{ButtonTrigger}.
 
 \begin{lstlisting}[language=c++]  
@@ -210,6 +201,59 @@ void loop()
 }
 \end{lstlisting}
 
-Týmto posledným krokom sme dokončili funkčnosť celej názornej ukážky programu. Celý program je možné nájsť v prílohe číslo //TODO.
+Týmto krokom sme dokončili funkčnosť názornej ukážky programu. Celý program je možné nájsť v prílohe číslo //TODO.
 
 \subsection{Architekúra knižnice Interro}
+Vďaka výberu jazyka C++ sme pri vývoji sme aktívne využívali princípy objektového orientované programovania. Architekúra Interra pozostáva z mnoho vytvorených tried.
+Tie je možné rozdeliť na tri hlavné skupiny: Spúšťače, triedy stavového stroja a triedu Interro.
+Postupne sa pozrieme na každú túto skupinu a jej úlohy detailnejšie. \par
+\begin{enumerate}
+    \item Stavový automat
+\end{enumerate}
+Medzi triedy stavového stroja môžeme zaradiť triedu \textit{StateMachine} a \textit{StateConfiguration}. Ide implementačne o pomerne jednoduché triedy. Ich úlohou
+je reprezentácia stavového automatu a všetkých jeho stavov. Po vygenerovaní udalosti zabezpečujú prechod z jedného stavu do ďalšieho spolu s volaním užívateľských
+metód. \par
+
+\begin{enumerate}[resume]
+    \item Spúšťače
+\end{enumerate}
+Spúšťače sú najzložitejšou a najrozsiahlejšou súčasťou knižnice Interro.
+Delíme ich na dva druhy: hardvérové a softvérové spúšťače. \par
+Hardvérový spúšťač používa na informovanie o udalosti prerušenia mikrokontroléra. Je napojený priamo na ISR prerušenia a obsahuje logiku pre konfiguráciu prerušení,
+ktoré podporuje. Knižnica Interro momentálne obsahuje spúšťače využívajúce prerušenia časovačov 1,3,4,5, externých prerušení 0 až 7 a taktiež  prerušenia hovoriace o zmene
+pinov, takzvané \textit{PinChangeInterrupt} 0 až 3. Každý z týchto spúšťačov má samostatnú triedu a fungujú nezávisle od seba. Preto je možné, respektíve nutné, každý z nich
+nakonfigurovať samostatne. Jediným obmedzením je hardvérová implementácia mikrokontroléra. V niektorých prípadoch sú rôzne prerušenia napojené na rovnaký pin procesora,
+preto je nutné pre správnu funkčnosť takýmto zhodám predchádzať. \par
+
+Druhým typom spúšťačov sú takzvané softvérove spúšťače. Pri hardvérových spúšťačoch je prvotným impulzom na vygenerovanie udalosti mikrokontrolér. Ten pomocou prerušenia
+oboznámi hardvérový spúšťač o novej udalosti. Ak žiadne prerušenie nenastalo, spúšťač nevykonáva žiadnu akciu. Pri softvérových spúšťačoch to funguje inak. Interro knižnica
+má zoznam všetkých softvérových spúšťačov a neustále sa na ne dopytuje či niektorá z udalosí nenastala. Ak spúštač odpovie definovanou udalosťou,
+tak tá je rovnakým spôsobom preposlaná do všetkých zaregistrovaných stavových automatov. V knižnici Interro je momentálne implementovaný jeden takýto spúšťač s názvom
+\textit{ButtonTrigger}. Je možné ho využiť na generovanie udalostí pri stlačení tlačidla. Jeho hlavným cieľom je však demonštrácia rozšíriteľnosti  knižnice o akékoľvek
+ďalšie spúšťače. Softvérové spúšťače môžu slúžiť na využitie procesora v čase mimo prerušení. Dopĺňajú tak funkcionalitu Interro knižnice pomocou ktorej je tak
+možné vykonávať úlohy na základe vplyvov rôznych periférii (prerušení), ale aj na základe aktálneho stavu programu. \par
+
+\begin{enumerate}[resume]
+    \item Globálny kontajner Interro
+\end{enumerate}
+
+Trieda Interro slúži ako globálny kontajner a koordinuje činnosť celej knižnice. Pomocou zreťazených zoznamov si ukladá všetky inštancie vytvorených stavových automatov
+ale aj hardvérových a softvérových spúšťačov. Počas práce s knižnicou by mala existovať len jedna inštancia tejto triedy. Vytvára ju knižnica a všetky ostatné komponenty
+následne pracujú s touto inštanciou triedy Interro. Zabezpečuje fungovanie hardvérových, ako aj softvérových spúšťačov. Vygenerované udalosti následne preposiela do
+existujúcich stavových automatov. \par
+S triedou Interro úzko súvisí aj trieda \textit{InterruptHandler}. Tá obsahuje ISR pre všetky podporované prerušenia. Ukážku ISR pre overflow prerušenie časovača 1
+je možné vidieť nižšie:
+\begin{lstlisting}[language=c++]  
+#if TIMER1_OVF_INTERRUPT
+ISR(TIMER1_OVF_vect)
+{
+    interro.handleInterrupt(TIMER1_OVF_INTERRUPT_ID);
+}
+#endif
+\end{lstlisting}
+
+
+Vidíme, že podmienkou kompilácie danej ISR je expanzia makra \textit{TIMER1\_OVF\_INTERRUPT} na logickú jednotku. Makro je definované v hlavičkovom súbore triedy Interro.
+Táto podmienená kompilácia je dostupná pre pokročilých užívateľov knižnice. Každý program môže obsahovať len jednu definúciu ISR pre každý vektor prerušenia. Preto je
+možné v hlavičkovom súbore prepísať expanziu makra \textit{TIMER1\_OVF\_INTERRUPT} na logickú 0 a odstrániť ho z kompilácie v Interro knižnici. Vďaka tomu užívateľ získa
+možnosť definovania ISR nezávisle od knižnice Interro.
