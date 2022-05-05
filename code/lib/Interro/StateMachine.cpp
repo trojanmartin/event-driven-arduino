@@ -7,13 +7,24 @@
 StateMachine::StateMachine(const int8_t initial_state)
 {
     initial = initial_state;
+    current = 0;
     interro.add(*this);
 }
 
 void StateMachine::onEvent(int8_t event)
 {
+    if (current == 0)
+    {
+        return;
+    }
+
     auto table = current->transition_table;
     int8_t index = 0;
+
+    if (table == 0)
+    {
+        return;
+    }
 
     while (table[index] != -1)
     {
