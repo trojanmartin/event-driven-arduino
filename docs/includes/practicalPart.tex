@@ -5,9 +5,11 @@ Praktická časť tejto diplomovej práce sa zaoberá spojením opisovaných ča
 architektúru mikrokontrolérov, preto sme značnú časť práce venovali práve štúdiu fungovania týchto mikrokontrolérov.
 Jednou z hlavných úloch vytvorenej knižnice je zjednodušenie použitia prerušení s dôrazom na prerušenia časovačov.
 Druhou úlohou je modelovanie programu mikrokontroléra pomocou konečných stavových automatov. Spojením týchto dvoch fenoménov sme sa pokúsili zjednodušiť
-a zrýchliť vývoj aplikácii aktívne využívajúcich prerušenia mikrokontroléra. Zároveň, knižnica by mala umožniť využitie týchto prerušení aj menej zdatným
-používateľom, keďže jej využitie by nemalo vyžadovať hĺbkové znalosti fungovania prerušení na mikrokontroléri Arduino Mega 2560. Knižnicu sme nazvali Interro
-a tento názov budeme používať aj neskôr v tejto práci pri opise fungovania a architektúry vytvorenej knižnice. Knižnica je zapísaná v jazyku C++.
+a zrýchliť vývoj aplikácii aktívne využívajúcich prerušenia mikrokontroléra. V predstavených riešeniach je možné program modelovať pomocou stavových automatov,
+avšak žiadne z nich neponúka priamu integráciu s prerušovacím systémom mikrokontrolérov. Udalosti v nich sú generované softvérovo. Naše riešenie má za cieľ rovnaké
+modelovanie programu pomocou stavových automatov s možnosťou generovania udalostí na softvérovej úrovni. Navyše by však malo umožňovať generovanie udalostí pomocou
+prerušení. Knižnica by mala umožniť využitie  prerušení aj menej zdatným používateľom, keďže jej využitie by nemalo vyžadovať hĺbkové znalosti fungovania prerušení na mikrokontroléri Arduino Mega 2560.
+Knižnicu sme nazvali Interro a tento názov budeme používať aj neskôr v tejto práci pri opise fungovania a architektúry vytvorenej knižnice. Knižnica je zapísaná v jazyku C++.
 
 \subsection{Predstavenie riešenia}
 \noindent
@@ -201,7 +203,7 @@ void loop()
 }
 \end{lstlisting}
 
-Týmto krokom sme dokončili funkčnosť názornej ukážky programu. Celý program je možné nájsť v prílohe číslo //TODO.
+Týmto krokom sme dokončili funkčnosť názornej ukážky programu. Celý program je možné nájsť v prílohe \ref{att:A}.
 
 \subsection{Architekúra knižnice Interro} \label{subsection:architecture-interro}
 Vďaka výberu jazyka C++ sme pri vývoji sme aktívne využívali princípy objektového orientované programovania. Architekúra Interra pozostáva z mnoho vytvorených tried.
@@ -259,7 +261,7 @@ ISR(TIMER1_OVF_vect)
 \end{lstlisting}
 
 
-Vidíme, že podmienkou kompilácie danej ISR je expanzia makra \textit{TIMER1\_OVF\_INTERRUPT} na logickú jednotku. Makro je definované v hlavičkovom súbore triedy Interro.
+Vidíme, že podmienkou kompilácie danej ISR je expanzia makra \\ \textit{TIMER1\_OVF\_INTERRUPT} na logickú jednotku. Makro je definované v hlavičkovom súbore triedy Interro.
 Táto podmienená kompilácia je dostupná pre pokročilých užívateľov knižnice. Každý program môže obsahovať len jednu definúciu ISR pre každý vektor prerušenia. Preto je
 možné v hlavičkovom súbore prepísať expanziu makra \textit{TIMER1\_OVF\_INTERRUPT} na logickú 0 a odstrániť ho z kompilácie v Interro knižnici. Vďaka tomu užívateľ získa
 možnosť definovania ISR nezávisle od knižnice Interro. V ISR prerušenia sa nachádza volanie metódy \textit{handleInterrupt}, ktorá informáciu o prerušení dristribuuje
@@ -358,4 +360,88 @@ kontrolné registre, porovnávacie registre, masku prerušení, identifikátory 
     }
 \end{lstlisting}
 
-Na rovnakom princípe je založená implementácia spúšťačov pre zvyšné dva druhy implementovaných spúšťačov.
+Na rovnakom princípe je založená implementácia spúšťačov pre zvyšné dva druhy implementovaných spúšťačov. \par
+
+\paragraph*{TimerTrigger} \: je základnou triedou pre implementáciu spúšťačov postavených na 16-bitových časovačoch. Podporuje štandardný mód, CTC mód a PWM mód časovača.
+
+\begin{enumerate}
+    \item Normálny mód.
+\end{enumerate}
+
+V normálnom móde spúšťač umožnuje generovanie udalosti po pretečení registra časovača. Zároveň je možné manuálne nastaviť hodnotu preddeličky.
+Príklad konfigurácie spúštača pre použitie v normálnom móde:
+\begin{lstlisting}[language=c++]      
+timerTrigger.configure(TimerMode::Normal)
+    .onOverflow(Events::TimeElapsed)
+    .setPrescalerValue(Prescalers::Prescaler64);
+\end{lstlisting}
+
+\begin{enumerate}[resume]
+    \item CTC mód
+\end{enumerate}
+
+Pri CTC móde je možné definovať až 3 intervaly v ktorých bude generovaná nakonfigurovaná udalosť. Pri každom definovanom intervale spúšťač automaticky prepočíta
+hodnotu preddeličky. Ak sú požadované intervaly nekompatibilné a hodnotu preddeličky nieje možné násjť, spúšťač program ukončí ešte v jeho 1 fáze. Po ukončení programu
+sa spúštač pokúsi poslať dostupné informácie o chybe pomocou sérioveho portu mikrokontroléra. Týmto spôsobom sa knižnica aktívne snaží o zjednodušenie ladenia programu.
+Príklad konfigurácie spúštača pre použitie CTC módu s generovaním udalostí po uplynutí 3 rôznych intervalov:
+\begin{lstlisting}[language=c++]      
+timerTrigger.configure(TimerMode::CTC)
+    .onTimeElapsed(1000, Events::Interval1)
+    .onTimeElapsed(600, Events::Interval2)
+    .onTimeElapsed(80, Events::Interval3);
+\end{lstlisting}
+
+\begin{enumerate}[resume]
+    \item PWM mód
+\end{enumerate}
+
+PWM mód slúži na generovanie PWM signálu. Koncepčne vykonáva niečo iné ako spúštač, avšak kvôli jednoduchosti riešenia sme sa rozhodli ho ponechať súčasťou časových
+spúštačov. Spúšťač v PWM móde podporuje 6 rôzny PWM módov 16 bitového časovača:
+\begin{itemize}
+    \item 3 variácie FastPWM módu: 8, 9 a 10 bitová maximálna hodnota registra časovača.
+    \item 3 variácie PhaseCorrectPWM módu: 8, 9 a 10 bitová maximálna hodnota registra časovača.
+\end{itemize}
+
+Pomocu konfigurácie je možné nastaviť striedu PWM signálu. Spúšťač percentuálne vyjadrenie automaticky prepočíta na hodnotu registra. Rovnakým spôsobom je možné
+aj manuálne nastavenie hodnoty registra. Príklad použitia PWM módu so striedou 70\% na  výstupe porovnávacieho registra A je možné vidieť nižšie:
+
+\begin{lstlisting}[language=c++]      
+Timer1Trigger timerTrigger;
+
+timerTrigger.configure(TimerMode::PWM)
+    .setPwmMode(PwmMode::FastPwm8Bit)
+    .setUpOutput(TimerPwmOutput::A, 0.7);
+\end{lstlisting}
+
+
+\paragraph*{ExternalTrigger} \: je základnou triedou pre generovanie udalostí pomocou externých prerušení mikrokontroléra. Je zdedaná triedami ExternalTrigger 0 až 7.
+Pri konfigurácii je možné nastaviť stav pri ktorom sa má udalosť vygenerovať. Udalosť je možné generovať ak je stav pinu nízky, ak sa logická hodnota pinu zmenila, prípade
+začne stúpať alebo klesať. Pri zmene hodnoty pinu často dochádza k určitému šumu, ktorý môže spôsobiť vygenerovanie viac ako jedného prerušenia v krátkom časovom intervale.
+Aby sme takémuto javu predišli, spúštač podporuje nastavenie minimálneho časového intervalu medzi udalosťami.
+Štandardná dĺžka intervalu je 300 milisekúnd, avšak používateľovi je umožnené použitie vlastnej hodnoty.
+Príklad použitia spúštača pre externé prerušenia je možné vidieť nižšie. Spúšťač je nakonfigurovaný tak, aby pri zmene hodnoty pinu vygeneroval udalosť \textit{PinChanged}.
+Minimálny interval medzi udalosťami je 500 milisekúnd.
+\begin{lstlisting}[language=c++]      
+ExternalTrigger0 externalTrigger0;
+
+externalTrigger0.configure(ExternalTriggerMode::Change)
+    .debounce(500)
+    .onOccurrence(Events::PinChanged);
+\end{lstlisting}
+
+\paragraph*{PinChangeTrigger} \: je základnou triedou pre generovanie udalostí pomocou prerušení o zmene pinu. Je zdedaná triedami \textit{PinChangeTrigger} 0 až 2.
+Triedy reprezentujú porty procesora a na každom z nich je možné povoliť pin pre generovanie udalosti. Rovnako ako \textit{ExternalTrigger}, aj \textit{PinChangeTrigger}
+podporuje minimálny časový interval medzi dvoma udalosťami. Príklad konfigurácie je možné vidieť nižšie:
+\begin{lstlisting}[language=c++]      
+PinChangeTrigger0 pinChangeTrigger0;
+
+pinChangeTrigger0.configure()
+    .enablePin(1)
+    .onOccurrence(Events::PinChanged);
+\end{lstlisting}
+
+\subsubsection{Rozšíriteľnosť riešenia}
+
+Vyvinuté riešenie nieje obmedzené na už implementované súčasti. Stavový automat podporuje variabilné množstvo stavov a udalostí. Pre podporu ďalších prerušení
+je možné implementovať ďalšie spúštače. Takýmto spôsobom je možné knižnicu rozšírovať o ďalšie generátory udalostí. Jedinou podmienkou vytvorenia nových spúštačov je
+zdedenie triedy \textit{HardTrigger}, respektíve \textit{SofTrigger} a implementovanie náležitých súčasti týchto základných tried.

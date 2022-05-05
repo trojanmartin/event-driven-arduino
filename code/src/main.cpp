@@ -32,13 +32,11 @@ static const int8_t ledOffStateTable[]{
     Events::TimeElapsed, States::LedOn,
     -1};
 
-void TurnOnLed()
-{
-}
+void TurnOnLed() {}
 
-void TurnOffLed()
-{
-}
+void TurnOffLed() {}
+
+ExternalTrigger0 externalTrigger0;
 
 void setup()
 {
@@ -55,8 +53,9 @@ void setup()
         .onEntry([](int8_t state)
                  { TurnOffLed(); });
 
-    timerTrigger.configure(TimerMode::CTC)
-        .onTimeElapsed(1000, Events::TimeElapsed);
+    timerTrigger.configure(TimerMode::PWM)
+        .setPwmMode(PwmMode::FastPwm8Bit)
+        .setUpOutput(TimerPwmOutput::A, 0.7);
 
     buttonTrigger.configure(5)
         .onClick(Events::ButtonClicked);
