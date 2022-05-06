@@ -4,8 +4,9 @@
 Praktická časť tejto diplomovej práce sa zaoberá spojením opisovaných častí do jednej softvérovej knižnice pre platformu Arduino Mega 2560. Arduino využíva AVR
 architektúru mikrokontrolérov, preto sme značnú časť práce venovali práve štúdiu fungovania týchto mikrokontrolérov.
 Jednou z hlavných úloch vytvorenej knižnice je zjednodušenie použitia prerušení s dôrazom na prerušenia časovačov.
-Druhou úlohou je modelovanie programu mikrokontroléra pomocou konečných stavových automatov. Spojením týchto dvoch fenoménov sme sa pokúsili zjednodušiť
-a zrýchliť vývoj aplikácii aktívne využívajúcich prerušenia mikrokontroléra. V predstavených riešeniach je možné program modelovať pomocou stavových automatov,
+Druhou úlohou je umožnenie vývoja aplikácii mikrokontroléra pomocou udalosťami riadeného programovania. Tento spôsob programovania sme modelovali použitím stavových
+automatov. Spojením týchto dvoch fenoménov sme sa pokúsili zjednodušiť a zrýchliť vývoj aplikácii aktívne využívajúcich prerušenia mikrokontroléra.
+V predstavených riešeniach je možné program modelovať pomocou udalosťami riadeného programovania,
 avšak žiadne z nich neponúka priamu integráciu s prerušovacím systémom mikrokontrolérov. Udalosti v nich sú generované softvérovo. Naše riešenie má za cieľ rovnaké
 modelovanie programu pomocou stavových automatov s možnosťou generovania udalostí na softvérovej úrovni. Navyše by však malo umožňovať generovanie udalostí pomocou
 prerušení. Knižnica by mala umožniť využitie  prerušení aj menej zdatným používateľom, keďže jej využitie by nemalo vyžadovať hĺbkové znalosti fungovania prerušení na mikrokontroléri Arduino Mega 2560.
@@ -171,7 +172,7 @@ Timer1Trigger timerTrigger;
 Nasleduje konfigurácia spúšťača v Arduino funkcii setup:
 \begin{lstlisting}[language=c++]  
 timerTrigger.configure(TimerMode::CTC)
-    .onTimeElapsed(1000, Events::TimeElapsed); 
+    .useInterval(1000, Events::TimeElapsed); 
 \end{lstlisting}
 
 Daným kódom konfigurujeme spúšťač, v našom konkrétnom prípade časovač 1, aby používal CTC mód, a po uplynutí každých 1000 milisekúnd oboznámil stavové automaty
@@ -380,15 +381,15 @@ timerTrigger.configure(TimerMode::Normal)
     \item CTC mód
 \end{enumerate}
 
-Pri CTC móde je možné definovať až 3 intervaly v ktorých bude generovaná nakonfigurovaná udalosť. Pri každom definovanom intervale spúšťač automaticky prepočíta
-hodnotu preddeličky. Ak sú požadované intervaly nekompatibilné a hodnotu preddeličky nieje možné násjť, spúšťač program ukončí ešte v jeho 1 fáze. Po ukončení programu
+Pri CTC móde je možné definovať až časy pri ktorých bude vygenerovaná nakonfigurovaná udalosť. Pri každom definovanom čase spúšťač automaticky prepočíta
+hodnotu preddeličky. Ak sú požadované hodnoty nekompatibilné a hodnotu preddeličky nieje možné násjť, spúšťač program ukončí ešte v jeho 1 fáze. Po ukončení programu
 sa spúštač pokúsi poslať dostupné informácie o chybe pomocou sérioveho portu mikrokontroléra. Týmto spôsobom sa knižnica aktívne snaží o zjednodušenie ladenia programu.
-Príklad konfigurácie spúštača pre použitie CTC módu s generovaním udalostí po uplynutí 3 rôznych intervalov:
+Príklad konfigurácie spúštača pre použitie CTC módu s použitím 1 sekundového intervalu, a generovaním udalostí po 80, 600 a 1000 milisekundách:
 \begin{lstlisting}[language=c++]      
 timerTrigger.configure(TimerMode::CTC)
-    .onTimeElapsed(1000, Events::Interval1)
-    .onTimeElapsed(600, Events::Interval2)
-    .onTimeElapsed(80, Events::Interval3);
+    .useInterval(1000, Events::Interval1)
+    .onTime(600, Events::Interval2)
+    .onTime(80, Events::Interval3);
 \end{lstlisting}
 
 \begin{enumerate}[resume]
@@ -440,8 +441,125 @@ pinChangeTrigger0.configure()
     .onOccurrence(Events::PinChanged);
 \end{lstlisting}
 
+\paragraph*{ButtonTrigger} \: je implementovaný softvérový spúštač, ktorý pre generovanie udalostí sleduje stav poskytnutého pinu. Funguje na princípe neustáleho
+dopytovania sa na aktuálny stav. Po nastavení logickej jednotky na pin, spúštač vygeneruje udalosť. Rovnako ako predošlé spúšťače, podporuje nastavenie minimálneho
+časového intervalu medzi dvoma vygenerovanými udalosťami. Cieľom tejto diplomovej práce je generovanie udalostí pomocou prerušení. Preto tento softvérový spúštač
+slúži hlavne ako demonštrácia možností rozšírenie knižnice aj o iné spúštače.
+Použitie triedy \textit{ButtonTrigger} môžeme vidieť nižšie:
+
+\begin{lstlisting}[language=c++]         
+ButtonTrigger buttonTrigger; 
+
+buttonTrigger.configure(5)
+    .debounce(500)
+    .onClick(Events::ButtonClicked);
+\end{lstlisting}
+
 \subsubsection{Rozšíriteľnosť riešenia}
 
-Vyvinuté riešenie nieje obmedzené na už implementované súčasti. Stavový automat podporuje variabilné množstvo stavov a udalostí. Pre podporu ďalších prerušení
+Vyvinuté riešenie nieje obmedzené na už implementované súčasti. Stavový automat podporuje variabilné množstvo stavov a udalostí. Pri modelovaní programu je možné použitie
+viacerých stavových automatov, ktoré môžu medzi sebou komunikovať. Pre podporu ďalších prerušení
 je možné implementovať ďalšie spúštače. Takýmto spôsobom je možné knižnicu rozšírovať o ďalšie generátory udalostí. Jedinou podmienkou vytvorenia nových spúštačov je
 zdedenie triedy \textit{HardTrigger}, respektíve \textit{SofTrigger} a implementovanie náležitých súčasti týchto základných tried.
+
+\subsection{Porovnanie s existujúcimi riešeniami}
+Vyvinuté riešenie je možné porovnávať s existujúcimi v dvoch rovinách. Prvou je správa a konfigurácia prerušení, druhou modelovanie programu stavovými automatmi.
+
+\subsubsection{Konfigurácia prerušení}
+
+Žiadne z predstavených riešení nepodporuje konfiguráciu prerušení takým spôsobom akým to umožňuje Interro. Ako príklad uvedieme porovnanie konfigurácie časovača 1 pomocou vytvorenej
+knižnice a konfiguráciu časovača manuálnym spôsobom. Ak chceme nakonfigurovať časovač 1 mikrokontroléra Arduino Mega 2560 použitím Interro, dosiahneme to nasledovným spôsobom:
+
+\begin{lstlisting}[language=c++]      
+timerTrigger.configure(TimerMode::CTC)
+    .useInterval(1000, Events::Interval1);
+\end{lstlisting}
+
+Pre porovnanie nižšie vidíme rovnaké nastavenie pomocou kontroloných registrov časovača. Prvým krokom je vynulovanie aktuálnych hodnôt v registroch.
+Nasleduje natavenie porovnávacej hodnoty. Na jej výpočet bolo potrebné potrebné použiť vzorec číslo \ref{eq:register-value} spolu so zvolením správnej hodnoty
+preddeličky. V posledných dvoch krokoch povolíme CTC mód časovača a následne aj prerušenia pre porovnávací registra A.
+
+\begin{lstlisting}[language=c++]      
+    TCCR1A = 0;
+    TCCR1B = 0;
+    TCCR1C = 0;
+
+    OCR1A = 62499;           // set compare value
+    TCCR1B |= (1 << CS12);   // set prescaler to 256
+    TCCR1B |= (1 << WGM12);  // enable ctc mode
+    TIMSK1 |= (1 << OCIE1A); // enable OCRA interrupt
+    
+\end{lstlisting}
+
+Na manuálnu konfiguráciu časovača užívateľ potrebuje poznať názvy registrov, názvy jednotlivých bitov  v registroch a model fungovanie časovača ako celku. Pre nadobudnutie
+týchto znalosti je nutné štúdium dátového hárku mikrokontroléra. To celý vývoj aplikácie predĺži a spomalí. Použitie viacerých intervalov,
+prípadne generovanie  PWM signálu pomocou PWM módu časovača by celú
+manuálnu konfiguráciu ešte viac skomplikovalo. Kód je navyše ťažko čitateľný a pre iných programátorov
+môže byť nezrozumiteľný. Pri použití vytvorenej knižnice všetky tieto nastavenia registrov vykoná knižnica za užívateľa. \par
+Na druhej strane, medzi výhody manuálnej konfigurácie určite patrí väčšia flexibilita riešenia. Časový spúšťač implementovaný v knižnici nepodporuje všetky dostupné
+módy a nastavenia, ktoré sú hardvérovo implementované mikrokontrolérom. To pre niektorých pokročilých užívateľov môže byť problém a preto použitie knižnice
+v tomto prípade nieje správnym riešením.
+
+\subsubsection{Udalosťami riadené programovanie}
+Rovnako ako vyvinutá knižnica, aj existujúce riešenia \textit{Eventually} a \textit{Automaton} podporujú paradigmu udalosťami riadeného programovania. Podľa kapitoly
+číslo \ref{section:event-driven-programming} túto paradigmu môžeme rozdeliť na dva druhy: Na programy, ktoré si uchovávajú aktuálny stav a na programy, ktoré nepoznajú
+kontext v ktorom udalosť nastala. Interro modeluje program pomocou stavových automatov preto patrí do prvej skupiny spolu s knižnicou Automaton. Do druhej skupiny
+zaraďujeme knižnicu Eventually, ktorá nepozná žiaden mechanizmus, ktorým by si uchovávala už vykonané kroky. \par
+Na krátkom programe nižšie vidíme použitie knižnice Eventually \cite{bartlettEventually2021}. V príklade blikajúcej led žiarovky môžeme vidieť,
+že aktuálny stav žiarovky si je nutné ukladať mimo poskytnutej knižnice. Pri namodelovaní programu pomocou knižnice Interro alebo Automaton
+sa zapamätanie aktuálneho stavu zabezpečí už pomocou jeho modelovania ako stavového automatu. Eventually umožňuje len reagovanie na časovú udalosť.
+\begin{lstlisting}[language=c++]      
+    #include <Eventually.h>       
+
+    #define LIGHT_PIN 5    
+
+    EvtManager mgr;
+    bool state = LOW;    
+
+    void setup() {
+      pinMode(LIGHT_PIN, OUTPUT);
+      mgr.addListener(new EvtTimeListener(1000, true, (EvtAction)blinkme)); 
+    }    
+
+    bool blinkme() {
+      state = !state; // Switch light states
+      digitalWrite(LIGHT_PIN, state); // Display the state
+      return false; // Allow the event chain to continue
+    }    
+
+    USE_EVENTUALLY_LOOP(mgr) // Use this instead of your loop() function.    
+\end{lstlisting}
+
+Základnou operáciou pri udalosťami riadnom programovaní je generovanie udalostí. Existujúce knižnice Automaton a Eventually umožňujú generovanie udalostí pomocou
+neustáleho kontrolovania ich stavu. Ak by však nastala niektorá z udalostí a knižnica by v tej chvíli bola zaneprázdnená obsluhou inej činnosti,
+mohlo by dôjsť k premeškaniu udalosti. Tento problém sme sa pokúsili vyriešiť v knižnici Interro. Zachovali sme
+možnosť generovania udalostí spôsobom akým to robili existujúce riešenia, pridali sme však aj možnosť generovania udalostí pomocou prerušení. Generovanie prerušení pomocou
+prináša aj niektoré nevýhody. Prerušenia sú úzko naviazané na procesor, ktorý sme použili pri vývoji. Nieje preto zaručená funkčnosť knižnice aj na iných modeloch
+mikrokontrolérov. Ďalšou z nevýhod je obsluha udalostí. Keďže udalosť bola vygenerovaná pri obsluhe prerušenia, aj obsluha udalosti prebieha vo vnútri prerušenia.
+Pri dlho trvajúcej obsluhe udalosti to môže predstavovať problém v podobe premeškania ďalších prichádzajúcich prerušení. Nezabraňuje to však použitiu knižnice s použitím
+softvérových spúšťačov.
+Porovnanie spomínaných knižníc je prehľadne zobrazené v tabuľke číslo \ref{table:library-compare}.
+\begin{table}[!htbp]
+    \begin{center}
+        \begin{tabular}{| m{20em} | c | c | c |}
+            \hline
+            Funkcionalita                                        & Interro   & Eventually & Automaton \\
+            \hline
+            Možnosť definovania vlastných udalostí               & Áno       & Áno        & Áno       \\
+            \hline
+            Uchovávanie aktuálneho stavu programu                & Áno       & Nie        & Áno       \\
+            \hline
+            Generovanie udalostí pomocou prerušení               & Áno       & Nie        & Nie       \\
+            \hline
+            Podpora rôznych mikrokontrolérov                     & Čiastočne & Áno        & Áno       \\
+            \hline
+            Možnosť použitia viac ako jedného stavového automatu & Áno       & -          & Áno       \\
+            \hline
+            Generovanie PWM signálu pomocou časovačov            & Áno       & -          & -         \\
+            \hline
+        \end{tabular}
+        \caption{Porovnanie knižníc Interro, Eventually a Automaton}
+        \label{table:library-compare}
+    \end{center}
+\end{table}
+

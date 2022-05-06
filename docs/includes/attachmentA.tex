@@ -46,9 +46,8 @@
             .onEntry([](int8_t state)
                      { TurnOffLed(); });
     
-        timerTrigger.configure(TimerMode::PWM)
-            .setPwmMode(PwmMode::FastPwm8Bit)
-            .setUpOutput(TimerPwmOutput::A, 0.7);
+        timerTrigger.configure(TimerMode::CTC)
+            .useInterval(1000, Events::TimeElapsed); 
     
         buttonTrigger.configure(5)
             .onClick(Events::ButtonClicked);
