@@ -1,64 +1,87 @@
 #include <Interro.hpp>
 
+uint8_t ledOnePin = 35;
+uint8_t ledTwoPin = 43;
+
 enum States
 {
-    LedOn,
-    LedOff,
-    Idle
+    LedOneOn,
+    LedOneOff,
+
+    LedTwoOn,
+    LedTwoOff,
 };
 
 enum Events
 {
-    ButtonClicked,
-    TimeElapsed,
+    IntervalOneElapsed,
+    IntervalTwoElapsed,
 };
 
 Timer1Trigger timerTrigger;
-ButtonTrigger buttonTrigger;
 
-StateMachine blinkingMachine(States::Idle);
+StateMachine blinkingMachineTwo(States::LedTwoOff);
+StateMachine blinkingMachineOne(States::LedOneOff);
 
-static const int8_t idleStateTable[]{
-    Events::ButtonClicked, States::LedOn,
+// machine one states
+static const int8_t ledOneOnStateTable[]{
+    Events::IntervalOneElapsed, States::LedOneOff,
     -1};
 
-static const int8_t ledOnStateTable[]{
-    Events::ButtonClicked, States::Idle,
-    Events::TimeElapsed, States::LedOff,
+static const int8_t ledOneOffStateTable[]{
+    Events::IntervalOneElapsed, States::LedOneOn,
     -1};
 
-static const int8_t ledOffStateTable[]{
-    Events::ButtonClicked, States::Idle,
-    Events::TimeElapsed, States::LedOn,
+// machine two states
+static const int8_t ledTwoOnStateTable[]{
+    Events::IntervalTwoElapsed, States::LedTwoOff,
     -1};
 
-void TurnOnLed() {}
+static const int8_t ledTwoOffStateTable[]{
+    Events::IntervalTwoElapsed, States::LedTwoOn,
+    -1};
 
-void TurnOffLed() {}
+void TurnOnLed(uint8_t pin)
+{
+    digitalWrite(pin, HIGH);
+}
 
-ExternalTrigger0 externalTrigger0;
+void TurnOffLed(uint8_t pin)
+{
+    digitalWrite(pin, LOW);
+}
 
 void setup()
 {
-    blinkingMachine.configure(States::Idle)
-        .onEvent(idleStateTable);
+    Serial.begin(9600);
+    pinMode(ledOnePin, OUTPUT);
+    pinMode(ledTwoPin, OUTPUT);
 
-    blinkingMachine.configure(States::LedOn)
-        .onEvent(ledOnStateTable)
-        .onEntry([](int8_t state)
-                 { TurnOnLed(); });
+    // set-up machine for led 1
+    blinkingMachineOne.configure(States::LedOneOn)
+        .onEvent(ledOneOnStateTable)
+        .onEntry([](int8_t event)
+                 { TurnOnLed(ledOnePin); });
 
-    blinkingMachine.configure(States::LedOff)
-        .onEvent(ledOffStateTable)
-        .onEntry([](int8_t state)
-                 { TurnOffLed(); });
+    blinkingMachineOne.configure(States::LedOneOff)
+        .onEvent(ledOneOffStateTable)
+        .onEntry([](int8_t event)
+                 { TurnOffLed(ledOnePin); });
 
-    timerTrigger.configure(TimerMode::PWM)
-        .setPwmMode(PwmMode::FastPwm8Bit)
-        .setUpOutput(TimerPwmOutput::A, 0.7);
+    // set-up machine for led 2
+    blinkingMachineTwo.configure(States::LedTwoOn)
+        .onEvent(ledTwoOnStateTable)
+        .onEntry([](int8_t event)
+                 { TurnOnLed(ledTwoPin); });
 
-    buttonTrigger.configure(5)
-        .onClick(Events::ButtonClicked);
+    blinkingMachineTwo.configure(States::LedTwoOff)
+        .onEvent(ledTwoOffStateTable)
+        .onEntry([](int8_t event)
+                 { TurnOffLed(ledTwoPin); });
+
+    // set-up triggers
+    timerTrigger.configure(TimerMode::CTC)
+        .useInterval(1000, Events::IntervalOneElapsed);
 }
 
 void loop()

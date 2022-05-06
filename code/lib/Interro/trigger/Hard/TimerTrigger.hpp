@@ -76,12 +76,14 @@ private:
     void setCompareMatchRegister(volatile uint16_t *occrnx, uint16_t compareValue, volatile uint8_t *timskn, uint8_t ocienx);
     void getPossiblePrescalers(double frequency, uint8_t prescalerindexes[], uint16_t compareValues[], uint8_t *count);
     double getFrequency(uint8_t prescalerIndex, uint16_t comapareValue);
+    TimerTrigger &setTimer(const uint32_t miliss, const uint8_t event, bool mainInterval);
 
 public:
     TimerTrigger &configure(TimerMode mode);
     TimerTrigger &setPrescalerValue(Prescalers value);
+    TimerTrigger &useInterval(const uint32_t millis, const uint8_t event);
+    TimerTrigger &onTime(const uint32_t millis, const uint8_t event);
     TimerTrigger &onOverflow(const uint8_t event);
-    TimerTrigger &onTimeElapsed(const uint32_t miliss, const uint8_t event);
     TimerPwmConfiguration &setPwmMode(PwmMode mode);
     TimerPwmConfiguration &getPwmConfigurator();
     TimerTrigger(volatile uint8_t *TCCRnA,
