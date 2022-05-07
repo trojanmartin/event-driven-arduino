@@ -9,7 +9,7 @@ To vedie k nižším nákladom a kratšej dobe vývoja. Tým sa šetrí čas a a
 dôvod existencie a popularity rôznych mikrokontrolérov. Medzi ďalšie výhody patrí nižšia spotreba energie,
 jednoduchosť modernizácie komponentov mikrokontroléra a vyššia spoľahlivosť
 celého systému. Tieto výhody patria medzi dôležité aspekty vstavaných systémov. \par
-K nevýhodám môžeme zaradiť rýchlosť zariadenia, keďže tá bude takmer vždy určite
+K nevýhodám môžeme zaradiť rýchlosť zariadenia, keďže tá bude takmer vždy
 nižšia ako by sme vedeli dosiahnuť len pomocou hardvérového riešenia. Väčšina aplikácii, a najmä tie, ktoré vyžadujú istý druh ľudskej interakcie, nepotrebujú
 dosiahnuť také rýchle reakčné časy. Preto je mikrokontrolér pre ne dobrou voľbou
 \cite{guntherIntroductionMicrocontrollers2007}.
@@ -27,34 +27,38 @@ V dnešnej dobe poznáme niekoľko typov mikrokontrolérov. Medzi najznámejšie
 \noindent
 PIC je rodina mikrokontrolérov vyrábaných technológiou mikročipov, pôvodne navrhnutou pre vývoj všobecných elektronických zariadení.
 Názov PIC pôvodne označoval Peripheral Interface Controller a v súčasnosti je
-rozšírený ako Programmable Intelligent Computer. Zariadenia PIC je známe pre
+rozšírený ako Programmable Intelligent Computer. Zariadenie PIC je známe pre
 svoju nízku cenu, širokú dostupnosť a veľkú používateľskú základňu. \par
 
 Z periférnych zariadení je tento mikrokontrolér vybavený:
 \begin{itemize}
     \item Tromi časovačmi
-    \item Dvomi takzvanými Capture/Compare/PWM modulmi
+    \item Dvomi tzv. Capture/Compare/PWM modulmi
     \item 10 bitovým analógovo-digitálnym prevodníkom
-    \item Synchrónnym sériovym portom s podporou I2C master/slave komunikácie
+    \item Synchrónnym sériovým portom s podporou I2C master/slave komunikácie
     \item 8 bitovým paralelným slave portom
 \end{itemize}
 
 Medzi výhody PIC patrí spoľahlivosť. Zároveň je aj veľmi rýchly vďaka použitiu architektúry RISC.
-Spotreba energie je taktiež menšia ak ju porovnáme so spotrebou iných mikrokontrolérov. K nevýhodám môžeme zaradiť dĺžku pogramu. Tá bude väčšia práve kvôli použitiu RISC architektúry(35 inštrukcií) \cite{shidlingDifferentTypesMicrocontrollers2020}.
+Spotreba energie je taktiež menšia ak ju porovnáme so spotrebou iných mikrokontrolérov. K nevýhodám môžeme zaradiť dĺžku programu.
+Tá bude väčšia práve kvôli použitiu RISC architektúry (35 inštrukcií) \cite{shidlingDifferentTypesMicrocontrollers2020}.
 
 \subsubsection{ARM mikrokontrolér}
 \noindent
 Názov ARM označuje Advanced Risk machine. ARM mikrokontrolér taktiež využíva architektúru procesora RISC. Procesor ARM patrí medzi jeden z najrozsiahlejších
 a najviac licencovaných procesorov na svete. Prvýkrát bol vyvinutý v roku 1978 Cambridgskou univerzitou. Firma ARM v súčasnosti vyvíja ARM architektúru a
 licencuje ju rôznym ďalším spoločnostiam, ktoré vyvíjajú svoje vlastné produkty.
-Procesory ARM majú menší počet tranzistorov kvôli menšiemu počtu podporovaných inštrukcií. Vďaka tomu je ARM procesor menší ako rôzne iné modely a preto sa nachádza v obrovskom množstve elektronických zariadení. Spojením procesora ARM
+Procesory ARM majú menší počet tranzistorov kvôli menšiemu počtu podporovaných inštrukcií. Vďaka tomu je ARM procesor menší ako rôzne iné modely, a preto sa nachádza v obrovskom množstve elektronických zariadení. Spojením procesora ARM
 s RAM a ROM pamäťou a ďalšími periférnymi zariadeniami dostaneme ARM mikrokontrolér.\par
 
-V porovnaní s inými procesormi sú lacné a zároveň majú menšiu energetickú spotrebu. Z toho vyplýva aj väčšia výdrž batérie. Medzi nevýhody určite patrí to, že architektúra ARM nieje kompatibilná s architektúrou x86 \cite{shidlingDifferentTypesMicrocontrollers2020}.
+V porovnaní s inými procesormi sú lacné a zároveň majú menšiu energetickú spotrebu. Z toho vyplýva aj väčšia výdrž batérie.
+Medzi nevýhody určite patrí to, že architektúra ARM nie je kompatibilná s architektúrou x86 \cite{shidlingDifferentTypesMicrocontrollers2020}.
 
 \subsubsection{AVR mikrokontrolér}
 \noindent
-AVR bol vyvinutý v roku 1996 spoločnosťou Atmel Corporation. Názov AVR je odvodený od mien vývojarov, ktorý na ňom pracovali. Je to skratka od  Alf-Egil Bogen Vegan Wollan RISC mikrokontrolér. Tkatiež je známy aj pod názvom Advanced Virtual RISC. AVR mikrokontrolér je dostupný v troch kategóriach:
+AVR bol vyvinutý v roku 1996 spoločnosťou Atmel Corporation. Názov AVR je odvodený od mien vývojarov, ktorí na ňom pracovali.
+Je to skratka od  Alf-Egil Bogen Vegan Wollan RISC mikrokontrolér.
+Taktiež je známy aj pod názvom Advanced Virtual RISC. AVR mikrokontrolér je dostupný v troch kategóriách:
 \begin{itemize}
     \item TinyAVR: Najmenší dostupný model. Je určený len pre jednoduché aplikácie.
     \item MegaAVR: Najpopulárnejší model AVR mikrokontrolérov. Má väčšie množstvo pamäte a viac zabudovaných periférnych zariadení. Je vhodný pre stredné náročné až zložité aplikácie.

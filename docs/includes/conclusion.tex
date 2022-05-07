@@ -1,1 +1,19 @@
-Conclusion is going to be where? \newline Here.
+
+V diplomovej práci sme sa venovali problematike udalosťami riadeného programovania s použitím prerušení mikrokontroléra. Na úvod sme si prestavili pojmy ako mikrokontrolér
+a prerušenie. Neskôr sme opísali spôsob fungovania AVR časovačov, ich možnú konfiguráciu a spôsob použitia v programe. Pokračovali sme predstavením programovacích paradigiem a modelovaním
+udalosťami riadeného programovania pomocou stavových automatov. \par
+V prakticej časti práce sme vyvinuli softvérovú knižnicu, ktorej úlohou je modelovanie programu pomocou stavových automatov s použitím prerušení mikrokontroléra Arduino
+Mega 2560. Prerušenia sú použité na generovanie udalostí, ktorých dôsledkom je zmena stavu stavového automatu. Knižnica umožnuje jednoduchú konfiguráciu a použitie
+prerušení aj pre používateľov, ktorí nemajú hĺboké vedomosti prerušovacieho systému mikrokontroléra. Implementované komponenty podporujú konfiguráciu
+časovačov 1, 3, 4 a 5, externých prerušení 0 až 7 a prerušení o zmene hodnoty pinu 0 až 2. Vytvorené riešenie taktisto ponúka aj možnosť generovania
+udalostí softvérovým spôsobom bez použitia prerušení. Pre demonštráciu riešenie obsahuje implementáciu softvérového generátora udalostí, ktorý sleduje stav pripojeného
+tlačidla.
+\par
+Vytvorená knižnica umožňuje program namodelovať pomocou stavových automatov. Výsledkom toho je lepšia čitateľnosť kódu a nižšia náročnosť zmeny existujúcich programov.
+Vďaka jednoduchej a intuitívnej konfigurácii prerušení je použiteľná aj pre menej zdatných používateľov. Pokročilým používateľom je umožnené skombinovanie použitia
+knižnice s vlastnou obsluhou prerušení. Medzi nevýhody použitia knižnice je jej neprenosnosť na iné mikrokontroléry Arduino. Vývoj aplikácie prebiehal na platforme
+Arduino Mega 2560 a konfigurácia prerušení je priamo naviazaná na použitý procesor mikrokontroléra. Medzi ďalšie nevýhody patrí nižšia flexibilita konfigurácie
+prerušení oproti manuálnej konfigurácii. \par
+V ďalšom vývoji knižnice by sme sa mohli zamerať na použiteľnosť knižnice aj na iných typoch mikrokontrolérov Arduino. Pomocou podmienej kompilácie kódu
+by sme vedeli dosiahnuť kompatibilitu s ďalšími verzia mikrokontrolérov AVR. Rozšírením podpory aj pre iné prerušenia by sme zasa dosiahli väčšiu flexibilitu
+riešenia.
