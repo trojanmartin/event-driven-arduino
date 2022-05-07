@@ -535,9 +535,9 @@ neustáleho kontrolovania ich stavu. Ak by však nastala niektorá z udalostí a
 mohlo by dôjsť k premeškaniu udalosti. Tento problém sme sa pokúsili vyriešiť v knižnici Interro. Zachovali sme
 možnosť generovania udalostí spôsobom akým to robili existujúce riešenia, pridali sme však aj možnosť generovania udalostí pomocou prerušení. Generovanie prerušení pomocou
 prináša aj niektoré nevýhody. Prerušenia sú úzko naviazané na procesor, ktorý sme použili pri vývoji. Nieje preto zaručená funkčnosť knižnice aj na iných modeloch
-mikrokontrolérov. Ďalšou z nevýhod je obsluha udalostí. Keďže udalosť bola vygenerovaná pri obsluhe prerušenia, aj obsluha udalosti prebieha vo vnútri prerušenia.
-Pri dlho trvajúcej obsluhe udalosti to môže predstavovať problém v podobe premeškania ďalších prichádzajúcich prerušení. Nezabraňuje to však použitiu knižnice s použitím
-softvérových spúšťačov.
+mikrokontrolérov. Nezabraňuje to však použitiu knižnice s použitím
+softvérových spúšťačov. Ďalšou z nevýhod je obsluha udalostí. Keďže udalosť bola vygenerovaná pri obsluhe prerušenia, aj obsluha udalosti prebieha vo vnútri prerušenia.
+Pri dlho trvajúcej obsluhe udalosti to môže predstavovať problém v podobe premeškania ďalších prichádzajúcich prerušení.
 Porovnanie spomínaných knižníc je prehľadne zobrazené v tabuľke číslo \ref{table:library-compare}.
 \begin{table}[!htbp]
     \begin{center}
