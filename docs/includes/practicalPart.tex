@@ -1,9 +1,8 @@
 \section{Praktická časť}
-\noindent
-
+\noindent \par
 Praktická časť tejto diplomovej práce sa zaoberá spojením opisovaných častí do jednej softvérovej knižnice pre platformu Arduino Mega 2560. Arduino využíva AVR
 architektúru mikrokontrolérov, preto sme značnú časť práce venovali práve štúdiu fungovania týchto mikrokontrolérov.
-Jednou z hlavných úloch vytvorenej knižnice je zjednodušenie použitia prerušení s dôrazom na prerušenia časovačov.
+Jednou z hlavných úloh vytvorenej knižnice je zjednodušenie použitia prerušení s dôrazom na prerušenia časovačov.
 Druhou úlohou je umožnenie vývoja aplikácii mikrokontroléra pomocou udalosťami riadeného programovania. Tento spôsob programovania sme modelovali použitím stavových
 automatov. Spojením týchto dvoch fenoménov sme sa pokúsili zjednodušiť a zrýchliť vývoj aplikácii aktívne využívajúcich prerušenia mikrokontroléra.
 V predstavených riešeniach je možné program modelovať pomocou udalosťami riadeného programovania,
@@ -13,14 +12,14 @@ prerušení. Knižnica by mala umožniť využitie  prerušení aj menej zdatný
 Knižnicu sme nazvali Interro a tento názov budeme používať aj neskôr v tejto práci pri opise fungovania a architektúry vytvorenej knižnice. Knižnica je zapísaná v jazyku C++.
 
 \subsection{Predstavenie riešenia}
-\noindent
-Pre jednoduchšie porozumenie si vytvorenú knižnicu predstavíme na nasledujúcom jednoduchom príklade: Vytvoríme program, ktorého úlohou je blikanie led žiarovky.
-Tá bude meniť svoj stav v 1 sekundovom intervale. Blikanie led žiarovky je možné vypnúť, respektíve zapnúť pomocou stlačenia tlačidla.
+\noindent \par
+Pre jednoduchšie porozumenie si vytvorenú knižnicu predstavíme na nasledujúcom jednoduchom príklade. Vytvoríme program, ktorého úlohou je blikanie led žiarovky.
+Tá bude meniť svoj stav v 1 sekundovom intervale. Blikanie led žiarovky je možné vypnúť, resp. zapnúť pomocou stlačenia tlačidla.
 
 \subsubsection{Modelovanie programu pomocou stavového automatu}
-\noindent
+\noindent \par
 Prvým krokom každého programu vytvoreného pomocou knižnice Interro je jeho namodelovanie pomocou stavového automatu.
-Ako sme spomínali v kapitovale číslo \ref{state-machine-theory}, automat je definovaný päticou ($\Sigma$ ,$\mathcal{Q}$ , $q_0$, $\mathcal{F}$, $\delta$).
+Ako sme spomínali v kapitole č.\ref{state-machine-theory}, automat je definovaný päticou ($\Sigma$ ,$\mathcal{Q}$ , $q_0$, $\mathcal{F}$, $\delta$).
 Automat označíme ako \textit{P} a začneme definíciou množiny stavov $\mathcal{Q}$. V našom príklade vieme identifikovať 3 stavy:
 \begin{enumerate}
     \item Led žiarovka svieti, označme ako \textit{LedOn}.
@@ -35,8 +34,8 @@ Pokračujme definíciou vstupnej abecedy $\Sigma$. Túto vstupnú abecedu Interr
 \end{enumerate}
 
 Nasleduje definícia počiatočného stavu $q_0$. Tým je stav \textit{Idle}. Množina konečných stavov $\mathcal{F}$ je v našom prípade prázdna. Príklad nedefinuje
-stav v ktorom má program skončiť a už ďalej nepokračovať vo svojej činnosti. K úplnej definícii automatu nám ešte chýba definícia prechodovej funkcie $\delta$.
-Tú definujeme pomocou obrázku číslo \ref{figure:blinking-led-state-machine}.
+stav, v ktorom má program skončiť a už ďalej nepokračovať vo svojej činnosti. K úplnej definícii automatu nám ešte chýba definícia prechodovej funkcie $\delta$.
+Tú definujeme pomocou obrázku č.\ref{figure:blinking-led-state-machine}.
 
 \begin{figure}[!h]
     \centering
@@ -52,9 +51,10 @@ Stavový automat \textit{P} je teda definovaný ako pätica ($\Sigma$ ,$\mathcal
     \item \begin{math} q_0 = \{ \textit{Idle} \}  \end{math}
     \item $\mathcal{F}$ \begin{math} = \{ \}  \end{math}
 \end{itemize}
-a prechodová funkcia $\delta$ je daná obrázkom \ref{figure:blinking-led-state-machine}.
+a prechodová funkcia $\delta$ je daná obrázkom č.\ref{figure:blinking-led-state-machine}.
 
 \subsubsection{Implementácia stavového automatu}
+\noindent \par
 Implementáciu začneme vytvorením niekoľkých globálnych premenných. Ako prvé definujeme enum stavov a enum udalostí definovaných v stavovom automate \textit{P}.
 \begin{lstlisting}[
     label={lst:events-and-states},
@@ -74,7 +74,7 @@ enum Events
 };    
 
 \end{lstlisting}
-Interro definuje triedu \textit{StateMachine}. Pomocou tejto triedy vieme reprenzentovať stavový automat \textit{P} v našom programe. Trieda definuje jeden
+Interro definuje triedu \textit{StateMachine}. Pomocou tejto triedy vieme reprezentovať stavový automat \textit{P} v našom programe. Trieda definuje jeden
 parametrický konštruktor, ktorého argumentom je počiatočný stav automatu. Podľa definície \textit{P} to je stav \textit{Idle}. Vytvoríme preto inštanciu danej triedy s
 názvom \textit{blinkingMachine} a nastavíme správny počiatočný stav automatu.
 \begin{lstlisting}[
@@ -97,9 +97,9 @@ static const int8_t ledOnStateTable[]{
     
 \end{lstlisting}
 
-Definícia je jednorozmerné pole, ktoré sa skladá z dvojíc udalostí a stavov. Táto dvojica reprezentuje prechod medzi stavmi. V prechodovej funkcii na obrázku číslo
-\ref{figure:blinking-led-state-machine} vidíme, že zo stavu \textit{LedOn} sa vieme dostať do stavu \textit{Idle} ale aj do stavu \textit{LedOff}.
-To aký bude ďalší stav definuje udalosť (vstupná abeceda), ktorá nastala. To vidíme aj v prechodovej tabuľke: Udalosť \textit{ButtonClicked} hovorí o prechode do stavu
+Definícia je jednorozmerné pole, ktoré sa skladá z dvojíc udalostí a stavov. Táto dvojica reprezentuje prechod medzi stavmi. V prechodovej funkcii na obrázku č.\ref{figure:blinking-led-state-machine} vidíme,
+že zo stavu \textit{LedOn} sa vieme dostať do stavu \textit{Idle} ale aj do stavu \textit{LedOff}.
+To, aký bude ďalší stav definuje udalosť (vstupná abeceda), ktorá nastala. To vidíme aj v prechodovej tabuľke: Udalosť \textit{ButtonClicked} hovorí o prechode do stavu
 \textit{Idle} a udalosť \textit{TimeElapsed} definuje prechod do stavu \textit{LedOff}. Pre čitateľnosť kódu je dôležité zvoliť správne formátovanie zápisu poľa.
 Prechodová tabuľka stavu musí byť vždy ukončená číslom -1. Na základe toho implementácia Interro knižnice zistí veľkosť poľa a je schopná s ním vykonávať operácie.
 Rovnakým spôsobom nadefinujeme prechodové tabuľky pre každý stav automatu \textit{P}:
@@ -125,7 +125,7 @@ static const int8_t ledOffStateTable[]{
 Definovali sme teda stavy, ktoré môže automat nadobudnúť. Rovnako aj udalosti spolu s prechodovými tabuľkami automatu.
 Tu ukončíme definíciu globálnych premenných a pokračujeme v implementácii v Arduino funkcii setup(), ktorá je zavolaná jedenkrát pri štarte programu.
 Pomocou definovaných globálnych premenných nakonfigurujeme spomínanú premennú \textit{blinkingMachine} typu \textit{StateMachine}. Konfigurácia funguje
-na rovnakom princípe ako definícia prechodových tabuliek: každý stav automatu konfigurujeme samostatne. Konfigurácia pre náš príklad je nasledujúca:
+na rovnakom princípe ako definícia prechodových tabuliek, teda každý stav automatu konfigurujeme samostatne. Konfigurácia pre náš príklad je nasledujúca:
 
 \begin{lstlisting}[language=c++]  
 
@@ -150,17 +150,18 @@ blinkingMachine.configure(States::LedOff)
 
 Ako prvé je vždy nutné zavolať metódu \textit{configure} (tento princíp sa opakuje v celej knižnici Interro).
 Ako argument do metódy posielame stav, pre ktorý chceme konfiguráciu vykonať. Nasleduje volanie metódy \textit{onEvent}, tu ako argument posielame prechodovú tabuľku
-stavu, ktorý konfigurujeme. Po volaní týchto dvoch metód je konfigurácie stavu hotová. Interro nám však umožnuje aj volanie vlastných metód pri vstupe a
+stavu, ktorý konfigurujeme. Po volaní týchto dvoch metód je konfigurácie stavu hotová. Interro nám však umožňuje aj volanie vlastných metód pri vstupe a
 výstupe zo stavu. V príklade vidíme volanie metódy  \textit{onEntry}. Do nej je možné poslať smerník na funkciu, prípadne lambda funckiu ako to vidíme
 v príklade vyššie. Táto funkcia bude následne zavolaná vždy pri vstupe stavového automatu do konfigurovaného stavu. V našom príklade pri vstupe do stavu
-\textit{LedOn} zavoláme funckiu \textit{TurnOnLed}, ktorá zasvieti led žiarovku. Analogicky pri vstupe do stavu \textit{LedOff}, voláme funckiu \textit{TurnOffLed},
+\textit{LedOn} zavoláme funkciu \textit{TurnOnLed}, ktorá zasvieti led žiarovku. Analogicky pri vstupe do stavu \textit{LedOff}, voláme funkciu \textit{TurnOffLed},
 ktorá led žiarovku zhasne. Rovnakým spôsobom funguje aj volanie metódy
 \textit{onExit}. Jediným rozdielom je, že poskytnutá funkcia bude zavolaná pred opustením daného stavu. Túto možnosť však v našom príklade nevyužívame.
 
 \subsubsection{Spúšťače udalostí}
+\noindent \par
 V predchádzajúcej podkapitole sme namodelovali náš program pomocou stavového automatu a následne sme tento automat pomocou knižnice Interro aj implementovali.
-Automat definuje stavy v ktorých sa môže nachádzať. Zároveň definuje aj prechody medzi stavmi a umožnuje volanie vlastných metód užívateľa pri zmene aktuálneho stavu.
-Poslednou chýbajúcou časťou sú udalosti a ich spúšťanie. O to sa v Interro knižnici starajú takzvané spúšťače. \par
+Automat definuje stavy, v ktorých sa môže nachádzať. Zároveň definuje aj prechody medzi stavmi a umožňuje volanie vlastných metód užívateľa pri zmene aktuálneho stavu.
+Poslednou chýbajúcou časťou sú udalosti a ich spúšťanie. O to sa v Interro knižnici starajú tzv. spúšťače. \par
 Spúšťače sú zodpovedné za sledovanie udalostí a ich následnú propagáciu do stavových automatov Interra.
 Príkladom spúšťača je \textit{Timer1Trigger}. Využíva časovač číslo 1 mikrokontroléra Arduino Mega 2560 a podporuje rôzné módy.
 Práve tento spúšťač použijeme na generovanie udalosti \textit{TimeElapsed}. Prvým krokom je vytvorenie ďalšej globálnej premennej typu \textit{Timer1Trigger}.
@@ -175,10 +176,10 @@ timerTrigger.configure(TimerMode::CTC)
     .useInterval(1000, Events::TimeElapsed); 
 \end{lstlisting}
 
-Daným kódom konfigurujeme spúšťač, v našom konkrétnom prípade časovač 1, aby používal CTC mód, a po uplynutí každých 1000 milisekúnd oboznámil stavové automaty
-o udalosti \textit{TimeElapsed}. Týmto spôsobom zabezpečíme generovanie udalosti \textit{TimeElapsed} každú sekundu. Ná základe tejto udalosti bude stavový automat
-prechádzať zo stavu \textit{LedOn} do stavu \textit{LedOff}, respektíve, to isté bude platiť aj opačným smerom. Dôsledkom týchto zmien stavu bude volanie funkcií
-\textit{TurnOnLed} respektíve \textit{TurnOffLed}, ktoré zabezpečia blikanie led žiarovky v 1 sekundovom intervale.  \par
+Daným kódom konfigurujeme spúšťač, v našom konkrétnom prípade časovač 1, aby používal CTC mód a po uplynutí každých 1000 milisekúnd oboznámil stavové automaty
+o udalosti \textit{TimeElapsed}. Týmto spôsobom zabezpečíme generovanie udalosti \textit{TimeElapsed} každú sekundu. Na základe tejto udalosti bude stavový automat
+prechádzať zo stavu \textit{LedOn} do stavu \textit{LedOff}, resp. to isté bude platiť aj opačným smerom. Dôsledkom týchto zmien stavu bude volanie funkcií
+\textit{TurnOnLed}, resp. \textit{TurnOffLed}, ktoré zabezpečia blikanie led žiarovky v 1 sekundovom intervale.  \par
 
 Na generovanie udalosti \textit{ButtonClicked} využijeme spúšťač nazvaný ako \textit{ButtonTrigger}. Ako aj v predošlých prípadoch, prvým krokom je definovanie globálnej premennej
 \textit{buttonTrigger} typu \textit{ButtonTrigger}.
@@ -193,7 +194,7 @@ buttonTrigger.configure(5)
     .onClick(Events::ButtonClicked); 
 \end{lstlisting}
 
-Spúšťač \textit{buttonTrigger} sme nakonfigurovali tak aby sledoval Arduino pin číslo 5 a v prípade stlačenia tlačidla pripojeného na tento pin, vygeneroval udalosť
+Spúšťač \textit{buttonTrigger} sme nakonfigurovali tak, aby sledoval Arduino pin číslo 5 a v prípade stlačenia tlačidla pripojeného na tento pin, vygeneroval udalosť
 \textit{ButtonClicked}. Po jej vygenerovaní automat prejde do  \textit{Idle} a blikanie led žiarovky sa zastaví. Po opakovanom stlačení tlačidla automat prejde do
 stavu \textit{LedOn} a blikanie led žiarovky sa znovu spustí. \par
 Pre správnu funkčnosť celej knižnice je nakoniec nutné v Arduino funkcii \textit{loop} volať metódu \textit{run}, definovanú v globálnom kontajneri Interro knižnice.
@@ -206,9 +207,10 @@ void loop()
 
 Týmto krokom sme dokončili funkčnosť názornej ukážky programu. Celý program je možné nájsť v prílohe \ref{att:A}.
 
-\subsection{Architekúra knižnice Interro} \label{subsection:architecture-interro}
-Vďaka výberu jazyka C++ sme pri vývoji sme aktívne využívali princípy objektového orientované programovania. Architekúra Interra pozostáva z mnoho vytvorených tried.
-Tie je možné rozdeliť na tri hlavné skupiny: Spúšťače, triedy stavového stroja a triedu Interro.
+\subsection{Architektúra knižnice Interro} \label{subsection:architecture-interro}
+\noindent \par
+Vďaka výberu jazyka C++ sme pri vývoji aktívne využívali princípy objektového orientovaného programovania. Architektúra Interra pozostáva z mnohých vytvorených tried.
+Tie je možné rozdeliť na tri hlavné skupiny a to spúšťače, triedy stavového stroja a triedu Interro.
 Postupne sa pozrieme na každú túto skupinu a jej úlohy detailnejšie. \par
 \begin{enumerate}
     \item Stavový automat
@@ -221,26 +223,26 @@ metód. \par
     \item Spúšťače
 \end{enumerate}
 Spúšťače sú najzložitejšou a najrozsiahlejšou súčasťou knižnice Interro.
-Delíme ich na dva druhy: hardvérové a softvérové spúšťače. \par
+Delíme ich na dva druhy a to hardvérové a softvérové spúšťače. \par
 Hardvérový spúšťač používa na informovanie o udalosti prerušenia mikrokontroléra. Je napojený priamo na ISR prerušenia a obsahuje logiku pre konfiguráciu prerušení,
 ktoré podporuje. Knižnica Interro momentálne obsahuje spúšťače pre tieto prerušenia:
 \begin{itemize}
     \item Prerušenia časovačov 1, 3, 4 a 5.
     \item Externých prerušení 0 až 7.
-    \item Prerušenia hovoriace o zmene hodnoty pinov, takzvané \textit{PinChangeInterrupt} 0 až 3.
+    \item Prerušenia hovoriace o zmene hodnoty pinov, tzv. \textit{PinChangeInterrupt} 0 až 3.
 \end{itemize}
 
-Každý z týchto spúšťačov má samostatnú triedu a fungujú nezávisle od seba. Preto je možné, respektíve nutné, každý z nich
+Každý z týchto spúšťačov má samostatnú triedu a fungujú nezávisle od seba. Preto je možné, resp. nutné, každý z nich
 nakonfigurovať samostatne. Jediným obmedzením je hardvérová implementácia mikrokontroléra. V niektorých prípadoch sú rôzne prerušenia napojené na rovnaký pin procesora,
 preto je nutné pre správnu funkčnosť takýmto zhodám predchádzať. \par
 
-Druhým typom spúšťačov sú takzvané softvérove spúšťače. Pri hardvérových spúšťačoch je prvotným impulzom na vygenerovanie udalosti mikrokontrolér. Ten pomocou prerušenia
+Druhým typom spúšťačov sú tzv. softvérove spúšťače. Pri hardvérových spúšťačoch je prvotným impulzom na vygenerovanie udalosti mikrokontrolér. Ten pomocou prerušenia
 oboznámi hardvérový spúšťač o novej udalosti. Ak žiadne prerušenie nenastalo, spúšťač nevykonáva žiadnu akciu. Pri softvérových spúšťačoch to funguje inak. Interro knižnica
-má zoznam všetkých softvérových spúšťačov a neustále sa na ne dopytuje či niektorá z udalosí nenastala. Ak spúštač odpovie definovanou udalosťou,
+má zoznam všetkých softvérových spúšťačov a neustále sa dopytuje či niektorá z udalostí nenastala. Ak spúšťač odpovie definovanou udalosťou,
 tak tá je rovnakým spôsobom preposlaná do všetkých zaregistrovaných stavových automatov. V knižnici Interro je momentálne implementovaný jeden takýto spúšťač s názvom
 \textit{ButtonTrigger}. Je možné ho využiť na generovanie udalostí pri stlačení tlačidla. Jeho hlavným cieľom je však demonštrácia rozšíriteľnosti  knižnice o akékoľvek
 ďalšie spúšťače. Softvérové spúšťače môžu slúžiť na využitie procesora v čase mimo prerušení. Dopĺňajú tak funkcionalitu Interro knižnice pomocou ktorej je tak
-možné vykonávať úlohy na základe vplyvov rôznych periférii (prerušení), ale aj na základe aktálneho stavu programu. \par
+možné vykonávať úlohy na základe vplyvov rôznych periférii (prerušení), ale aj na základe aktuálneho stavu programu. \par
 
 \begin{enumerate}[resume]
     \item Globálny kontajner Interro
@@ -263,27 +265,28 @@ ISR(TIMER1_OVF_vect)
 
 
 Vidíme, že podmienkou kompilácie danej ISR je expanzia makra \\ \textit{TIMER1\_OVF\_INTERRUPT} na logickú jednotku. Makro je definované v hlavičkovom súbore triedy Interro.
-Táto podmienená kompilácia je dostupná pre pokročilých užívateľov knižnice. Každý program môže obsahovať len jednu definúciu ISR pre každý vektor prerušenia. Preto je
+Táto podmienená kompilácia je dostupná pre pokročilých užívateľov knižnice. Každý program môže obsahovať len jednu definíciu ISR pre každý vektor prerušenia. Preto je
 možné v hlavičkovom súbore prepísať expanziu makra \textit{TIMER1\_OVF\_INTERRUPT} na logickú 0 a odstrániť ho z kompilácie v Interro knižnici. Vďaka tomu užívateľ získa
-možnosť definovania ISR nezávisle od knižnice Interro. V ISR prerušenia sa nachádza volanie metódy \textit{handleInterrupt}, ktorá informáciu o prerušení dristribuuje
-do ostatným komponentov knižnice. Prerušenie je identifikované na základe jeho identifikátora. Ten je definovaný v hlavičkovom súbore triedy Interro, a je používaný
+možnosť definovania ISR nezávisle od knižnice Interro. V ISR prerušenia sa nachádza volanie metódy \textit{handleInterrupt}, ktorá informáciu o prerušení distribuuje
+do ostatným komponentov knižnice. Prerušenie je identifikované na základe jeho identifikátora. Ten je definovaný v hlavičkovom súbore triedy Interro a je používaný
 ako argument metódy \textit{handleInterrupt}.
 Rovnakým spôsobom sú implementované všetky podporované prerušenia knižnice Interro.
 
 \subsubsection{Komunikácia medzi komponentami knižnice Interro}
-Komunikáciu s a vrámci knižnice je možné rozdeliť do dvoch fáz. \par
+\noindent \par
+Komunikáciu s a v rámci knižnice je možné rozdeliť do dvoch fáz. \par
 Prvá fáza je konfiguračná a prebieha okamžite po spustení programu. Jej obsahom je správne
 nastavenie spúšťačov a definícia stavových automatov. Na platforme Arduine prebieha vo funkcii \textit{setup} a je spustená práve jeden krát. V tejto fáze sa knižnica
 rôznymi spôsobmi snaží konfiguráciu a nastavenie spúšťačov čo najviac zjednodušiť. Jedným zo spôsobov je implicitné pridávanie použitých komponentov do globálneho
-kontajnera knižnice. Vďaka tomu užívateľ nemusí písať veľa „zbytočného“ kódu. Ďalším je dodržiavanie konvencíí v rámci celej knižnice. Jednou z nich je napríklad
+kontajnera knižnice. Vďaka tomu užívateľ nemusí písať veľa „zbytočného“ kódu. Ďalším je dodržiavanie konvencií v rámci celej knižnice. Jednou z nich je napríklad
 volanie metódy \textit{configure}. Akákoľvek konfigurácia, akéhokoľvek komponentu knižnici musí začínať volaním tejto metódy.  \par
 
-Fáza číslo 2 začína okamžite po skončení prvej fázy. V tejto fáze prebieha generovanie  udalostí, zmena stavov automatov a volanie užívateľských funkcií pri prechodoch
+Fáza č.2 začína okamžite po skončení prvej fázy. V tejto fáze prebieha generovanie  udalostí, zmena stavov automatov a volanie užívateľských funkcií pri prechodoch
 medzi stavmi. Udalosť môže byť vygenerovaná buď hardvérovým alebo softvérovým spúšťačom,  preto aj následná komunikácia je určitým spôsobom rozdielna.
-Ak bola udalosť vygenerovaná hardvérovým spúšťačom, komunikácia je zobrazená na sekvenčnom diagrame na obrázku číslo \ref{figure:interrupt-trigger}.
+Ak bola udalosť vygenerovaná hardvérovým spúšťačom, komunikácia je zobrazená na sekvenčnom diagrame na obrázku č.\ref{figure:interrupt-trigger}.
 Diagram zobrazuje nasledovné procesy:
 \begin{enumerate}
-    \item Procesor prestane vykonávať aktuálny kód, a spustí ISR daného prerušenia.
+    \item Procesor prestane vykonávať aktuálny kód a spustí ISR daného prerušenia.
     \item ISR definované v triede \textit{InterruptHandler} oboznámi o prerušení triedu \textit{Interro}.
     \item Trieda \textit{Interro} sa následne „opýta“ každého hardvérového spúšťača či je potrebné vygenerovanie novej udalosti. Ak áno, spúšťač odpovie udalosťou, ktorú je potrebné vygenerovať.
     \item Ak spúšťač odpovie nedefinovanou udalosťou, komunikácia sa končí. V opačnom prípade Interro oboznámi o novej udalosti všetky stavové automaty.
@@ -308,8 +311,8 @@ Diagram zobrazuje nasledovné procesy:
 \end{figure}
 
 
-Podobný proces funguje aj pri softvérových prerušeniach. Ten je zobrazený na sekvenčným diagramom na obrázku číslo \ref{figure:soft-trigger}.
-Princíp fungovania softvérových spúšťačov je však iný ako v prípade hardvérových. Pre ich správnu funkčnosť je nutné aby bola v užívateľskom kóde neustále
+Podobný proces funguje aj pri softvérových prerušeniach. Ten je zobrazený na sekvenčným diagramom na obrázku č.\ref{figure:soft-trigger}.
+Princíp fungovania softvérových spúšťačov je však iný ako v prípade hardvérových. Pre ich správnu funkčnosť je nutné, aby bola v užívateľskom kóde neustále
 volaná metóda \textit{run} definovaná v triede \textit{Interro}. To zabezpečí cyklenie nižšie popísaného procesu a tým aj správne fungovanie knižnice:
 
 \begin{enumerate}
@@ -320,10 +323,10 @@ volaná metóda \textit{run} definovaná v triede \textit{Interro}. To zabezpeč
 \end{enumerate}
 
 \subsubsection{Implementované spúšťače}
-
-Ako sme spomínali v kapitole číslo \ref{subsection:architecture-interro}, knižnica momentálne implementuje 16 hardvérových spúšťačov troch druhov. Vďaka použitiu
+\noindent \par
+Ako sme spomínali v kapitole č.\ref{subsection:architecture-interro}, knižnica momentálne implementuje 16 hardvérových spúšťačov troch druhov. Vďaka použitiu
 objektovo orientovaného programovania a dedičnosti nebolo nutné každý z týchto spúšťačov implementovať samostatne.
-Na ich implementáciu je použitá štruktúra zobrazená na diagrame na obrázku číslo \ref{figure:timer-class-diagram}:
+Na ich implementáciu je použitá štruktúra zobrazená na diagrame na obrázku č.\ref{figure:timer-class-diagram}:
 \begin{figure}[!h]
     \centering
     \includegraphics[width=0.95\textwidth]{img/timer-class-diagram.png}
@@ -332,7 +335,7 @@ Na ich implementáciu je použitá štruktúra zobrazená na diagrame na obrázk
 \end{figure}
 
 Všetka logika implementácie a práce s registrami časovača sa nachádza v triede \textit{TimerTrigger}. V nej je definovaný parametrický konštruktor, ktorý
-je zavolaný z tried ktoré túto triedu zdedili. Na príklade nižšie vidíme spôsob akým je implementovaný časovač číslo 1. V implementácii sa nachádza len volanie
+je zavolaný z tried, ktoré túto triedu zdedili. Na príklade nižšie vidíme spôsob akým je implementovaný časovač č.1. V implementácii sa nachádza len volanie
 konštruktora rodiča danej triedy s doplnenými parametrami. Každý z časovačov takýmto spôsobom posiela do triedy \textit{TimerTrigger} adresy na svoje
 kontrolné registre, porovnávacie registre, masku prerušení, identifikátory podporovaných prerušení a nakoniec konfiguráciu pre generovanie PWM signálu.
 
@@ -369,7 +372,7 @@ Na rovnakom princípe je založená implementácia spúšťačov pre zvyšné dv
     \item Normálny mód.
 \end{enumerate}
 
-V normálnom móde spúšťač umožnuje generovanie udalosti po pretečení registra časovača. Zároveň je možné manuálne nastaviť hodnotu preddeličky.
+V normálnom móde spúšťač umožňuje generovanie udalosti po pretečení registra časovača. Zároveň je možné manuálne nastaviť hodnotu preddeličky.
 Príklad konfigurácie spúštača pre použitie v normálnom móde:
 \begin{lstlisting}[language=c++]      
 timerTrigger.configure(TimerMode::Normal)
@@ -377,14 +380,15 @@ timerTrigger.configure(TimerMode::Normal)
     .setPrescalerValue(Prescalers::Prescaler64);
 \end{lstlisting}
 
+
 \begin{enumerate}[resume]
     \item CTC mód
 \end{enumerate}
 
-Pri CTC móde je možné definovať až časy pri ktorých bude vygenerovaná nakonfigurovaná udalosť. Pri každom definovanom čase spúšťač automaticky prepočíta
-hodnotu preddeličky. Ak sú požadované hodnoty nekompatibilné a hodnotu preddeličky nieje možné násjť, spúšťač program ukončí ešte v jeho 1 fáze. Po ukončení programu
-sa spúštač pokúsi poslať dostupné informácie o chybe pomocou sérioveho portu mikrokontroléra. Týmto spôsobom sa knižnica aktívne snaží o zjednodušenie ladenia programu.
-Príklad konfigurácie spúštača pre použitie CTC módu s použitím 1 sekundového intervalu, a generovaním udalostí po 80, 600 a 1000 milisekundách:
+Pri CTC móde je možné definovať až časy, pri ktorých bude vygenerovaná nakonfigurovaná udalosť. Pri každom definovanom čase spúšťač automaticky prepočíta
+hodnotu preddeličky. Ak sú požadované hodnoty nekompatibilné a hodnotu preddeličky nie je možné nájsť, spúšťač program ukončí ešte v jeho 1 fáze. Po ukončení programu
+sa spúšťač pokúsi poslať dostupné informácie o chybe pomocou sérioveho portu mikrokontroléra. Týmto spôsobom sa knižnica aktívne snaží o zjednodušenie ladenia programu.
+Príklad konfigurácie spúšťača pre použitie CTC módu s použitím 1 sekundového intervalu a generovaním udalostí po 80, 600 a 1000 milisekundách:
 \begin{lstlisting}[language=c++]      
 timerTrigger.configure(TimerMode::CTC)
     .useInterval(1000, Events::Interval1)
@@ -416,11 +420,11 @@ timerTrigger.configure(TimerMode::PWM)
 
 
 \paragraph*{ExternalTrigger} \: je základnou triedou pre generovanie udalostí pomocou externých prerušení mikrokontroléra. Je zdedaná triedami ExternalTrigger 0 až 7.
-Pri konfigurácii je možné nastaviť stav pri ktorom sa má udalosť vygenerovať. Udalosť je možné generovať ak je stav pinu nízky, ak sa logická hodnota pinu zmenila, prípade
+Pri konfigurácii je možné nastaviť stav, pri ktorom sa má udalosť vygenerovať. Udalosť je možné generovať ak je stav pinu nízky, ak sa logická hodnota pinu zmenila, prípade
 začne stúpať alebo klesať. Pri zmene hodnoty pinu často dochádza k určitému šumu, ktorý môže spôsobiť vygenerovanie viac ako jedného prerušenia v krátkom časovom intervale.
-Aby sme takémuto javu predišli, spúštač podporuje nastavenie minimálneho časového intervalu medzi udalosťami.
+Aby sme takémuto javu predišli, spúšťač podporuje nastavenie minimálneho časového intervalu medzi udalosťami.
 Štandardná dĺžka intervalu je 300 milisekúnd, avšak používateľovi je umožnené použitie vlastnej hodnoty.
-Príklad použitia spúštača pre externé prerušenia je možné vidieť nižšie. Spúšťač je nakonfigurovaný tak, aby pri zmene hodnoty pinu vygeneroval udalosť \textit{PinChanged}.
+Príklad použitia spúšťača pre externé prerušenia je možné vidieť nižšie. Spúšťač je nakonfigurovaný tak, aby pri zmene hodnoty pinu vygeneroval udalosť \textit{PinChanged}.
 Minimálny interval medzi udalosťami je 500 milisekúnd.
 \begin{lstlisting}[language=c++]      
 ExternalTrigger0 externalTrigger0;
@@ -441,10 +445,10 @@ pinChangeTrigger0.configure()
     .onOccurrence(Events::PinChanged);
 \end{lstlisting}
 
-\paragraph*{ButtonTrigger} \: je implementovaný softvérový spúštač, ktorý pre generovanie udalostí sleduje stav poskytnutého pinu. Funguje na princípe neustáleho
+\paragraph*{ButtonTrigger} \: je implementovaný softvérový spúšťač, ktorý pre generovanie udalostí sleduje stav poskytnutého pinu. Funguje na princípe neustáleho
 dopytovania sa na aktuálny stav. Po nastavení logickej jednotky na pin, spúštač vygeneruje udalosť. Rovnako ako predošlé spúšťače, podporuje nastavenie minimálneho
-časového intervalu medzi dvoma vygenerovanými udalosťami. Cieľom tejto diplomovej práce je generovanie udalostí pomocou prerušení. Preto tento softvérový spúštač
-slúži hlavne ako demonštrácia možností rozšírenie knižnice aj o iné spúštače.
+časového intervalu medzi dvoma vygenerovanými udalosťami. Cieľom tejto diplomovej práce je generovať udalosti pomocou prerušení. Preto implmentovaný softvérový spúštač
+slúži hlavne ako demonštrácia možností rozšírenie knižnice aj o iné spúšťače.
 Použitie triedy \textit{ButtonTrigger} môžeme vidieť nižšie:
 
 \begin{lstlisting}[language=c++]         
@@ -456,18 +460,19 @@ buttonTrigger.configure(5)
 \end{lstlisting}
 
 \subsubsection{Rozšíriteľnosť riešenia}
-
-Vyvinuté riešenie nieje obmedzené na už implementované súčasti. Stavový automat podporuje variabilné množstvo stavov a udalostí. Pri modelovaní programu je možné použitie
+\noindent \par
+Vyvinuté riešenie nie je obmedzené na už implementované súčasti. Stavový automat podporuje variabilné množstvo stavov a udalostí. Pri modelovaní programu je možné použitie
 viacerých stavových automatov, ktoré môžu medzi sebou komunikovať. Pre podporu ďalších prerušení
 je možné implementovať ďalšie spúštače. Takýmto spôsobom je možné knižnicu rozšírovať o ďalšie generátory udalostí. Jedinou podmienkou vytvorenia nových spúštačov je
-zdedenie triedy \textit{HardTrigger}, respektíve \textit{SofTrigger} a implementovanie náležitých súčasti týchto základných tried.
+zdedenie triedy \textit{HardTrigger}, resp. \textit{SofTrigger} a implementovanie náležitých súčastí týchto základných tried.
 
 \subsection{Porovnanie s existujúcimi riešeniami}
+\noindent \par
 Vyvinuté riešenie je možné porovnávať s existujúcimi v dvoch rovinách. Prvou je správa a konfigurácia prerušení, druhou modelovanie programu stavovými automatmi.
 
 \subsubsection{Konfigurácia prerušení}
-
-Žiadne z predstavených riešení nepodporuje konfiguráciu prerušení takým spôsobom akým to umožňuje Interro. Ako príklad uvedieme porovnanie konfigurácie časovača 1 pomocou vytvorenej
+\noindent \par
+Žiadne z predstavených riešení nepodporuje konfiguráciu prerušení takým spôsobom, akým to umožňuje Interro. Ako príklad uvedieme porovnanie konfigurácie časovača 1 pomocou vytvorenej
 knižnice a konfiguráciu časovača manuálnym spôsobom. Ak chceme nakonfigurovať časovač 1 mikrokontroléra Arduino Mega 2560 použitím Interro, dosiahneme to nasledovným spôsobom:
 
 \begin{lstlisting}[language=c++]      
@@ -475,8 +480,8 @@ timerTrigger.configure(TimerMode::CTC)
     .useInterval(1000, Events::Interval1);
 \end{lstlisting}
 
-Pre porovnanie nižšie vidíme rovnaké nastavenie pomocou kontroloných registrov časovača. Prvým krokom je vynulovanie aktuálnych hodnôt v registroch.
-Nasleduje natavenie porovnávacej hodnoty. Na jej výpočet bolo potrebné potrebné použiť vzorec číslo \ref{eq:register-value} spolu so zvolením správnej hodnoty
+Pre porovnanie nižšie vidíme rovnaké nastavenie pomocou kontrolných registrov časovača. Prvým krokom je vynulovanie aktuálnych hodnôt v registroch.
+Nasleduje natavenie porovnávacej hodnoty. Na jej výpočet bolo potrebné potrebné použiť vzorec č.\ref{eq:register-value} spolu so zvolením správnej hodnoty
 preddeličky. V posledných dvoch krokoch povolíme CTC mód časovača a následne aj prerušenia pre porovnávací registra A.
 
 \begin{lstlisting}[language=c++]      
@@ -497,13 +502,14 @@ prípadne generovanie  PWM signálu pomocou PWM módu časovača by celú
 manuálnu konfiguráciu ešte viac skomplikovalo. Kód je navyše ťažko čitateľný a pre iných programátorov
 môže byť nezrozumiteľný. Pri použití vytvorenej knižnice všetky tieto nastavenia registrov vykoná knižnica za užívateľa. \par
 Na druhej strane, medzi výhody manuálnej konfigurácie určite patrí väčšia flexibilita riešenia. Časový spúšťač implementovaný v knižnici nepodporuje všetky dostupné
-módy a nastavenia, ktoré sú hardvérovo implementované mikrokontrolérom. To pre niektorých pokročilých užívateľov môže byť problém a preto použitie knižnice
-v tomto prípade nieje správnym riešením.
+módy a nastavenia, ktoré sú hardvérovo implementované mikrokontrolérom. To pre niektorých pokročilých užívateľov môže byť problém, a preto použitie knižnice
+v tomto prípade nie je správnym riešením.
 
 \subsubsection{Udalosťami riadené programovanie}
+\noindent \par
 Rovnako ako vyvinutá knižnica, aj existujúce riešenia \textit{Eventually} a \textit{Automaton} podporujú paradigmu udalosťami riadeného programovania. Podľa kapitoly
-číslo \ref{section:event-driven-programming} túto paradigmu môžeme rozdeliť na dva druhy: Na programy, ktoré si uchovávajú aktuálny stav a na programy, ktoré nepoznajú
-kontext v ktorom udalosť nastala. Interro modeluje program pomocou stavových automatov preto patrí do prvej skupiny spolu s knižnicou Automaton. Do druhej skupiny
+č.\ref{section:event-driven-programming} túto paradigmu môžeme rozdeliť na dva druhy, a to na programy, ktoré si uchovávajú aktuálny stav a na programy, ktoré nepoznajú
+kontext, v ktorom udalosť nastala. Interro modeluje program pomocou stavových automatov, preto patrí do prvej skupiny spolu s knižnicou Automaton. Do druhej skupiny
 zaraďujeme knižnicu Eventually, ktorá nepozná žiaden mechanizmus, ktorým by si uchovávala už vykonané kroky. \par
 Na krátkom programe nižšie vidíme použitie knižnice Eventually \cite{bartlettEventually2021}. V príklade blikajúcej led žiarovky môžeme vidieť,
 že aktuálny stav žiarovky si je nutné ukladať mimo poskytnutej knižnice. Pri namodelovaní programu pomocou knižnice Interro alebo Automaton
@@ -533,12 +539,12 @@ sa zapamätanie aktuálneho stavu zabezpečí už pomocou jeho modelovania ako s
 Základnou operáciou pri udalosťami riadnom programovaní je generovanie udalostí. Existujúce knižnice Automaton a Eventually umožňujú generovanie udalostí pomocou
 neustáleho kontrolovania ich stavu. Ak by však nastala niektorá z udalostí a knižnica by v tej chvíli bola zaneprázdnená obsluhou inej činnosti,
 mohlo by dôjsť k premeškaniu udalosti. Tento problém sme sa pokúsili vyriešiť v knižnici Interro. Zachovali sme
-možnosť generovania udalostí spôsobom akým to robili existujúce riešenia, pridali sme však aj možnosť generovania udalostí pomocou prerušení. Generovanie prerušení pomocou
-prináša aj niektoré nevýhody. Prerušenia sú úzko naviazané na procesor, ktorý sme použili pri vývoji. Nieje preto zaručená funkčnosť knižnice aj na iných modeloch
+možnosť generovania udalostí spôsobom akým to robili existujúce riešenia, pridali sme však aj možnosť generovania udalostí pomocou prerušení. Generovanie prerušení pomocou prerušení
+prináša aj niektoré nevýhody. Prerušenia sú úzko naviazané na procesor, ktorý sme použili pri vývoji. Nie je preto zaručená funkčnosť knižnice aj na iných modeloch
 mikrokontrolérov. Nezabraňuje to však použitiu knižnice s použitím
 softvérových spúšťačov. Ďalšou z nevýhod je obsluha udalostí. Keďže udalosť bola vygenerovaná pri obsluhe prerušenia, aj obsluha udalosti prebieha vo vnútri prerušenia.
 Pri dlho trvajúcej obsluhe udalosti to môže predstavovať problém v podobe premeškania ďalších prichádzajúcich prerušení.
-Porovnanie spomínaných knižníc je prehľadne zobrazené v tabuľke číslo \ref{table:library-compare}.
+Porovnanie spomínaných knižníc je prehľadne zobrazené v tabuľke č.\ref{table:library-compare}.
 \begin{table}[!htbp]
     \begin{center}
         \begin{tabular}{| m{20em} | c | c | c |}
@@ -556,6 +562,8 @@ Porovnanie spomínaných knižníc je prehľadne zobrazené v tabuľke číslo \
             Možnosť použitia viac ako jedného stavového automatu & Áno       & -          & Áno       \\
             \hline
             Generovanie PWM signálu pomocou časovačov            & Áno       & -          & -         \\
+            \hline
+            Množstvo vstavaných komponentov                      & Nie       & -          & Áno       \\
             \hline
         \end{tabular}
         \caption{Porovnanie knižníc Interro, Eventually a Automaton}

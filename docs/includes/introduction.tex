@@ -1,2 +1,14 @@
 
-Výovj so
+Mikrokontroléry sa dnes nachádzajú v obrovskom množstve zariadení, ktoré denno-denne používame. Nájdeme ich od inteligentých hodiniek, cez práčku až po rôzne senzory merajúceho vplyvy okolia,
+v ktorom sa nachádzajú. Ich úlohou je zber dát a ich následne spracovanie, prípadne odoslanie do iného externého systému. To sa často deje v pravidelných časových intervaloch. Komunikácia
+so senzormi môže byť zabezpečená pomocou prerušení mikrokontroléra. Vývoj softvéru podporujúceho všetky spomínané funkcionality nemusí byť jednoduchou záležitosťou. Programátor musí počítať
+s možnosťou prijatia dát v ktoromkoľvek okamihu behu aplikácie. Ak v danej chvíli program vykonáva inú aktivitu, mohlo by dôjsť k strate dát a tým k znehodnoteniu celej práce aplikácie. Preto
+sa na komunikáciu s perifernými zariadeniami, prípade na časovo kritické operácie využívajú prerušenia mikrokontroléra. Ich konfigurácia však býva veľmi komplikovaná.  Popri internej
+komunikácii mikrokontroléra, programátor musí počítať aj so spracovaním dát a taktiež s prípadnou nedostupnosťou externého systému. Jedným z riešení ako udržať zdrojový kód aplikácie
+prehľadným a udržiavateľným je pomocou udalosťami riadeného programovania. Jednou z jeho variácií je modelovanie programu pomocou stavových automatov. Akákoľvek zmena vygeneruje udalosť,
+na základe ktorej sa program pomocou stavového automatu rozhodne aká akcia bude nasledovať. To programátorom umožňuje sústrediť sa na funkčnú časť riešenia a tým zrýchliť a zjednodušiť proces
+vývoja celej aplikácie. Kombináciou generovania udalostí pomocou prerušení a použitím udalosťami riadeného programovania môže vzniknúť mocný nástroj na rýchlu tvorbu aplikácii určených
+pre mikrokontroléry. V tejto diplomovej práci sa preto budeme venovať vývoju softvérovej knižnice, ktorá spomínaný spôsob písania kódu programátorom umožní. V jednotlivých kapitolách
+diplomovej práce sa pozrieme na mikrokontroléry s dôrazom na ich prerušenia a prerušenia časovačov. Neskôr na formálnu definíciu stavových automatov a ich využitím v softvérom vývoji. Súčasťou
+práce bude aj predstavenie a zhodnotenie existujúcich riešení. Predstavíme aj platformu Arduino, pretože vývoj knižnice bude prebiehať na mikrokontroléry Arduino Mega 2560 s architektúrou AVR.
+V poslednej časti práce opíšeme vyvinuté riešenie a porovnáme ho s predstavenými existujúcimi riešeniami.

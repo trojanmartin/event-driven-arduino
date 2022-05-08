@@ -4,14 +4,14 @@
 \subsection{AVR časovače a počítadlá}
 \noindent
 
-Ako názov napovedá, časovače sú určené na meranie času. Často ich nazývame aj počítadlá
+Ako názov napovedá, časovače sú určené na meranie času. Často ich nazývame aj počítadlá,
 pretože vo svojom základnom princípe časovače len počítajú počet dokončených periód zdrojových hodín.
 Každý časovač má svoj vlastný register, kde je uložená jeho aktuálna hodnota a taktiež každý potrebuje zdroj hodín. V mikrokontroléroch často existuje niekoľko možných zdrojov
 hodín a ich výber je možné určiť pomocou prepínača. Niektoré mikrokontroléry umožňujú aj použitie
 externých hodín \cite{IntroductionMicrocontrollerTimers}. Pri rôznych architektúrach sa môže spôsob fungovania časovačov líšiť. V tejto diplomovej práci sa budeme venovať
 mikrokontroléru s architektúrou AVR, preto aj nasledujúci opis fungovania časovačov sa vzťahuje na architektúru AVR.\par
 Fungovanie časovača si najlepšie opíšeme na konkrétnom príklade.
-Uvažujme časovač s 16-bitovým registrom a zdrojom hodín s frekvenciou 1 kilohertz. Po každom uplynutí cyklu v hodinách, časovač
+Uvažujme časovač s 16-bitovým registrom a zdrojom hodín s frekvenciou 1 kHz. Po každom uplynutí cyklu v hodinách, časovač
 zvýši hodnotu uloženú v registri o 1. Dĺžku jedného cyklu časovača je možné vyjadriť vzorcom:
 
 \begin{equation}
@@ -20,7 +20,7 @@ zvýši hodnotu uloženú v registri o 1. Dĺžku jedného cyklu časovača je m
     \end{aligned}
 \end{equation}
 
-To znamená že najkratší časový úsek, ktorý je možné pomocou časovača odmeriať sa
+To znamená, že najkratší časový úsek, ktorý je možné pomocou časovača odmerať sa
 rovná dĺžke periódy vstupných hodín. V našom príklade s hodinami s frekvenciou 1 kilohertz je dĺžka periódy nasledovná:
 \begin{equation}
     \begin{aligned}
@@ -39,15 +39,15 @@ Po dosiahnutí maximálnej hodnoty register pretečie a časovač začne počít
 \begin{figure}[!h]
     \centering
     \includegraphics[width=0.70\textwidth]{img/timer.png}
-    \caption{Zmena hodnoty v 16 bitovom registri časovača.}
+    \caption{Zmena hodnoty v 16 bitovom registri časovača}
     \label{figure:timer1}
 \end{figure}
 
 Pri hodinách s frekvenciou 1MHz časovač dosiahne maximálnu hodnotu registra približne každých 66 milisekúnd a dĺžka jedného cyklu je $\frac{1}{1000000}$ sekundy, čo je 1 mikrosekunda \cite{cameraNewbieGuideAVR2015}.
 
 \subsubsection{Preddelička}
-
-Pri použití 16-bitového registra je 66 milisekúnd najdlhší časový interval, ktorý dokážeme odmeriať pokým register nepretečie a časovač nezačne počítať od 0.
+\noindent \par
+Pri použití 16-bitového registra je 66 milisekúnd najdlhší časový interval, ktorý dokážeme odmerať pokým register nepretečie a časovač nezačne počítať od 0.
 Pre nás ľudí je to veľmi krátky časový úsek. Často chceme dosiahnuť interval, ktorý je dlhší a pre nás badateľný. Príkladom takého intervalu je 1 sekunda.
 Existuje viacero spôsobov ako tento interval dosiahnuť. Jedným z nich je použitie preddeličky (v anglickej literatúre sa používa termín prescaler).
 \par
@@ -62,7 +62,7 @@ Hodnoty preddeličky bývajú pevne dané a často sú to hodnoty 1, 8, 64, 256 
     \end{aligned}
 \end{equation}
 
-Pre časovač s frekvenciou 1MHz a hodnotami preddeličky 1, 8, 64, 256 s 1024 môžme zostrojiť nasledujúcu tabuľku:
+Pre časovač s frekvenciou 1MHz a hodnotami preddeličky 1, 8, 64, 256 s 1024 môžeme zostrojiť nasledujúcu tabuľku:
 \begin{table}[!htbp]
     \begin{center}
         \begin{tabular}{|c|c|}
@@ -81,8 +81,8 @@ Pre časovač s frekvenciou 1MHz a hodnotami preddeličky 1, 8, 64, 256 s 1024 m
     \end{center}
 \end{table}
 
-Pre dosiahnutie 1 sekundového intervalu potrebujeme poznať aj hodnotu registra
-pri ktorej tento interval uplynie. Tú dosataneme použitím nasledujúceho vzorca:
+Pre dosiahnutie 1 sekundového intervalu potrebujeme poznať aj hodnotu registra,
+pri ktorej tento interval uplynie. Tú dostaneme použitím nasledujúceho vzorca:
 
 \begin{equation} \label{eq:register-value}
     \begin{aligned}
@@ -92,12 +92,12 @@ pri ktorej tento interval uplynie. Tú dosataneme použitím nasledujúceho vzor
 \end{equation}
 
 Časovače AVR aktualizujú svoju hodnotu iba pri každom tiknutí vstupných hodín.
-Je teda potrebný tik aby sa hodnota časovača dostala z maximálnej hodnoty späť na nulu. Preto v znáronenom vzorci
+Je teda potrebný tik, aby sa hodnota časovača dostala z maximálnej hodnoty späť na nulu. Preto v znázornenom vzorci
 musíme znížiť počet tikov o jeden \cite{atmelATmega64012801281}. \par
 
-Teraz sa vráťme späť k tomu ako dosiahneme interval 1 sekundy.
+Teraz sa vráťme späť k tomu, ako dosiahneme interval 1 sekundy.
 Potrebujeme zistiť či existuje hodnota preddeličky, ktorá poskytne presné oneskorenie 1 Hz. Jeden Hertz je rovný jednému cyklu za sekundu. Na výpočet použijeme vzorec
-číslo \ref{eq:register-value} a výsledky umiestnime do tabuľky č. \ref{table:timerPrescalerValues}:
+č.\ref{eq:register-value} a výsledky týchto výpočtov sú uvedené v tabuľku č. \ref{table:timerPrescalerValues}:
 
 \begin{table}[!htbp]
     \begin{center}
@@ -117,14 +117,14 @@ Potrebujeme zistiť či existuje hodnota preddeličky, ktorá poskytne presné o
     \end{center}
 \end{table}
 
-Pri pohľade na tabuľku môžeme hneď usúdiť, že preddeličky s hodnotou 256 a 1024 niesú vhodné pre dosiahnutie nášho cieľa. Hodnota v registri je vždy celé kladné číslo a preto nemôžme tieto hodnoty použiť. Ďalším kritériom pre výber preddeličky je veľkosť
+Pri pohľade na tabuľku môžeme hneď usúdiť, že preddeličky s hodnotou 256 a 1024 nie sú vhodné pre dosiahnutie nášho cieľa. Hodnota v registri je vždy celé kladné číslo, a preto nemôžme tieto hodnoty použiť. Ďalším kritériom pre výber preddeličky je veľkosť
 vypočítanej hodnoty. Náš časovač používa 16-bitový register, ktorého maximálna hodnota je $2^{16} -1$ (65365).
-Ostáva nám teda len jedna možnosť preddeličky: a to 64. Preddeličky s hodnotou 1 a 8 vyžadujú hodnotu registra väčšiu ako je schopný uložiť.
-Suma sumárum, pre dosiahnutie jedno sekundového intervalu pomocou 16 bitového časovača s frekvenciou 1MHz potrebujeme použiť preddeličku s hodnotou 64.
-1 sekundu časovač dosiane po napočítaní do 15624. \par
+Ostáva nám teda len jedna možnosť preddeličky, a to 64. Preddeličky s hodnotou 1 a 8 vyžadujú hodnotu registra väčšiu ako je schopný uložiť.
+Teda, pre dosiahnutie jedno sekundového intervalu pomocou 16 bitového časovača s frekvenciou 1MHz potrebujeme použiť preddeličku s hodnotou 64.
+1 sekundu časovač dosiahne po napočítaní do 15624. \par
 Čo však v prípade ak chceme dosiahnuť dlho trvajúce intervaly? Hodinu, deň, týždeň, mesiac prípadne rok?
 V tomto prípade je možné implementovať preddeličku aj softvérovo. Pre jednoduchšie vysvetlenie si riešenie problému ukážeme na príklade. Uvažujme rovnaké parametre časovača: 1MHz frekvencia, 16 bitový register. Chceme dosiahnuť časový interval jednej hodiny. Pomocou vyššie popísanej techniky vytvoríme interval 1 sekundy.
-Po každom uplynutí intervalu zvýšime hodnotu nášho počítadlá. 1 hodina je 3600 sekúnd. Teda vieme že pokiaľ naše počítadlo dosiahne hodnotu 3600 ubehla 1 hodina.
+Po každom uplynutí intervalu zvýšime hodnotu nášho počítadlá. 1 hodina je 3600 sekúnd. Teda vieme, že pokiaľ naše počítadlo dosiahne hodnotu 3600 ubehla 1 hodina.
 Pseudokód danej implementácie by mohol vyzerať nasledovne:
 \begin{lstlisting}[
     language=c
@@ -145,6 +145,7 @@ Pri takejto implementácii je potrebné dať si pozor aj na najmenšie odchýlky
 Aj najmenšia odchýlka môže po sčítaní znamenať veľkú nepresnosť v požadovanom konečnom intervale \cite{cameraNewbieGuideAVR2015}.
 
 \subsubsection{Časovače a prerušenia} \label{subsec:timers-interrupts}
+\noindent \par
 Pomocou AVR časovačov existujú dva spôsoby ako vykonať kód v presne danom čase. Prvým je použitie cyklu.
 Pri tejto metóde dochádza k neustálej kontrole hodnoty registra časovača. Ak register dosiahne požadovanú hodnotu, vieme, že požadovaný interval skončil
 a je možné vykonať inú akciu/akcie. Druhou možnosťou je presunúť zodpovednosť toho, kedy je akciu potrebné vykonať na hardvér AVR mikrokontroléra.
@@ -152,11 +153,11 @@ To je možné dosiahnuť pomocou prerušení časovača. AVR časovače podporuj
 Najčastejšie ide o Overflow (pretečenie) a Compare and Capture (porovnanie a zachytenie) prerušenia \cite{atmelATmega64012801281}. \par
 Overflow prerušenie nastáva pri pretečení registra časovača. Časovač napočíta do svojej maximálnej hodnoty a v nasledujúcom cykle sa hodnota registra nastaví na 0.
 Pri tomto pretečení časovač nastaví bit vo svojom stavovom registri a na základe toho je informovaná hlavná aplikácia o udalosti, ktorá nastala. Ak je dané prerušenie
-povolené a zároveň sú globálne povolené všetky prerušenia, tak mikrokontrolér prestane vykonávať aktuálnu činnosť a spustní obsluhu prerušenia. Takýmto spôsobom
+povolené a zároveň sú globálne povolené všetky prerušenia, tak mikrokontrolér prestane vykonávať aktuálnu činnosť a spustí obsluhu prerušenia. Takýmto spôsobom
 ponecháme rozhodnutie o vypršaní časového intervalu na hardvér AVR. Ak nechceme používať prerušenia, možnosťou je aj neustála softvérová kontrola bitu časovača v kontrolnom registri.
-Práve na základe tohto bitu hardvér AVR vyvolá obsluhu prerušenia \cite{atmelATmega64012801281}. Nevýhodou je že zatiaľčo v tejto metóde je procesor neustále zamestnaný kontrolou
+Práve na základe tohto bitu hardvér AVR vyvolá obsluhu prerušenia \cite{atmelATmega64012801281}. Nevýhodou je, že zatiaľ čo v tejto metóde je procesor neustále zamestnaný kontrolou
 hodnoty registra, v prípade prerušenia môže namiesto toho vykonávať inú prospešnú činnosť. \par
-Pre zostavenie rovnice na výpočet časového intervalu pretečenia môžeme použiť vzorec číslo \ref{eq:cycle-length}. Ten hovorí o dĺžke jedného cyklu. Ak teda dĺžku cyklu
+Pre zostavenie rovnice na výpočet časového intervalu pretečenia môžeme použiť vzorec č.\ref{eq:cycle-length}. Ten hovorí o dĺžke jedného cyklu. Ak teda dĺžku cyklu
 vynásobíme počtom možných hodnôt, dostaneme časový interval potrebný na pretečenie registra:
 
 \begin{equation} \label{eq:overflow-frequency}
@@ -165,9 +166,9 @@ vynásobíme počtom možných hodnôt, dostaneme časový interval potrebný na
     \end{aligned}
 \end{equation}
 
-V nasledujúcej tabuľke vidíme porovnanie frekvencií a časových intervalov pretečenia registra časovača. Pre zostrojenie tabuľky sme uvažovali 16 bitový časovač
+V nasledujúcej tabuľke č.\ref{table:overflow-frequency} vidíme porovnanie frekvencií a časových intervalov pretečenia registra časovača. Pre zostrojenie tabuľky sme uvažovali 16 bitový časovač
 s frekvenciou 1MHz.  Vidíme, že čím väčšia hodnota preddeličky, tým menšia frekvencia
-pretečenia registra. Z takmer ľuďmi nebadateľnej hodnoty sme sa dostali až k intervalu viac ako 1 minúty.
+pretečenia registra. Z takmer nebadateľnej hodnoty pre ľudí, milisekunda, sme sa dostali až k intervalu viac ako 1 minúty.
 
 \begin{table}[!htbp]
     \begin{center}
@@ -187,11 +188,11 @@ pretečenia registra. Z takmer ľuďmi nebadateľnej hodnoty sme sa dostali až 
     \end{center}
 \end{table}
 
-Použitie overflow prerušenia si ukážeme na už spomínanom príklade dosiahnutia 1 sekundového intervalu. V predchádzajúcim kapitolách sme si ukázali,
-že pri použítí 16-bitového časovača s frekvenciou 1MHz je možné dosiahnuť 1 sekundový interval po napočítaní do 15625 spolu s použítím preddeličky s hodnotou 64.
-Zároveň vieme, že maximálna hodnota registra je 65535 a pri následnom pretečení nastane prerušenie. Vieme teda že ak časovač dosiahne maximálnu hodnotu registra každú
+Použitie overflow prerušenia si ukážeme na už spomínanom príklade dosiahnutia 1 sekundového intervalu. V predchádzajúcich kapitolách sme si ukázali,
+že pri použití 16-bitového časovača s frekvenciou 1MHz je možné dosiahnuť 1 sekundový interval po napočítaní do 15625 spolu s použitím preddeličky s hodnotou 64.
+Zároveň vieme, že maximálna hodnota registra je 65535 a pri následnom pretečení nastane prerušenie. Vieme teda, že ak časovač dosiahne maximálnu hodnotu registra každú
 sekundu, aj prerušenie bude vykonané pravidelne v tomto intervale. Z toho vyplýva, že časovač nesmie začať počítať od 0 ale od inej, presne danej hodnoty.
-Pre matematické vyjadrenie počiatočnej hodnoty registra použijeme vzorec číslo \ref{eq:register-value}. Pri vzorci sme uvažovali počiatočnú hodnotu 0. Tentokrát chceme
+Pre matematické vyjadrenie počiatočnej hodnoty registra použijeme vzorec č.\ref{eq:register-value}. Pri vzorci sme uvažovali počiatočnú hodnotu 0. Tentokrát chceme
 dosiahnuť to, aby po uplynutí intervalu časovač dosiahol svoju maximálnu hodnotu. Vzorec pre tento výpočet bude teda nasledovný:
 
 \begin{equation} \label{eq:start-value}
@@ -232,28 +233,29 @@ END ISR
 
 \end{lstlisting}
 
-Spomínané Compare and Capture prerušenie sa vzťahuje hlavne k CTC módu časovača, preto si ho predstavíme až v kapitole číslo \ref{subsec:ctc-mode}.
+Spomínané Compare and Capture prerušenie sa vzťahuje hlavne k CTC módu časovača, preto si ho predstavíme až v kapitole č.\ref{subsec:ctc-mode}.
 
 \subsubsection{CTC mód} \label{subsec:ctc-mode}
-Doteraz opísovaný spôsob fungovania AVR časovača sa vzťahuje na takzvaný normálny  mód. V tomto móde časovač ráta od 0 po maximálnu hodnotu.
+\noindent \par
+Doteraz opisovaný spôsob fungovania AVR časovača sa vzťahuje na tzv. normálny  mód. V tomto móde časovač ráta od 0 po maximálnu hodnotu.
 Je to základný a najjednoduchší spôsob fungovania AVR časovačov. Preto sme si na ňom predstavili spôsob akým tieto časovače fungujú a akým spôsobom sa dajú prakticky
-používať. Komplikovanejším módom je takzvaný "Clear timer on Compare" (vynulovanie časovača pri porovnaní) mód, označovaný ako CTC mód. \par
+používať. Komplikovanejším módom je tzv. „Clear timer on Compare“ (vynulovanie časovača pri porovnaní) mód, označovaný ako CTC mód. \par
 CTC mód na hardvérovej úrovni porovnáva aktuálnu hodnotu časovača s požadovanou hodnotou. Ide o hardvérové porovnanie, ktoré je značne rýchlejšie ako porovnanie
 softvérové. Ak časovač požadovanú hodnotu dosiahne, CTC mód nastaví bit v stavovom registri
 a zároveň vynuluje hodnotu časovača. Týmto nám významným spôsobom uľahčuje prácu s časovačom. Nemusíme sa totiž starať o vynulovanie hodnoty časovača ako sme si ukázali
-v kapitole číslo \ref{subsec:timers-interrupts}. Zároveň nám ostáva možnosť použitia prerušenia na vykonanie akcie. Ak povolíme CTC prerušenia, tak po zapísaní bitu
-do stavového registra AVR vykoná obsluhu prerušenia Compare and Capture. Aktuálna hodnota časovača je porovnávaná s hodnotou alebo hodnotami v takzvaných Output Compare registrami.
+v kapitole č.\ref{subsec:timers-interrupts}. Zároveň nám ostáva možnosť použitia prerušenia na vykonanie akcie. Ak povolíme CTC prerušenia, tak po zapísaní bitu
+do stavového registra AVR vykoná obsluhu prerušenia Compare and Capture. Aktuálna hodnota časovača je porovnávaná s hodnotou alebo hodnotami v tzv. Output Compare registrami.
 16 bitové časovače majú tieto registre tri. Označované sú ako Output Compare Register A, Output Compare Register B a Output Compare Register C. My ich ďalej budeme nazývať
 porovnávací register A, B, C. V 8 bitových časovačoch nájdeme len prvé dva. Vďaka viacerým porovnávacím registrom, dokážeme jeden časovač využiť na generovanie viacerých
 časových intervalov \cite{atmelATmega64012801281}. \par
 Po každom tiku časovača je aktuálna hodnota  porovnaná s hodnotami v porovnávacích registroch. Každý porovnávací register funguje
-samostatne a podporuje nezávislé generovanie prerušení. Je dôležité poznamenať, že hodnota časovača je vynulovaná len v prípade zhody s porovnávacím registra A.
+samostatne a podporuje nezávislé generovanie prerušení. Je dôležité poznamenať, že hodnota časovača je vynulovaná len v prípade zhody hodnoty s porovnávacím registrom A.
 To je obzvlášť dôležité ak chceme používať jeden časovač na generovanie viacerých intervalov. Ak by sme do porovnávacieho registra B zapísali hodnotu väčšiu ako
 do porovnávacieho registra A, časovač nikdy nedosiahne hodnotu v registri B. Rovnako to platí aj pre register C. Z uvedeného taktiež vyplýva, že maximálna hodnota
-časovača už nieje kapacita jeho registra, ale hodnota, ktorá je zapísaná v porovnávacom registri A \cite{atmelATmega64012801281}. \par
+časovača už nie je kapacita jeho registra, ale hodnota, ktorá je zapísaná v porovnávacom registri A \cite{atmelATmega64012801281}. \par
 Ako príklad znovu využijeme 1 sekundový interval, označíme ho ako interval 1.
-Pridáme k nemu ešte interval 200 milisekúnd, ktorý chceme aby odštartoval v rovnaký moment ako 1 sekundového interval. Pomenujeme ho ako interval 2. Pre jednoduchšiu
-predstavu je na obrázku číslo \ref{figure:interval-timeline} zobrazená časová os spolu s označenými intervalmi.
+Pridáme k nemu ešte interval 200 milisekúnd, ktorý chceme, aby odštartoval v rovnaký moment ako 1 sekundového interval. Pomenujeme ho ako interval 2. Pre jednoduchšiu
+predstavu je na obrázku č.\ref{figure:interval-timeline} zobrazená časová os spolu s označenými intervalmi.
 
 
 \begin{figure}[!h]
@@ -264,8 +266,8 @@ predstavu je na obrázku číslo \ref{figure:interval-timeline} zobrazená časo
 \end{figure}
 
 Jeden časovač chceme použiť na dva rôzne intervaly. Preto v CTC móde potrebujeme 2 porovnávacie registre. Použijeme register A a porovnávací register B. Znovu uvažujeme
-16 bitový časovač s frekvenciou 1MHz. V predchádzajúcich kapitolách sme vypočítali, že pri použití preddeličky s hodnoutou 64, časovač dosiahne 1 sekundový interval
-po napočítaní do 15624. Potrebujeme ešte vypočítať porovnávaciu hodnotu pre interval 200 milisekúnd. Použijeme na to vzorec číslo \ref{eq:register-value}.
+16 bitový časovač s frekvenciou 1MHz. V predchádzajúcich kapitolách sme vypočítali, že pri použití preddeličky s hodnotou 64, časovač dosiahne 1 sekundový interval
+po napočítaní do 15624. Potrebujeme ešte vypočítať porovnávaciu hodnotu pre interval 200 milisekúnd. Použijeme na to vzorec č.\ref{eq:register-value}.
 
 \begin{equation}
     \begin{aligned}
@@ -280,7 +282,7 @@ po napočítaní do 15624. Potrebujeme ešte vypočítať porovnávaciu hodnotu 
 Vypočítali sme obidve potrebné porovnávacie hodnoty. Porovnávacia hodnota intervalu 1 je väčšia ako hodnota pre interval 2. Väčšiu hodnotu teda zapíšeme do registra A a
 menšiu do registra B. Časovač zabezpečí neustále porovnávanie týchto hodnôt s aktuálnou hodnotou časovača. Ak zároveň povolíme Compare and Capture prerušenia pre register
 A a aj register B, mikrokontrolér vygeneruje prerušenia pri zhode hodnôt. Vďaka tomu dokážeme spúšťať kód v presných časových intervaloch. Zmena hodnoty časovača spolu
-s generovaním prerušení je zobrazené na obrázku číslo \ref{figure:ctc-timer-value}.
+s generovaním prerušení je zobrazené na obrázku č.\ref{figure:ctc-timer-value}.
 \begin{figure}[!h]
     \centering
     \includegraphics[width=0.85\textwidth]{img/ctc-timer-value.png}
@@ -317,7 +319,7 @@ END ISR
 
 \end{lstlisting}
 
-Za zmienky taktiež stojí, že pri použiťí CTC módu nieje možné nastaviť časovač tak aby generoval akéhokoľvek dva, respektíve tri intervaly. Pre časovač je možné nastaviť
+Poznamenať by sme mali, že pri použití CTC módu nie je možné nastaviť časovač tak, aby generoval akékoľvek dva, resp. tri intervaly. Pre časovač je možné nastaviť
 len jednu preddeličku. Z toho vyplýva, že aj všetky intervaly musia byť kompatibilné s danou preddeličkou. Ak náš predchádzajúcu príklad trochu upravíme
 a 200 milisekundový interval nahradíme 250 milisekundovým dostaneme spomínané nekompatibilné hodnoty. Pomocou vzorca \ref{eq:register-value} sa pokúsime vypočítať
 porovnávaciu hodnotu:
@@ -331,36 +333,36 @@ porovnávaciu hodnotu:
     \end{aligned}
 \end{equation}
 
-Vidíme, že sme výsledkom nieje celé číslo. Teoretickým riešením by mohlo byť zaokrúhlenie danej hodnoty na celé číslo. Tým by sme však do celého procesu vniesli nepresnosť,
+Vidíme, že výsledkom nie je celé číslo. Teoretickým riešením by mohlo byť zaokrúhlenie danej hodnoty na celé číslo. Tým by sme však do celého procesu vniesli nepresnosť,
 ktorá je vo väčšine prípadov neakceptovateľná.
 
 \subsubsection{PWM mód}
-\paragraph{PWM signál} \mbox{}\\
-Pulse Width Modulation (impulzová šírková modulácia) alebo aj PWM je technika pomocou ktorej je možné ovládať analógové zariadenia pomocou digitálneho signálu.
-Jednoduchým príkladom je stiemavanie led žiarovky alebo ovládanie rýchlosti motora. PWM signál nieje reálnym analógovým signálom, len ho určitým spôsobom dokáže napodobniť.
-Pomocou digitálneho ovládania dokážeme rýchlo napájanie vypínať alebo zapínať a riadiť tak prúd dodávaný zoriadenia. Ak necháme prúd zapnutý dlhší čas, ako čas v ktorom
+\noindent \par
+Pulse Width Modulation (impulzová šírková modulácia) alebo aj PWM je technika, pomocou ktorej je možné ovládať analógové zariadenia pomocou digitálneho signálu.
+Jednoduchým príkladom je stmievanie led žiarovky alebo ovládanie rýchlosti motora. PWM signál nie je reálnym analógovým signálom, len ho určitým spôsobom dokáže napodobniť.
+Pomocou digitálneho ovládania dokážeme rýchlo napájanie vypínať alebo zapínať a riadiť tak prúd dodávaný do zoriadenia. Ak necháme prúd zapnutý dlhší čas ako čas, v ktorom
 je vypnutý, tak zvýšime priemernú úroveň výkonu. V opačnom prípade priemernú úroveň výkonu znížime. Trvanie „času zapnutia“ sa nazýva šírka impulzu.
 Ak chceme získať rôzne analógové hodnoty, zmeníme šírku impulzu. Na vyjadrenie dĺžky času zapnutia sa používa termín Duty cycle (pracovný cyklus). Udáva sa v percentách
 a hovorí o dĺžke „času zapnutia“  počas jedného intervalu \cite{WhatPWMSignal}.
 \begin{figure}[!h]
     \centering
     \includegraphics[width=0.85\textwidth]{img/duty-cycle.jpg}
-    \caption{Ukážka rôznych pracovný cyklov v PWM signále}
+    \caption{Ukážka rôznej hodnoty striedy v PWM signále}
     \source{\cite{WhatPWMSignal}}
     \label{figure:pwm-signal}
 \end{figure}
 
 Ako sme si ukázali, pre generovanie PWM signálu potrebujeme neustále v určitých časových intervalov „vypínať“ a „zapínať“ prúd. Na to môžu výborne poslúžiť časovače.
-Tie dokážu na presne dané piny mikrokontroléra zapisovať logickú jednotku, respektíve nulu čoho výsledkom môže byť PWM signál. To je možné docieliť
-pomocou špeciálnych PWM módov, ktoré si predstavíme v ďalších podkapitolách.
+Tie dokážu na presne dané piny mikrokontroléra zapisovať logickú jednotku, resp. nulu čoho výsledkom môže byť PWM signál. To je možné docieliť
+pomocou špeciálnych PWM módov, ktoré si predstavíme v ďalšej časti diplomovej práce.
 
-\paragraph{Fast PWM mód} \mbox{}\\
-V tomto móde sa časovač jednoducho počíta od 0 po maximálnu kapacitu registra. Pri počítaní porovnáva svoju hodnotu, s hodnotami v porovnávacích registroch.
+\noindent \par
+Fast PWM mód je jedným z podporovaných modov v AVR časovačoch. V tomto móde sa časovač jednoducho počíta od 0 po maximálnu kapacitu registra. Pri počítaní porovnáva svoju hodnotu, s hodnotami v porovnávacích registroch.
 Používajú sa rovnaké porovnávacie registre ako v už spomínanom CTC móde. Tieto registre sú naviac namapované na externé piny mikrokontroléra.
-Ná výstupné piny je zapísaná logická jednotka, keď je časovač na 0, a logická nula, keď sa časovač zhoduje s výstupným porovnávacím registrom. Čím vyššia je hodnota
+Na výstupné piny je zapísaná logická jednotka, keď je časovač na 0 a logická nula, keď sa časovač zhoduje s výstupným porovnávacím registrom. Čím vyššia je hodnota
 v porovnávacom registri, tým je na pine nastavená väčšia strieda \cite{shirriffSecretsArduinoPWM}. \par
 Existujú aj rôzne variácie Fast PWM módu, kedy je možné nastaviť maximálnu hodnotu časovača a tým meniť frekvenciu. \par
-Na obrázku číslo \ref{figure:fast-pwm-mode} môžeme vidieť zmenu hodnoty v 8 bitovom AVR časovači spolu s PWM signálom, ktorý je schopný vygenerovať.
+Na obrázku č.\ref{figure:fast-pwm-mode} môžeme vidieť zmenu hodnoty v 8 bitovom AVR časovači spolu s PWM signálom, ktorý je schopný vygenerovať.
 \begin{figure}[!h]
     \centering
     \includegraphics[width=0.85\textwidth]{img/fast-pwm-graph.png}
@@ -369,7 +371,7 @@ Na obrázku číslo \ref{figure:fast-pwm-mode} môžeme vidieť zmenu hodnoty v 
     \label{figure:fast-pwm-mode}
 \end{figure}
 
-Porovnávací register A je vyznačený zelenou farbou, zatiaľ register B je označený farbou červenou. Obrázok číslo \ref{figure:fast-pwm-mode} znázorňuje následné hodnoty:
+Porovnávací register A je vyznačený zelenou farbou, zatiaľ čo register B je označený farbou červenou. Obrázok č.\ref{figure:fast-pwm-mode} znázorňuje následné hodnoty:
 \begin{itemize}
     \item Porovnávací register A
           \subitem{Hodnota porovnávacieho registra A: 180}
@@ -379,12 +381,13 @@ Porovnávací register A je vyznačený zelenou farbou, zatiaľ register B je oz
           \subitem{Strieda pre porovnávací register B: (50 + 1)/256 = 19,9\%}
 \end{itemize}
 
-Pri výpočte  duty cycle si možeme všimnúť, že k hodnote v registri sme propočítali 1. Je to kvôli tomu, že AVR časovaču trvá jednu periódu navyše pokiaľ hodnotu
+Pri výpočte striedy si možeme všimnúť, že k hodnote v registri sme pripočítali 1. Je to kvôli tomu, že AVR časovaču trvá jednu periódu navyše pokiaľ hodnotu
 na danom pine zmení \cite{shirriffSecretsArduinoPWM}.
-\paragraph{Phase-Correct PWM mód} \mbox{}\\
-Ďalším módom je takzvaný Phase-Correct PWM mód. V tomto móde časovač počíta od 0 po maximálnu hodnotu registra a následne sa hodnota nevunuluje
-ale časovač znovu počíta od najvačšej honoty po 0. Ná výstupné piny je zapísaná logická jednotka, keď je časovač na 0. Pri počítaní smerom nahor sa pri dosiahnutí porovnávacieho registra výstupný pin vypne
-a následne pri počítaní smerom nadol zapne. Výsledkom je symetrický výstup \cite{shirriffSecretsArduinoPWM}. Na obrázku  číslo \ref{figure:phase-correct-pwm-mode} si môžeme všímnúť,
+
+\noindent \par
+Ďalším módom je tzv. Phase-Correct PWM mód. V tomto móde časovač počíta od 0 po maximálnu hodnotu registra a následne sa hodnota nevynuluje
+ale časovač znovu počíta od najväčšej hodnoty po 0. Na výstupné piny je zapísaná logická jednotka, keď je časovač na 0. Pri počítaní smerom nahor sa pri dosiahnutí porovnávacieho registra výstupný pin vypne
+a následne pri počítaní smerom nadol zapne. Výsledkom je symetrický výstup \cite{shirriffSecretsArduinoPWM}. Na obrázku  č.\ref{figure:phase-correct-pwm-mode} si môžeme všimnúť,
 že dôsledkom počítania aj smerom nadol je polovičná frekvencia oproti režimu Fast PWM.
 
 \begin{figure}[!h]
@@ -395,12 +398,12 @@ a následne pri počítaní smerom nadol zapne. Výsledkom je symetrický výstu
     \label{figure:phase-correct-pwm-mode}
 \end{figure}
 
-Porovnávací register A je vyznačený zelenou farbou, zatiaľ register B je označený farbou červenou. Obrázok číslo \ref{figure:phase-correct-pwm-mode} znázorňuje následné hodnoty:
+Porovnávací register A je vyznačený zelenou farbou, zatiaľ čo register B je označený farbou červenou. Obrázok č.\ref{figure:phase-correct-pwm-mode} znázorňuje následné hodnoty:
 \begin{itemize}
     \item Porovnávací register A
           \subitem{Hodnota porovnávacieho registra A: 180}
-          \subitem{Duty cycle pinu porovnávací registra A: (180 + 1)/256 = 70,7\%}
+          \subitem{Strieda pinu porovnávaceho registra A: (180 + 1)/256 = 70,7\%}
     \item Porovnávací register B
           \subitem{Hodnota porovnávacieho registra B: 50}
-          \subitem{Duty cycle pinu porovnávací registra B: (50 + 1)/256 = 19,9\%}
+          \subitem{Strieda pinu porovnávaceho registra B: (50 + 1)/256 = 19,9\%}
 \end{itemize}

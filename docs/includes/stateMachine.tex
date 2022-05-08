@@ -1,5 +1,6 @@
 \section{Konečný stavový automat} \label{state-machine-theory}
-\noindent Existuje množstvo spôsobov ako modelovať správanie sytémov. Jedným z
+\noindent \par
+Existuje množstvo spôsobov ako modelovať správanie systémov. Jedným z
 najstarších a najznámejších je modelovanie pomocou konečného stavového automatu.
 Vďaka takejto abstrakcii môžeme o problémoch rozmýšľať ako o stavoch, ktoré nastali v určitom čase a charakterizujú ako sa systém správa.
 Táto technika však nie je limitovaná len na modelovanie softvérových systémov. Využíva sa aj v iných oblastiach ako napríklad vo fyzike a biológii \cite{WaybackMachine2014}.
@@ -13,7 +14,8 @@ Stav môže abstrahovať všetky možné (relevantné ale i irelevantné) sekven
 Poznáme dva typy konečných stavových strojov: deterministický konečný automat (DKA)  a nedeterministický stavový automat (NKA) \cite{FiniteStateMachines}.
 
 \subsection{Deterministický konečný automat}
-\noindent Deterministický konečný automat $\mathcal{M}$ je definovaný päticou ($\Sigma$ ,$\mathcal{Q}$ , $q_0$, $\mathcal{F}$, $\delta$), kde
+\noindent \par
+Deterministický konečný automat $\mathcal{M}$ je definovaný päticou ($\Sigma$ ,$\mathcal{Q}$ , $q_0$, $\mathcal{F}$, $\delta$), kde
 \begin{itemize}
     \item $\Sigma$ je neprázdna a konečná vstupná abeceda $\mathcal{M}$
     \item $\mathcal{Q}$ je konečná množina stavov $\mathcal{M}$
@@ -35,15 +37,14 @@ DKA môže byť reprenzentovaný pomocou diagramu, ktorý vidíme na obrázku č
 \end{figure}
 
 Rovnaký DKA môže byť popísaný aj nasledovne:
-Nech $\mathcal{M}$ je pätica ($\Sigma$ ,$\mathcal{Q}$ , $q_0$, $\mathcal{F}$, $\delta$) kde,
-
+Nech $\mathcal{M}$ je pätica ($\Sigma$ ,$\mathcal{Q}$ , $q_0$, $\mathcal{F}$, $\delta$), kde
 \begin{itemize}
     \item \begin{math} \Sigma = \{a, b ,c \}  \end{math}
     \item \begin{math} Q = \{S0, S1, S2 \}  \end{math}
     \item \begin{math} q_0 = \{S0 \}  \end{math}
     \item $\mathcal{F}$ \begin{math} = \{S2\}  \end{math}
 \end{itemize}
-a prechodová funkcia $\delta$ je daná tabuľkou číslo \ref{table:dfaPrechodovaFunckcia}:
+a prechodová funkcia $\delta$ je daná tabuľkou č.\ref{table:dfaPrechodovaFunckcia}:
 
 \begin{table}[!htbp]
     \begin{center}
@@ -63,7 +64,8 @@ a prechodová funkcia $\delta$ je daná tabuľkou číslo \ref{table:dfaPrechodo
 
 
 \subsection{Nedeterministický konečný automat}
-\noindent Podobne ako DKA aj NKA je reprenzentovaný ako  pätica ($\Sigma$ ,$\mathcal{Q}$ , $q_0$, $\mathcal{F}$, $\delta$) kde
+\noindent \par
+Podobne ako DKA aj NKA je reprezentovaný ako  pätica ($\Sigma$ ,$\mathcal{Q}$ , $q_0$, $\mathcal{F}$, $\delta$), kde
 \begin{itemize}
     \item $\Sigma$ je neprázdna a konečná vstupná abeceda $\mathcal{M}$
     \item $\mathcal{Q}$ je konečná množina stavov $\mathcal{M}$
@@ -72,7 +74,7 @@ a prechodová funkcia $\delta$ je daná tabuľkou číslo \ref{table:dfaPrechodo
     \item $\delta$ je prechodová funkcia  \begin{math}\delta : Q \times \Sigma \Rightarrow Q\end{math}
 \end{itemize}
 
-Narozdiel od DKA, NKA nevyžaduje definíciou prechodovej funkcie pre každý symbol
+Na rozdiel od DKA, NKA nevyžaduje definíciou prechodovej funkcie pre každý symbol
 patriaci $\Sigma$. Zároveň v NKA môže byť definovaná viac ako jedna prechodová funkcia $\delta$ pre symbol z $\Sigma$.
-Taktiež je možné použiť aj takzvané nulové prechody.
+Taktiež je možné použiť aj tzv. nulové prechody.
 Tie sa označujú ako $\epsilon$ a dovoľujú prechod z jedného stavu do druhého bez potreby prečítania akéhokoľvek symbolu patriaceho $\Sigma$ \cite{FiniteStateMachines}.

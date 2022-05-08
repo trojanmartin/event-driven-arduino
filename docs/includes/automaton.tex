@@ -1,13 +1,20 @@
-
 \subsection{Automaton}
-\noindent Automat je názov rosiahlej open-source Arduino knižnice, ktorej hlavným cieľom
-je modelovanie aplikácii pomocou konečných automatov. Vznikla v roku 2015 a je dostupná pod MIT licenciou.
-\par Knižnica umožňuje vytváranie niekoľkých súbežne spustených konečných automatov, ktoré medzi sebou spoluprácujú. Jednotlivé komponenty sa dokážu navzájom spúštať a vytvárať zložité riadiace štrukúry. Automaton obsahuje veľké množstvo zabudovaných komponentov. Uživateľovi však dáva aj možnosť vytvárať si vlastné a kombinovať ich s už existujúcimi komponentami. Medzi základné stavebné kamene knižnice patria dve triedy: 
+\noindent \par Automat je názov rozsiahlej open-source Arduino knižnice, ktorej hlavným cieľom
+je modelovanie aplikácií pomocou konečných automatov. Vznikla v roku 2015 a je dostupná pod MIT licenciou.
+\par Knižnica umožňuje vytváranie niekoľkých súbežne spustených konečných automatov, ktoré medzi sebou spolupracujú.
+Jednotlivé komponenty sa dokážu navzájom spúšťať a vytvárať zložité riadiace štruktúry.
+Automaton obsahuje veľké množstvo zabudovaných komponentov. Používateľovi však dáva aj možnosť vytvárať si vlastné a kombinovať ich s už existujúcimi komponentami.
+Medzi základné stavebné kamene knižnice patria dve triedy:
 \begin{enumerate}
-    \item Trieda \textit{Automaton}
+  \item Trieda \textit{Automaton}
 \end{enumerate}
 
-\noindent \par Táto trieda prestavuje zabudovaný plánovač a stará sa o cyklenie konečných automatov. Obsahuje tri základné funkcie. Funckiu \textit{add()}, \textit{run()} a funckiu \textit{delay()}. Funckia \textit{run} vykoná jeden cyklus všetkých stavový strojov, ktoré trieda Automaton obsahuje. Pomocou funkcie \textit{add} je možné explicitne pridávať stavové stroje. To však väčšinou nie je nutné, pretože aplikácia zvykne obsahovať len jednu inštanciu triedy Automaton a stavové stroje sú pridané implicitne pri štarte programu. Poslednou je funkcia \textit{delay}. Tá zabezpečí cyklenie strojov pokým neuplynie príslušný počet milisekúnd.  Pri štadardnom použivaní knižnice je táto trieda použitá len vo funckii loop a to nasledoným spôsobom:
+\noindent \par Táto trieda prestavuje zabudovaný plánovač a stará sa o cyklenie konečných automatov. Obsahuje tri základné funkcie. Funkciu \textit{add()}, \textit{run()} a funkciu \textit{delay()}.
+Funkcia \textit{run} vykoná jeden cyklus všetkých stavový strojov, ktoré trieda Automaton obsahuje.
+Pomocou funkcie \textit{add} je možné explicitne pridávať stavové stroje.
+To však väčšinou nie je nutné, pretože aplikácia zvykne obsahovať len jednu inštanciu triedy Automaton a stavové stroje sú pridané implicitne pri štarte programu.
+Poslednou je funkcia \textit{delay}. Tá zabezpečí cyklenie strojov pokým neuplynie príslušný počet milisekúnd.
+Pri štadardnom použivaní knižnice je táto trieda použitá len vo funkcii loop a to nasledovným spôsobom:
 
 \begin{lstlisting}[
     label={lst:main-c},
@@ -20,10 +27,10 @@ void loop() {
 \end{lstlisting}
 
 \begin{enumerate}[resume]
-    \item Abstraktná trieda \textit{Machine}
+  \item Abstraktná trieda \textit{Machine}
 \end{enumerate}
 
-\noindent \par Pre vytvorenie nového stavového stroja je nutné zdediť triedu \textit{Machine}, ktorá predstavuje základ konečného automatu a definuje základné správanie a metódy, ktoré musí každý konečný automat splniť. Medzi tieto základné metódy patrí \textit{begin()}, \textit{event()} a \textit{action()}. 
+\noindent \par Pre vytvorenie nového stavového stroja je nutné zdediť triedu \textit{Machine}, ktorá predstavuje základ konečného automatu a definuje základné správanie a metódy, ktoré musí každý konečný automat splniť. Medzi tieto základné metódy patrí \textit{begin()}, \textit{event()} a \textit{action()}.
 \par Funkcionalitu metód a samotnej triedy si predstavíme na jednoduchom príklade blikajúcej LED žiarovky. Blikanie namodelujeme ako konečný automat. Základom je nová trieda, ktorá dedí z už spomínanej triedy \textit{Machine}.
 \begin{lstlisting}[
     label={lst:main-c},
@@ -39,8 +46,8 @@ void loop() {
   };
 \end{lstlisting}
 
-Na to aby sme donútili LED žiarovky blikať, potrebujeme poznať pin na ktorom je 
-pripojená a časovač. Časovač zabezpečí pravidelnú zmenu stavu konečného automatu pomocou vyvolania udalosti. Ďalšímy premennými budú stavy, aké môže automat nadobudnúť, spolu s udalosťami aké môžu nastať.
+Na to, aby sme donútili LED žiarovky blikať, potrebujeme poznať pin, na ktorom je
+pripojená a časovač. Časovač zabezpečí pravidelnú zmenu stavu konečného automatu pomocou vyvolania udalosti. Ďalšími premennými budú stavy, aké môže automat nadobudnúť, spolu s udalosťami aké môžu nastať.
 
 \begin{lstlisting}[
     label={lst:main-c},
@@ -59,7 +66,8 @@ pripojená a časovač. Časovač zabezpečí pravidelnú zmenu stavu konečnéh
       Atm_blink( void ) : Machine(){};  
   };
 \end{lstlisting}
-Z kódu je zrejmé, že automat môže nadobúdať dva stavy: LED\_ON, ktorý reprezentuje stav keď LED žiarovka svieti. LED\_OFF stav, keď je žiarovka vypnutá. Medzi udalosťami sa nachádza EVT\_TIMER, ktorý reprezentuje udalosť vygenerovanú časovačom. Automat taktiež definuje dve akcie. Zapnutie a vypnutie žiarovky.
+Z kódu je zrejmé, že automat môže nadobúdať dva stavy: LED\_ON, ktorý reprezentuje stav, keď LED žiarovka svieti. LED\_OFF stav, keď je žiarovka vypnutá.
+Medzi udalosťami sa nachádza EVT\_TIMER, ktorý reprezentuje udalosť vygenerovanú časovačom. Automat taktiež definuje dve akcie. Zapnutie a vypnutie žiarovky.
 \par Nasleduje metóda begin:
 \begin{lstlisting}[
     label={lst:main-c},
@@ -80,7 +88,11 @@ Atm_blink & begin( int attached_pin, int blinkrate ) {
 }
 \end{lstlisting}
 
-Hlavným komponentom je takzvaná stavová tabuľka. Tá reprezentuje to ako sa automat bude správať, aké prechody medzi stavmi sú definované a aké akcie sa majú vykonať. V riadkoch sa nachádzajú stavy, ktoré je možné nadobudnúť. V stĺpcoch sú udalosti, ktoré môžu nastať. Ako príklad môžeme uviesť riadok 2, ktorý reprezentuje stav svietiacej žiarovky a prvý stĺpec s názvom ON\_ENTER. Ten reprezentuje udalosť vstupu do stavu. Hodnota na súradnici 2:1 teda hovorí o  akcii, ktorá sa ma udiať, keď automat vstúpi do stavu LED\_ON. V našom prípade to je zapnutie LED žiarovky. Štvrtým stĺpcom je EVT\_TIMER. Táto udalosť nastane pri vypršaní časovača. Definujeme teda, že v prípade svietacej žiarovky a vypršania časovača chceme prejsť do stavu vypnutej žiarovky, respektíve opačne.  Mezi ďalšie kroky v metóde begin patrí nastavenie časovača a pinu.
+Hlavným komponentom je tzv. stavová tabuľka. Tá reprezentuje to, ako sa automat bude správať, aké prechody medzi stavmi sú definované a aké akcie sa majú vykonať.
+V riadkoch sa nachádzajú stavy, ktoré je možné nadobudnúť. V stĺpcoch sú udalosti, ktoré môžu nastať.
+Ako príklad môžeme uviesť riadok 2, ktorý reprezentuje stav svietiacej žiarovky a prvý stĺpec s názvom ON\_ENTER. Ten reprezentuje udalosť vstupu do stavu.
+Hodnota na súradnici 2:1 teda hovorí o  akcii, ktorá sa ma udiať, keď automat vstúpi do stavu LED\_ON. V našom prípade to je zapnutie LED žiarovky.
+Štvrtým stĺpcom je EVT\_TIMER. Táto udalosť nastane pri vypršaní časovača. Definujeme teda, že v prípade svietacej žiarovky a vypršania časovača chceme prejsť do stavu vypnutej žiarovky, resp. opačne.  Medzi ďalšie kroky v metóde begin patrí nastavenie časovača a pinu.
 \par Pomocou metódy event konečný automat získava informáciu o tom či nejaká udalosť nastala. V našom prípade metóda vyzerá nasledovne:
 \begin{lstlisting}[
     label={lst:main-c},
@@ -95,8 +107,8 @@ int event( int id ) {
     return 0;
 }
 \end{lstlisting}
-Parameter id reprezentuje udalosť, o ktorej chce knižnica informáciu. V tomto prípade je to EVT\_TIMER. Ak udalosť nastala funkcia musí vratiť 1, inak 0. Vidíme, že to či udalosť nastala závisí od toho či časovač vypršal. 
-\par Poslednou funkciou je action. Vyzerá podobne ako funkcia event, avšak jej úlohou je spúštanie udalostí. 
+Parameter id reprezentuje udalosť, o ktorej chce knižnica informáciu. V tomto prípade je to EVT\_TIMER. Ak udalosť nastala funkcia musí vrátiť 1, inak 0. Vidíme, že to či udalosť nastala závisí od toho či časovač vypršal.
+\par Poslednou funkciou je action. Vyzerá podobne ako funkcia event, avšak jej úlohou je spúštanie udalostí.
 \begin{lstlisting}[
     label={lst:main-c},
     language=c
@@ -114,9 +126,9 @@ Parameter id reprezentuje udalosť, o ktorej chce knižnica informáciu. V tomto
   }
 }
 \end{lstlisting}
-Vstup reprezentuje akciu, a na základe toho funkcia vykoná požadovanú akciu. V našom prípade zapne/vypne žiarovku.
+Vstup reprezentuje akciu a na základe toho funkcia vykoná požadovanú akciu. V našom prípade zapne/vypne žiarovku.
 
-\par Po namodelovaní blikujúcej žiarovky je následne použitie veľmi jednoduché. Celý program bude veľmi krátky a vyzerá nasledovne:
+\par Po namodelovaní blikajúcej žiarovky je následne použitie veľmi jednoduché. Celý program bude veľmi krátky a vyzerá nasledovne:
 \begin{lstlisting}[
     label={lst:main-c},
     language=c
@@ -134,4 +146,7 @@ Vstup reprezentuje akciu, a na základe toho funkcia vykoná požadovanú akciu.
   }
 \end{lstlisting}
 Ako prvé vytvoríme inštanciu konečného automatu blikajúcej LED žiarovky. Vo funkcii setup natavíme pin a časový interval blikania. Posledným krokom bude vyvolanie udalosti pre prvé zapnutie žiarovky. Takto nastavený automat potom použijeme vo funkcii loop, kde jedinou volanou funkciou bude loop. Ten zabezpečí cyklenie automatu a tým pádom aj blikanie LED žiarovky \cite{tinkerspyAutomaton2021}.
-\par Automaton je veľmi mocný nástroj, pomocou ktorého je možné modelovať komplikované systémy. Dovoľuje definíciu rôznych automatov, ktoré je možné prepájať. Medzi jeho silné stránky patrí rozšíriteľnosť o nové automaty a zároveň aj veľké množstvo už existujúcich stavových strojov. Udalosti, ktoré spúšťajú akcie sú rovnako ako pri knižnici Eventually generované softvérovo. Taktiež tu teda môže prísť k veľkej latencii medzi nastaním udalosti a jej obsluhov. Zvlášť, pokiaľ ide o hardvérové prerušenia.
+\par Automaton je veľmi mocný nástroj, pomocou ktorého je možné modelovať komplikované systémy.
+Dovoľuje definíciu rôznych automatov, ktoré je možné prepájať. Medzi jeho silné stránky patrí rozšíriteľnosť o nové automaty a zároveň aj veľké množstvo už existujúcich stavových strojov.
+Udalosti, ktoré spúšťajú akcie sú rovnako ako pri knižnici Eventually generované softvérovo.
+Taktiež tu teda môže prísť k veľkej latencii medzi udalosťou a jej obsluhou. Zvlášť, pokiaľ ide o hardvérové prerušenia.

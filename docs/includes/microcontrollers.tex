@@ -1,5 +1,5 @@
 \section{Vstavané systémy a mikrokontroléry}
-\noindent
+\noindent \par
 Pojmom vstavaný systém označujeme spojenie počítačového hardvéru a softvéru, ktorý je navrhnutý tak, aby vykonával vyhradenú aktivitu. Tá môže byť súčasťou komplexného systému, avšak môže fungovať aj samostatne. Jadrom vstaveného systému
 je integrovaný obvod určený na vykonávanie výpočtov pre operácie v reálnom čase \cite{WhatEmbeddedSystem}. \par
 Mikrokontrolér je procesor, ktorý je vybavený pamäťou, časovačmi, radičom prerušení, I/O pinmi a rôznymi ďalšími periférnymi
@@ -15,7 +15,7 @@ dosiahnuť také rýchle reakčné časy. Preto je mikrokontrolér pre ne dobrou
 \cite{guntherIntroductionMicrocontrollers2007}.
 
 \subsection{Typy mikrokontrolérov}
-\noindent
+\noindent \par
 V dnešnej dobe poznáme niekoľko typov mikrokontrolérov. Medzi najznámejšie patria:
 \begin{itemize}
     \item PIC mikrokontrolér
@@ -24,7 +24,7 @@ V dnešnej dobe poznáme niekoľko typov mikrokontrolérov. Medzi najznámejšie
 \end{itemize}
 
 \subsubsection{PIC mikrokontrolér}
-\noindent
+\noindent \par
 PIC je rodina mikrokontrolérov vyrábaných technológiou mikročipov, pôvodne navrhnutou pre vývoj všobecných elektronických zariadení.
 Názov PIC pôvodne označoval Peripheral Interface Controller a v súčasnosti je
 rozšírený ako Programmable Intelligent Computer. Zariadenie PIC je známe pre
@@ -33,7 +33,7 @@ svoju nízku cenu, širokú dostupnosť a veľkú používateľskú základňu. 
 Z periférnych zariadení je tento mikrokontrolér vybavený:
 \begin{itemize}
     \item Tromi časovačmi
-    \item Dvomi tzv. Capture/Compare/PWM modulmi
+    \item Dvomi takzvanými Capture/Compare/PWM modulmi
     \item 10 bitovým analógovo-digitálnym prevodníkom
     \item Synchrónnym sériovým portom s podporou I2C master/slave komunikácie
     \item 8 bitovým paralelným slave portom
@@ -44,7 +44,7 @@ Spotreba energie je taktiež menšia ak ju porovnáme so spotrebou iných mikrok
 Tá bude väčšia práve kvôli použitiu RISC architektúry (35 inštrukcií) \cite{shidlingDifferentTypesMicrocontrollers2020}.
 
 \subsubsection{ARM mikrokontrolér}
-\noindent
+\noindent \par
 Názov ARM označuje Advanced Risk machine. ARM mikrokontrolér taktiež využíva architektúru procesora RISC. Procesor ARM patrí medzi jeden z najrozsiahlejších
 a najviac licencovaných procesorov na svete. Prvýkrát bol vyvinutý v roku 1978 Cambridgskou univerzitou. Firma ARM v súčasnosti vyvíja ARM architektúru a
 licencuje ju rôznym ďalším spoločnostiam, ktoré vyvíjajú svoje vlastné produkty.
@@ -55,17 +55,17 @@ V porovnaní s inými procesormi sú lacné a zároveň majú menšiu energetick
 Medzi nevýhody určite patrí to, že architektúra ARM nie je kompatibilná s architektúrou x86 \cite{shidlingDifferentTypesMicrocontrollers2020}.
 
 \subsubsection{AVR mikrokontrolér}
-\noindent
+\noindent \par
 AVR bol vyvinutý v roku 1996 spoločnosťou Atmel Corporation. Názov AVR je odvodený od mien vývojarov, ktorí na ňom pracovali.
 Je to skratka od  Alf-Egil Bogen Vegan Wollan RISC mikrokontrolér.
 Taktiež je známy aj pod názvom Advanced Virtual RISC. AVR mikrokontrolér je dostupný v troch kategóriách:
 \begin{itemize}
     \item TinyAVR: Najmenší dostupný model. Je určený len pre jednoduché aplikácie.
-    \item MegaAVR: Najpopulárnejší model AVR mikrokontrolérov. Má väčšie množstvo pamäte a viac zabudovaných periférnych zariadení. Je vhodný pre stredné náročné až zložité aplikácie.
+    \item MegaAVR: Najpopulárnejší model AVR mikrokontrolérov. Má väčšie množstvo pamäte a viac zabudovaných periférnych zariadení. Je vhodný pre stredne náročné až zložité aplikácie.
     \item XmegaAVR: Je určený na komerčné použitie pre komplexné aplikácie, ktoré vyžadujú veľké množstvo pamäte a vysokú rýchlosť procesora.
 \end{itemize}
 
-AVR je jednou z prvých architekúr mikrokontrolérov, ktoré používajú zabudovanú flash pamäť, narozdiel od jednorazovo programovateľnej pamäte ROM, EPROM alebo EEPROM, ktoré v tom čase používali ostatné mikrokontroléry.
+AVR je jednou z prvých architektúr mikrokontrolérov, ktoré používajú zabudovanú flash pamäť, na rozdiel od jednorazovo programovateľnej pamäte ROM, EPROM alebo EEPROM, ktoré v tom čase používali ostatné mikrokontroléry.
 \par
 Medzi hlavné výhody patrí cena, jednoduchosť používania a v neposlednom rade aj možnosť výberu rôznych typov na základe užívateľských požiadaviek \cite{shidlingDifferentTypesMicrocontrollers2020}. AVR je taktiež využívané platformou Arduino \cite{AVRVsArduinoWhich2017}.
 
