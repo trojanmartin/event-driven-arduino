@@ -11,7 +11,7 @@ hodín a ich výber je možné určiť pomocou prepínača. Niektoré mikrokontr
 externých hodín \cite{IntroductionMicrocontrollerTimers}. Pri rôznych architektúrach sa môže spôsob fungovania časovačov líšiť. V tejto diplomovej práci sa budeme venovať
 mikrokontroléru s architektúrou AVR, preto aj nasledujúci opis fungovania časovačov sa vzťahuje na architektúru AVR.\par
 Fungovanie časovača si najlepšie opíšeme na konkrétnom príklade.
-Uvažujme časovač s 16-bitovým registrom a zdrojom hodín s frekvenciou 1 kHz. Po každom uplynutí cyklu v hodinách, časovač
+Uvažujme časovač s 16-bitovým registrom a zdrojom hodín s frekvenciou 1 \acrshort{kHz}. Po každom uplynutí cyklu v hodinách, časovač
 zvýši hodnotu uloženú v registri o 1. Dĺžku jedného cyklu časovača je možné vyjadriť vzorcom:
 
 \begin{equation}
@@ -21,7 +21,7 @@ zvýši hodnotu uloženú v registri o 1. Dĺžku jedného cyklu časovača je m
 \end{equation}
 
 To znamená, že najkratší časový úsek, ktorý je možné pomocou časovača odmerať sa
-rovná dĺžke periódy vstupných hodín. V našom príklade s hodinami s frekvenciou 1 kilohertz je dĺžka periódy nasledovná:
+rovná dĺžke periódy vstupných hodín. V našom príklade s hodinami s frekvenciou 1 \acrshort{kHz} je dĺžka periódy nasledovná:
 \begin{equation}
     \begin{aligned}
         Dĺžka\:cyklu & = \frac{1}{Frekvencia\:hodín} \\
@@ -43,7 +43,7 @@ Po dosiahnutí maximálnej hodnoty register pretečie a časovač začne počít
     \label{figure:timer1}
 \end{figure}
 
-Pri hodinách s frekvenciou 1MHz časovač dosiahne maximálnu hodnotu registra približne každých 66 milisekúnd a dĺžka jedného cyklu je $\frac{1}{1000000}$ sekundy, čo je 1 mikrosekunda \cite{cameraNewbieGuideAVR2015}.
+Pri hodinách s frekvenciou 1MHz časovač dosiahne maximálnu hodnotu registra približne každých 66 milisekúnd a dĺžka jedného cyklu je $\frac{1}{1000000}$ sekundy, čo je 1 μs \cite{cameraNewbieGuideAVR2015}.
 
 \subsubsection{Preddelička}
 \noindent \par
@@ -62,7 +62,7 @@ Hodnoty preddeličky bývajú pevne dané a často sú to hodnoty 1, 8, 64, 256 
     \end{aligned}
 \end{equation}
 
-Pre časovač s frekvenciou 1MHz a hodnotami preddeličky 1, 8, 64, 256 s 1024 môžeme zostrojiť nasledujúcu tabuľku:
+Pre časovač s frekvenciou 1 \acrshort{MHz} a hodnotami preddeličky 1, 8, 64, 256 s 1024 môžeme zostrojiť nasledujúcu tabuľku:
 \begin{table}[!htbp]
     \begin{center}
         \begin{tabular}{|c|c|}
@@ -96,7 +96,7 @@ Je teda potrebný tik, aby sa hodnota časovača dostala z maximálnej hodnoty s
 musíme znížiť počet tikov o jeden \cite{atmelATmega64012801281}. \par
 
 Teraz sa vráťme späť k tomu, ako dosiahneme interval 1 sekundy.
-Potrebujeme zistiť či existuje hodnota preddeličky, ktorá poskytne presné oneskorenie 1 Hz. Jeden Hertz je rovný jednému cyklu za sekundu. Na výpočet použijeme vzorec
+Potrebujeme zistiť či existuje hodnota preddeličky, ktorá poskytne presné oneskorenie 1 \acrshort{Hz}. Jeden Hertz je rovný jednému cyklu za sekundu. Na výpočet použijeme vzorec
 č.\ref{eq:register-value} a výsledky týchto výpočtov sú uvedené v tabuľku č. \ref{table:timerPrescalerValues}:
 
 \begin{table}[!htbp]

@@ -6,7 +6,7 @@ Táto adresa je definovaná v tzv. \textit{vektore prerušení} (interrupt vecto
 ktoré špecifikuje adresu, kde má procesor pokračovať vo vykonávaní kódu.
 Každé podporované prerušenie sa musí nachádzať v tomto vektore.
 Blok pamäte kam odkazuje vektor prerušení sa nazýva \textit{obsluha prerušenia}.
-V anglickej literatúre sa používa výraz \textit{interrupt service routine} \textit{(ISR)}, preto aj my budeme ďalej používať skratku  ISR. Po vykonaní  ISR sa procesor vráti k predtým vykonávanej aktivite. \par
+V anglickej literatúre sa používa výraz \textit{interrupt service routine} \textit{(ISR)}, preto aj my budeme ďalej používať skratku  \acrshort{ISR}. Po vykonaní  ISR sa procesor vráti k predtým vykonávanej aktivite. \par
 \textit{Radič prerušení} je periférne zariadenie, ktoré spravuje prerušenia pre procesor.
 Niektoré architektúry procesorov majú integrovaný sofistikovaný radič prerušení (napríklad AVR alebo MSP430), zatiaľ čo iné obsahujú iba základný ovládač, ktorý si vyžaduje ďalší externý radič prerušení (napríklad ARM alebo x86). \par
 Prerušenie je v stave \textit{čakania}, ak daná udalosť nastala a radič prerušení dané prerušenie zaregistroval, avšak ešte sa nezačalo vykonávanie ISR.
@@ -29,7 +29,7 @@ Prerušenie nastane pri splnení nasledujúcich podmienok:
 Ak sa objaví ďalšie prerušenie s vyššou prioritou, latencia prerušenia s nižšou prioritou môže byť veľká.
 K dĺžke latencie prispievajú aj vyššie spomínané podmienky vykonania prerušenia,
 keďže kontrola či sú bity nastavené alebo dokončenie vykonávania aktuálnej inštrukcie procesorom trvá nejaký čas. \par
-Veľká väčšina procesorov podporuje aj prerušenia, ktoré nie je možné vypnúť (non-maskable interrupt - NMI).
+Veľká väčšina procesorov podporuje aj prerušenia, ktoré nie je možné vypnúť (non-maskable interrupt - \acrshort{NMI}).
 Používajú sa v prípade výskytu fatálnych chýb, z ktorých nie je možné žiadnym spôsobom vykonať nápravu programu
 \cite{regehrSafeStructuredUse2007}. \par
 Prerušenia je možné vnímať aj ako udalosti. Pri ich využívaní v programe je preto možné hovoriť o programovaní pomocou udalosťami riadenej paradigmy.
