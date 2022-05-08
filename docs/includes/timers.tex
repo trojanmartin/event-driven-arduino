@@ -43,7 +43,7 @@ Po dosiahnutí maximálnej hodnoty register pretečie a časovač začne počít
     \label{figure:timer1}
 \end{figure}
 
-Pri hodinách s frekvenciou 1MHz časovač dosiahne maximálnu hodnotu registra približne každých 66 milisekúnd a dĺžka jedného cyklu je $\frac{1}{1000000}$ sekundy, čo je 1 μs \cite{cameraNewbieGuideAVR2015}.
+Pri hodinách s frekvenciou 1MHz časovač dosiahne maximálnu hodnotu registra približne každých 66 milisekúnd a dĺžka jedného cyklu je $\frac{1}{1000000}$ sekundy, čo je 1 mikrosekunda \cite{cameraNewbieGuideAVR2015}.
 
 \subsubsection{Preddelička}
 \noindent \par
@@ -174,16 +174,16 @@ pretečenia registra. Z takmer nebadateľnej hodnoty pre ľudí, milisekunda, sm
     \begin{center}
         \begin{tabular}{|c|c|c|}
             \hline
-            Hodnota preddeličky & Frekvencia & Časový interval \\
+            Hodnota preddeličky & Frekvencia & Časový interval    \\
             \hline
-            1                   & 15,259 Hz  & 65,5 ms         \\
-            8                   & 1,907 Hz   & 0,524 s         \\
-            64                  & 0,2384 Hz  & 4,195 s         \\
-            256                 & 0,0596 Hz  & 16,78 s         \\
-            1024                & 0,0149 Hz  & 67,11 s         \\
+            1                   & 15,259 Hz  & 65,5 \acrshort{ms} \\
+            8                   & 1,907 Hz   & 0,524 \acrshort{s} \\
+            64                  & 0,2384 Hz  & 4,195 s            \\
+            256                 & 0,0596 Hz  & 16,78 s            \\
+            1024                & 0,0149 Hz  & 67,11 s            \\
             \hline
         \end{tabular}
-        \caption{Frekvencie pretečenia registra pri rôznom nastavení preddeličky}
+        \caption{Frekvencie pretečenia registra pri rôznom nastavení preddeličkay}
         \label{table:overflow-frequency}
     \end{center}
 \end{table}
@@ -233,7 +233,7 @@ END ISR
 
 \end{lstlisting}
 
-Spomínané Compare and Capture prerušenie sa vzťahuje hlavne k CTC módu časovača, preto si ho predstavíme až v kapitole č.\ref{subsec:ctc-mode}.
+Spomínané Compare and Capture prerušenie sa vzťahuje hlavne k \acrshort{CTC} módu časovača, preto si ho predstavíme až v kapitole č.\ref{subsec:ctc-mode}.
 
 \subsubsection{CTC mód} \label{subsec:ctc-mode}
 \noindent \par
@@ -338,11 +338,11 @@ ktorá je vo väčšine prípadov neakceptovateľná.
 
 \subsubsection{PWM mód}
 \noindent \par
-Pulse Width Modulation (impulzová šírková modulácia) alebo aj PWM je technika, pomocou ktorej je možné ovládať analógové zariadenia pomocou digitálneho signálu.
+Pulse Width Modulation (impulzová šírková modulácia) alebo aj \acrshort{PWM} je technika, pomocou ktorej je možné ovládať analógové zariadenia pomocou digitálneho signálu.
 Jednoduchým príkladom je stmievanie led žiarovky alebo ovládanie rýchlosti motora. PWM signál nie je reálnym analógovým signálom, len ho určitým spôsobom dokáže napodobniť.
 Pomocou digitálneho ovládania dokážeme rýchlo napájanie vypínať alebo zapínať a riadiť tak prúd dodávaný do zoriadenia. Ak necháme prúd zapnutý dlhší čas ako čas, v ktorom
 je vypnutý, tak zvýšime priemernú úroveň výkonu. V opačnom prípade priemernú úroveň výkonu znížime. Trvanie „času zapnutia“ sa nazýva šírka impulzu.
-Ak chceme získať rôzne analógové hodnoty, zmeníme šírku impulzu. Na vyjadrenie dĺžky času zapnutia sa používa termín Duty cycle (pracovný cyklus). Udáva sa v percentách
+Ak chceme získať rôzne analógové hodnoty, zmeníme šírku impulzu. Na vyjadrenie dĺžky času zapnutia sa používa termín strieda. Udáva sa v percentách
 a hovorí o dĺžke „času zapnutia“  počas jedného intervalu \cite{WhatPWMSignal}.
 \begin{figure}[!h]
     \centering
