@@ -118,9 +118,6 @@ TimerTrigger &TimerTrigger::setTimer(const uint32_t millis, const uint8_t event,
     // just check if we handled this properly. If there no free slot user will know that something wrong happend
     assert(freeEventSlots > 0);
 
-    Serial.print("Compare value: ");
-    Serial.println(compareValue);
-
     setPrescaler(calculatedPrescalerIndex);
     return *this;
 }
@@ -248,8 +245,6 @@ void TimerTrigger::setPrescaler(uint8_t index)
 
         index = finalPrescalerIndex;
     }
-    Serial.print("Prescaler index: ");
-    Serial.println(index + 1);
     *TCCRnB |= (index + 1); // set prescaler
     prescalerIndex = index;
 }

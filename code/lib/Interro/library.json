@@ -1,8 +1,8 @@
 {
     "name": "Interro",
     "version": "0.0.0",
-    "keywords": "rtos, timing, thread, task, mutex, semaphore",
-    "description": "Real Time Operating System",
+    "keywords": "arduino, state machine, interrupts",
+    "description": "Arduino state machine library with interrupts support",
     "frameworks": "*",
     "platforms": "*",
     "build": {
