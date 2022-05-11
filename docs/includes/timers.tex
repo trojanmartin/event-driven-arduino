@@ -11,7 +11,7 @@ hodín a ich výber je možné určiť pomocou prepínača. Niektoré mikrokontr
 externých hodín \cite{IntroductionMicrocontrollerTimers}. Pri rôznych architektúrach sa môže spôsob fungovania časovačov líšiť. V tejto diplomovej práci sa budeme venovať
 mikrokontroléru s architektúrou AVR, preto aj nasledujúci opis fungovania časovačov sa vzťahuje na architektúru AVR.\par
 Fungovanie časovača si najlepšie opíšeme na konkrétnom príklade.
-Uvažujme časovač s 16-bitovým registrom a zdrojom hodín s frekvenciou 1 \acrshort{kHz}. Po každom uplynutí cyklu v hodinách, časovač
+Uvažujme časovač so 16-bitovým registrom a zdrojom hodín s frekvenciou 1 \acrshort{kHz}. Po každom uplynutí cyklu v hodinách, časovač
 zvýši hodnotu uloženú v registri o 1. Dĺžku jedného cyklu časovača je možné vyjadriť vzorcom:
 
 \begin{equation}
@@ -32,7 +32,7 @@ rovná dĺžke periódy vstupných hodín. V našom príklade s hodinami s frekv
 \end{equation}
 Dĺžka periódy je 0.001 sekundy. Z toho vyplýva, že časovač je schopný odmerať dĺžku času, ktorý je násobkom 0.001. Ak necháme časovač napočítať do 100, potrvá to 100 krát 0.001 sekundy, čiže 0.1 sekundy \cite{cameraNewbieGuideAVR2015}.
 Tu treba poznamenať, že v našom príklade počítame s frekvenciou 1kHz, čo je pomerne nízka frekvencia a dnešné mikrokontroléry sú podstatne rýchlejšie.
-Ako príklad uvedieme mikrokontrolér Arduino Mega2560, ktorý používa frekvenciu 16MHz čo je rádovo viac ako 1kHz \cite{ArduinoMega2560}.
+Ako príklad uvedieme mikrokontrolér Arduino Mega2560, ktorého maximálna frekvencia je 16MHz čo je rádovo viac ako 1kHz \cite{ArduinoMega2560}.
 \par Pre reálnejšiu predstavu preto pokračujme v našom príklade s časovačom s frekvenciou 1MHz. Časovač má k dispozícii 16-bitový register. Maximálny počet
 možných hodnôt v registri je teda $2^{16}$ (65536, maximálna hodnota je 65365).
 Po dosiahnutí maximálnej hodnoty register pretečie a časovač začne počítať znova od 0.
@@ -47,8 +47,8 @@ Pri hodinách s frekvenciou 1MHz časovač dosiahne maximálnu hodnotu registra 
 
 \subsubsection{Preddelička}
 \noindent \par
-Pri použití 16-bitového registra je 66 milisekúnd najdlhší časový interval, ktorý dokážeme odmerať pokým register nepretečie a časovač nezačne počítať od 0.
-Pre nás ľudí je to veľmi krátky časový úsek. Často chceme dosiahnuť interval, ktorý je dlhší a pre nás badateľný. Príkladom takého intervalu je 1 sekunda.
+Pri použití časovača so 16-bitovým registrom a frekvenciou 1MHz je 66 milisekúnd najdlhší časový interval, ktorý dokážeme odmerať pokým register nepretečie a časovač nezačne počítať od 0.
+Častokrát chceme dosiahnuť interval, ktorý je dlhší a pre nás pozorovateľný voľným okom. Príkladom takého intervalu je 1 sekunda.
 Existuje viacero spôsobov ako tento interval dosiahnuť. Jedným z nich je použitie preddeličky (v anglickej literatúre sa používa termín prescaler).
 \par
 Preddelička je súčasťou obvodu časovača, ktorý nám umožňuje preskočiť periódy zdrojových hodín o mocninu 2, čím sa zníži frekvencia,
@@ -97,7 +97,7 @@ musíme znížiť počet tikov o jeden \cite{atmelATmega64012801281}. \par
 
 Teraz sa vráťme späť k tomu, ako dosiahneme interval 1 sekundy.
 Potrebujeme zistiť či existuje hodnota preddeličky, ktorá poskytne presné oneskorenie 1 \acrshort{Hz}. Jeden Hertz je rovný jednému cyklu za sekundu. Na výpočet použijeme vzorec
-č.\ref{eq:register-value} a výsledky týchto výpočtov sú uvedené v tabuľku č. \ref{table:timerPrescalerValues}:
+č.\ref{eq:register-value} a výsledky týchto výpočtov sú uvedené v tabuľku č.\ref{table:timerPrescalerValues}:
 
 \begin{table}[!htbp]
     \begin{center}
@@ -117,7 +117,7 @@ Potrebujeme zistiť či existuje hodnota preddeličky, ktorá poskytne presné o
     \end{center}
 \end{table}
 
-Pri pohľade na tabuľku môžeme hneď usúdiť, že preddeličky s hodnotou 256 a 1024 nie sú vhodné pre dosiahnutie nášho cieľa. Hodnota v registri je vždy celé kladné číslo, a preto nemôžme tieto hodnoty použiť. Ďalším kritériom pre výber preddeličky je veľkosť
+Pri pohľade na tabuľku č.\ref{table:timerPrescalerValues} môžeme hneď usúdiť, že preddeličky s hodnotou 256 a 1024 nie sú vhodné pre dosiahnutie nášho cieľa. Hodnota v registri je vždy celé kladné číslo, a preto nemôžme tieto hodnoty použiť. Ďalším kritériom pre výber preddeličky je veľkosť
 vypočítanej hodnoty. Náš časovač používa 16-bitový register, ktorého maximálna hodnota je $2^{16} -1$ (65365).
 Ostáva nám teda len jedna možnosť preddeličky, a to 64. Preddeličky s hodnotou 1 a 8 vyžadujú hodnotu registra väčšiu ako je schopný uložiť.
 Teda, pre dosiahnutie jedno sekundového intervalu pomocou 16 bitového časovača s frekvenciou 1MHz potrebujeme použiť preddeličku s hodnotou 64.
@@ -334,12 +334,12 @@ porovnávaciu hodnotu:
 \end{equation}
 
 Vidíme, že výsledkom nie je celé číslo. Teoretickým riešením by mohlo byť zaokrúhlenie danej hodnoty na celé číslo. Tým by sme však do celého procesu vniesli nepresnosť,
-ktorá je vo väčšine prípadov neakceptovateľná.
+ktorá je v niektorých prípadoch neakceptovateľná.
 
 \subsubsection{PWM mód}
 \noindent \par
 Pulse Width Modulation (impulzová šírková modulácia) alebo aj \acrshort{PWM} je technika, pomocou ktorej je možné ovládať analógové zariadenia pomocou digitálneho signálu.
-Jednoduchým príkladom je stmievanie led žiarovky alebo ovládanie rýchlosti motora. PWM signál nie je reálnym analógovým signálom, len ho určitým spôsobom dokáže napodobniť.
+Jednoduchým príkladom je stmievanie led žiarovky alebo ovládanie rýchlosti elektromotora. PWM signál nie je reálnym analógovým signálom, len ho určitým spôsobom dokáže napodobniť.
 Pomocou digitálneho ovládania dokážeme rýchlo napájanie vypínať alebo zapínať a riadiť tak prúd dodávaný do zoriadenia. Ak necháme prúd zapnutý dlhší čas ako čas, v ktorom
 je vypnutý, tak zvýšime priemernú úroveň výkonu. V opačnom prípade priemernú úroveň výkonu znížime. Trvanie „času zapnutia“ sa nazýva šírka impulzu.
 Ak chceme získať rôzne analógové hodnoty, zmeníme šírku impulzu. Na vyjadrenie dĺžky času zapnutia sa používa termín strieda. Udáva sa v percentách
@@ -381,7 +381,7 @@ Porovnávací register A je vyznačený zelenou farbou, zatiaľ čo register B j
           \subitem{Strieda pre porovnávací register B: (50 + 1)/256 = 19,9\%}
 \end{itemize}
 
-Pri výpočte striedy si možeme všimnúť, že k hodnote v registri sme pripočítali 1. Je to kvôli tomu, že AVR časovaču trvá jednu periódu navyše pokiaľ hodnotu
+Pri výpočte striedy si možeme všimnúť, že k hodnote v porovnávacom registri sme pripočítali 1. Je to kvôli tomu, že AVR časovaču trvá jednu periódu navyše pokiaľ hodnotu
 na danom pine zmení \cite{shirriffSecretsArduinoPWM}.
 
 \noindent \par

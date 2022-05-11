@@ -497,28 +497,26 @@ preddeličky. V posledných dvoch krokoch povolíme CTC mód časovača a násle
 \end{lstlisting}
 
 Na manuálnu konfiguráciu časovača užívateľ potrebuje poznať názvy registrov, názvy jednotlivých bitov  v registroch a model fungovanie časovača ako celku. Pre nadobudnutie
-týchto znalosti je nutné štúdium dátového hárku mikrokontroléra. To celý vývoj aplikácie predĺži a spomalí. Použitie viacerých intervalov,
+týchto znalosti je nutné štúdium dátového hárku mikrokontroléra \cite{atmelATmega64012801281}. To celý vývoj aplikácie predĺži a spomalí. Použitie viacerých intervalov,
 prípadne generovanie  PWM signálu pomocou PWM módu časovača by celú
 manuálnu konfiguráciu ešte viac skomplikovalo. Kód je navyše ťažko čitateľný a pre iných programátorov
-môže byť nezrozumiteľný. Pri použití vytvorenej knižnice všetky tieto nastavenia registrov vykoná knižnica za užívateľa. \par
+môže byť nezrozumiteľný. Pri použití vytvorenej knižnice Interro všetky tieto nastavenia registrov vykoná knižnica za užívateľa. \par
 Na druhej strane, medzi výhody manuálnej konfigurácie určite patrí väčšia flexibilita riešenia. Časový spúšťač implementovaný v knižnici nepodporuje všetky dostupné
 módy a nastavenia, ktoré sú hardvérovo implementované mikrokontrolérom. To pre niektorých pokročilých užívateľov môže byť problém, a preto použitie knižnice
 v tomto prípade nie je správnym riešením.
 
 \subsubsection{Udalosťami riadené programovanie}
 \noindent \par
-Rovnako ako vyvinutá knižnica, aj existujúce riešenia \textit{Eventually} a \textit{Automaton} podporujú paradigmu udalosťami riadeného programovania. Podľa kapitoly
+Rovnako ako vyvinutá knižnica Interro, aj existujúce riešenia \textit{Eventually} a \textit{Automaton} podporujú paradigmu udalosťami riadeného programovania. Podľa kapitoly
 č.\ref{section:event-driven-programming} túto paradigmu môžeme rozdeliť na dva druhy, a to na programy, ktoré si uchovávajú aktuálny stav a na programy, ktoré nepoznajú
 kontext, v ktorom udalosť nastala. Interro modeluje program pomocou stavových automatov, preto patrí do prvej skupiny spolu s knižnicou Automaton. Do druhej skupiny
 zaraďujeme knižnicu Eventually, ktorá nepozná žiaden mechanizmus, ktorým by si uchovávala už vykonané kroky. \par
-Na krátkom programe nižšie vidíme použitie knižnice Eventually \cite{bartlettEventually2021}. V príklade blikajúcej led žiarovky môžeme vidieť,
-že aktuálny stav žiarovky si je nutné ukladať mimo poskytnutej knižnice. Pri namodelovaní programu pomocou knižnice Interro alebo Automaton
+Na programe nižšie vidíme porovnanie použitia knižníc Eventually \cite{bartlettEventually2021}, Automaton \cite{tinkerspyAutomaton2021} a Interro. V príklade blikajúcej led žiarovky môžeme vidieť,
+že aktuálny stav žiarovky si je v prípade knižnice Eventually nutné ukladať mimo poskytnutej knižnice. Pri namodelovaní programu pomocou knižnice Interro alebo Automaton
 sa zapamätanie aktuálneho stavu zabezpečí už pomocou jeho modelovania ako stavového automatu. Eventually umožňuje len reagovanie na časovú udalosť.
 \begin{lstlisting}[language=c++]      
-    #include <Eventually.h>       
-
+    #include <Eventually.h>    
     #define LIGHT_PIN 5    
-
     EvtManager mgr;
     bool state = LOW;    
 
@@ -534,6 +532,118 @@ sa zapamätanie aktuálneho stavu zabezpečí už pomocou jeho modelovania ako s
     }    
 
     USE_EVENTUALLY_LOOP(mgr) // Use this instead of your loop() function.    
+\end{lstlisting}
+
+Pre porovnanie nasleduje rovnaký príklad v knižnici Interro.
+\begin{lstlisting}[language=c++]      
+#include <Interro.hpp>
+uint8_t ledPin = 35;
+enum States
+{
+    LedOn,
+    LedOff
+};
+enum Events
+{
+    IntervalOneElapsed,
+};
+
+Timer1Trigger timerTrigger;
+StateMachine blinkingMachineOne(States::LedOff);
+
+static const int8_t ledOnStateTable[]{
+    Events::IntervalOneElapsed, States::LedOff,
+    -1};
+static const int8_t ledOffStateTable[]{
+    Events::IntervalOneElapsed, States::LedOn,
+    -1};
+
+void TurnOnLed(uint8_t pin)
+{
+    digitalWrite(pin, HIGH);
+}
+void TurnOffLed(uint8_t pin)
+{
+    digitalWrite(pin, LOW);
+}
+void setup()
+{
+    pinMode(ledPin, OUTPUT);
+
+    blinkingMachineOne.configure(States::LedOn)
+        .onEvent(ledOnStateTable)
+        .onEntry([](int8_t event)
+                 { TurnOnLed(ledPin); });
+
+    blinkingMachineOne.configure(States::LedOff)
+        .onEvent(ledOffStateTable)
+        .onEntry([](int8_t event)
+                 { TurnOffLed(ledPin); });
+
+    // set-up triggers
+    timerTrigger.configure(TimerMode::CTC)
+        .useInterval(1000, Events::IntervalOneElapsed);
+}
+void loop()
+{
+    interro.run();
+}
+\end{lstlisting}
+A poslednou porovnávanou knižnicou je knižnica Automaton \cite{tinkerspyAutomaton2021}.
+
+\begin{lstlisting}[language=c++]      
+#include <Automaton.h>
+class Atm_blink : public Machine {
+    public:
+    Atm_blink( void ) : Machine() {};
+    short pin;
+    atm_timer_millis timer;
+    enum { IDLE, LED_ON, LED_OFF }; // STATES
+    enum { EVT_TIMER, EVT_ON, EVT_OFF, ELSE }; // EVENTS
+    enum { ENT_ON, ENT_OFF }; // ACTIONS
+
+    Atm_blink & begin( int attached_pin, uint32_t blinkrate ) {
+        const static state_t state_table[] PROGMEM = {
+        /*            ON_ENTER    ON_LOOP  ON_EXIT  EVT_TIMER  EVT_ON  EVT_OFF  ELSE */
+        /* IDLE    */  ENT_OFF,        -1,      -1,        -1, LED_ON,      -1,   -1,
+        /* LED_ON  */   ENT_ON,        -1,      -1,   LED_OFF,     -1,    IDLE,   -1,
+        /* LED_OFF */  ENT_OFF,        -1,      -1,    LED_ON,     -1,    IDLE,   -1,
+        };
+        Machine::begin( state_table, ELSE );
+        pin = attached_pin;
+        timer.set( blinkrate );
+        pinMode( pin, OUTPUT );
+        return *this;
+    }
+
+    int event( int id ) {
+        switch ( id ) {
+        case EVT_TIMER :
+            return timer.expired( this );
+        }
+        return 0;
+    }
+
+    void action( int id ) {
+        switch ( id ) {
+        case ENT_ON :
+            digitalWrite( pin, HIGH );
+            return;
+        case ENT_OFF :
+            digitalWrite( pin, LOW );
+            return;
+        }
+    }
+};
+
+Atm_blink led;
+void setup() {
+    led.begin( 4, 200 );        // Setup a blink machine on pin 4
+    led.trigger( led.EVT_ON );  // Turn it on
+}
+void loop() {
+    led.cycle();
+}
 \end{lstlisting}
 
 Základnou operáciou pri udalosťami riadnom programovaní je generovanie udalostí. Existujúce knižnice Automaton a Eventually umožňujú generovanie udalostí pomocou

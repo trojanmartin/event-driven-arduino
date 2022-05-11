@@ -8,15 +8,13 @@ Všetky prvky mikrokontroléra sú integrované na jednom čipe, čím sa šetr�
 To vedie k nižším nákladom a kratšej dobe vývoja. Tým sa šetrí čas a aj peniaze čo je hlavný
 dôvod existencie a popularity rôznych mikrokontrolérov. Medzi ďalšie výhody patrí nižšia spotreba energie,
 jednoduchosť modernizácie komponentov mikrokontroléra a vyššia spoľahlivosť
-celého systému. Tieto výhody patria medzi dôležité aspekty vstavaných systémov. \par
-K nevýhodám môžeme zaradiť rýchlosť zariadenia, keďže tá bude takmer vždy
-nižšia ako by sme vedeli dosiahnuť len pomocou hardvérového riešenia. Väčšina aplikácii, a najmä tie, ktoré vyžadujú istý druh ľudskej interakcie, nepotrebujú
-dosiahnuť také rýchle reakčné časy. Preto je mikrokontrolér pre ne dobrou voľbou
-\cite{guntherIntroductionMicrocontrollers2007}.
+celého systému. Tieto výhody patria medzi dôležité aspekty vstavaných systémov. \cite{guntherIntroductionMicrocontrollers2007} \par
+K nevýhodám môžeme zaradiť napríklad komplexnosť mikrokontrolérov v porovnaní s mikroprocesormi alebo ich limitovaný počet úloch vykonávaných simultánne \cite{ECSTUFF4UElectronicsEngineer}.
+Medzi dôležité nevýhody patrí aj náchylnosť týchto zariadení na kybernetické útoky. Táto hrozba býva pri mikrokontroléroch často podceňovaná \cite{iotSecurityChallenges}.
 
 \subsection{Typy mikrokontrolérov}
 \noindent \par
-V dnešnej dobe poznáme niekoľko typov mikrokontrolérov. Medzi najznámejšie patria:
+V dnešnej dobe poznáme niekoľko typov mikrokontrolérov, ktoré sú základom mnohých vstavaných systémov. Medzi najznámejšie patria:
 \begin{itemize}
     \item \acrshort{PIC} mikrokontrolér
     \item ARM mikrokontrolér
@@ -52,7 +50,8 @@ Procesory ARM majú menší počet tranzistorov kvôli menšiemu počtu podporov
 s \acrshort{RAM} a \acrshort{ROM} pamäťou a ďalšími periférnymi zariadeniami dostaneme ARM mikrokontrolér.\par
 
 V porovnaní s inými procesormi sú lacné a zároveň majú menšiu energetickú spotrebu. Z toho vyplýva aj väčšia výdrž batérie.
-Medzi nevýhody určite patrí to, že architektúra ARM nie je kompatibilná s architektúrou x86 \cite{shidlingDifferentTypesMicrocontrollers2020}.
+Medzi nevýhody určite patrí to, že architektúra ARM nie je kompatibilná s architektúrou x86 \cite{shidlingDifferentTypesMicrocontrollers2020}. To môže spôsobovať ťažkosti s výkonom
+v komplikovanejších aplikáciach. Ten je závislý od schopností programátorov, pričom pri použití ARM architekrúry si jeho dosiahnutie vyžaduje vysoko kvalifikovaných ľudí \cite{WhatARMProcessor2022}.
 
 \subsubsection{AVR mikrokontrolér}
 \noindent \par
