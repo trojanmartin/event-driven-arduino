@@ -1,6 +1,7 @@
 #include <Interro.hpp>
 
 uint8_t ledPin = 35;
+uint8_t buttonPin = 43;
 
 enum States
 {
@@ -50,7 +51,8 @@ void setup()
                  { TurnOffLed(ledPin); });
 
     // set-up triggers
-    buttonTrigger.configure(ledPin)
+    buttonTrigger.configure(buttonPin)
+        .debounce(400)
         .onClick(Events::ButtonClicked);
 }
 
